@@ -1,6 +1,7 @@
-import { Button, Modal } from '@mantine/core';
+import { useState } from 'react';
+import { Pencil } from 'lucide-react';
 import CreateEventForm from '../components/forms/CreateEventForm';
-import { useDisclosure } from '@mantine/hooks';
+import AppleModal from '../components/ui/AppleModal';
 import type { Event } from '../types/event';
 
 type EditEventModalProps = {
@@ -8,16 +9,29 @@ type EditEventModalProps = {
 };
 
 export default function EditEventModal({ event }: EditEventModalProps) {
-	const [opened, { open, close }] = useDisclosure(false);
+	const [opened, setOpened] = useState(false);
 
 	return (
 		<>
-			<Modal opened={opened} onClose={close} title='Edit Event'>
-				<CreateEventForm event={event} />
-			</Modal>
-			<Button onClick={open} variant='light' size='compact-xs'>
-				edit
-			</Button>
+			<button
+				type='button'
+				onClick={() => setOpened(true)}
+				aria-label='Edit event'
+				title='Edit event'
+				className='group/btn p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.08] transition-colors active:bg-white/[0.12]'
+			>
+				<Pencil className='w-4 h-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90' />
+			</button>
+
+			<AppleModal
+				opened={opened}
+				onClose={() => setOpened(false)}
+				title='Edit Event'
+				subtitle={event.title}
+				size='lg'
+			>
+				<CreateEventForm event={event} onSuccess={() => setOpened(false)} />
+			</AppleModal>
 		</>
 	);
 }
