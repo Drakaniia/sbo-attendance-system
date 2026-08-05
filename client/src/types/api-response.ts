@@ -8,4 +8,6 @@ export type APIResponse<T> = {
 export type APIPaginatedResponse<T> = APIResponse<T> & {
 	next: number;
 	prev: number;
+	totalPages: number;
+	total: number;
 };

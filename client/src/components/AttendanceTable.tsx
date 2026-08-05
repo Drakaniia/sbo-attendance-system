@@ -1,49 +1,89 @@
-import { Table } from '@mantine/core';
 import { format } from 'date-fns';
 import type { Attendance } from '../types/attendance';
+import EditAttendanceModal from '../modals/EditAttendanceModal';
 
 type AttendanceTableProps = {
 	attendances: Attendance[];
+	onAttendanceUpdated?: (updated: Attendance) => void;
 };
 
-export default function AttendanceTable({ attendances }: AttendanceTableProps) {
+const TIME_FMT = 'hh:mm aaa';
+
+export default function AttendanceTable({
+	attendances,
+	onAttendanceUpdated,
+}: AttendanceTableProps) {
 	return (
-		<Table.ScrollContainer minWidth={500} maxHeight={300}>
-			<Table>
-				<Table.Thead>
-					<Table.Tr>
-						<Table.Th>Student ID</Table.Th>
-						<Table.Th>Name</Table.Th>
-						<Table.Th>Course</Table.Th>
-						<Table.Th>Year</Table.Th>
-						<Table.Th>Time In</Table.Th>
-						<Table.Th>Time Out</Table.Th>
-					</Table.Tr>
-				</Table.Thead>
-				<Table.Tbody>
-					{attendances.map((attendance) => (
-						<Table.Tr className='' key={attendance._id}>
-							<Table.Td>{attendance.studentID}</Table.Td>
-							<Table.Td>
-								{attendance.student.firstname} {attendance.student.lastname}
-							</Table.Td>
-							<Table.Td>{attendance.student.course}</Table.Td>
-							<Table.Td>{attendance.student.year}</Table.Td>
-							{/* old date format 'MM-dd-yyyy hh:mm aaa' */}
-							<Table.Td>
-								{attendance.timeIn
-									? format(new Date(attendance.timeIn), 'hh:mm aaa')
-									: '--'}
-							</Table.Td>
-							<Table.Td>
-								{attendance.timeOut
-									? format(new Date(attendance.timeOut), 'hh:mm aaa')
-									: '--'}
-							</Table.Td>
-						</Table.Tr>
-					))}
-				</Table.Tbody>
-			</Table>
-		</Table.ScrollContainer>
+		<div className='overflow-x-auto'>
+			<table className='w-full text-sm min-w-[600px]'>
+				<thead>
+					<tr className='border-b border-white/[0.06]'>
+						{[
+							'Student ID',
+							'Name',
+							'Course',
+							'Year',
+							'Time In',
+							'Time Out',
+						].map((head) => (
+							<th
+								key={head}
+								className='text-left py-3 px-3 first:pl-0 last:pr-0 text-[11px] font-medium text-white/30 uppercase tracking-micro whitespace-nowrap'
+							>
+								{head}
+							</th>
+						))}
+						<th className='text-left py-3 px-3 text-[11px] font-medium text-white/30 uppercase tracking-micro whitespace-nowrap w-0' />
+					</tr>
+				</thead>
+				<tbody>
+					{attendances.map((attendance) => {
+						const hasIn = !!attendance.timeIn;
+						const hasOut = !!attendance.timeOut;
+						return (
+							<tr
+								key={attendance._id}
+								className='border-b border-white/[0.03] transition-colors hover:bg-white/[0.02]'
+							>
+								<td className='py-3 px-3 first:pl-0 font-mono text-xs text-white/60 tabular-nums'>
+									{attendance.studentID}
+								</td>
+								<td className='py-3 px-3 font-medium text-white/80 whitespace-nowrap'>
+									{attendance.student.firstname} {attendance.student.lastname}
+								</td>
+								<td className='py-3 px-3 text-white/50 whitespace-nowrap'>
+									{attendance.student.course}
+								</td>
+								<td className='py-3 px-3 text-white/50 tabular-nums'>
+									{attendance.student.year}
+								</td>
+								<td className='py-3 px-3 text-white/60 tabular-nums whitespace-nowrap'>
+									{hasIn ? format(new Date(attendance.timeIn), TIME_FMT) : '—'}
+								</td>
+								<td className='py-3 px-3 text-white/60 tabular-nums whitespace-nowrap'>
+									{hasOut ? format(new Date(attendance.timeOut), TIME_FMT) : '—'}
+								</td>
+								<td className='py-3 px-3 last:pr-0'>
+									<EditAttendanceModal
+										attendance={attendance}
+										onSuccess={(updated) => onAttendanceUpdated?.(updated)}
+									/>
+								</td>
+							</tr>
+						);
+					})}
+					{attendances.length === 0 && (
+						<tr>
+							<td
+								colSpan={7}
+								className='py-12 text-center text-sm text-white/30'
+							>
+								No attendance recorded yet
+							</td>
+						</tr>
+					)}
+				</tbody>
+			</table>
+		</div>
 	);
 }
