@@ -6,22 +6,16 @@ export default {
   ],
   theme: {
     extend: {
+      transitionTimingFunction: {
+        'apple-out': 'cubic-bezier(0.23, 1, 0.32, 1)',
+      },
       animation: {
         'spin-slow': 'spin 3s linear infinite',
-        'show-slow': 'show 0.5s ease-in-out',
       },
       keyframes: {
         'spin-slow': {
           to: {
             transform: 'rotate(360deg)',
-          },
-        },
-        'show-slow': {
-          from: {
-            opacity: 0,
-          },
-          to: {
-            opacity: 1,
           },
         },
       }

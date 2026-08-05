@@ -5,5 +5,180 @@
 @tailwind utilities;
 
 * {
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	font-optical-sizing: auto;
 }
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* ── Motion keyframes ───────────────────────────────── */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Green pulse on the scan input after a successful recording */
+@keyframes flash-success {
+	0% {
+		box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.55),
+			0 0 20px 2px rgba(16, 185, 129, 0.35);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0),
+			0 0 0 0 rgba(16, 185, 129, 0);
+	}
+}
+
+/* Error overlay card entrance — slight scale pop */
+@keyframes overlay-pop {
+	from {
+		opacity: 0;
+		transform: scale(0.96) translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+/* ── Apple design tokens ─────────────────────────────── */
+:root {
+	/* Motion — damping 1.0 (critically damped) springs feel, expressed as curves */
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+	/* Materials — translucent surfaces, light catches the top edge */
+	--surface: rgba(255, 255, 255, 0.04);
+	--surface-hover: rgba(255, 255, 255, 0.06);
+	--surface-border: rgba(255, 255, 255, 0.08);
+	--surface-hairline: rgba(255, 255, 255, 0.06);
+}
+
+@layer components {
+	/* Translucent panel material */
+	.glass {
+		background: var(--surface);
+		-webkit-backdrop-filter: blur(20px) saturate(180%);
+		backdrop-filter: blur(20px) saturate(180%);
+		border: 1px solid var(--surface-border);
+		box-shadow: inset 0 1px 0 var(--surface-hairline);
+	}
+
+	/* Heavier toolbar material — bigger surfaces read thicker */
+	.glass-heavy {
+		background: rgba(17, 17, 19, 0.55);
+		-webkit-backdrop-filter: blur(24px) saturate(180%);
+		backdrop-filter: blur(24px) saturate(180%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+	}
+
+	/* Modal / floating sheet surface — strongest blur, deepest shadow */
+	.glass-modal {
+		background: rgba(20, 20, 22, 0.78);
+		-webkit-backdrop-filter: blur(40px) saturate(200%);
+		backdrop-filter: blur(40px) saturate(200%);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+			0 32px 64px -16px rgba(0, 0, 0, 0.8);
+	}
+
+	/* Structural rail — heavier material for the sidebar, hairline left edge catches light */
+	.sidebar-material {
+		background: rgba(16, 16, 18, 0.72);
+		-webkit-backdrop-filter: blur(24px) saturate(180%);
+		backdrop-filter: blur(24px) saturate(180%);
+		box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.04);
+	}
+
+	/* Scroll edge effect — fade where content meets floating chrome, not a divider */
+	.glass-heavy::after {
+		content: '';
+		position: absolute;
+		inset: 100% 0 auto 0;
+		height: 16px;
+		background: linear-gradient(to bottom, rgba(10, 10, 10, 0.55), transparent);
+		pointer-events: none;
+	}
+
+	/* Pointer-fine hover brightening for panels */
+	.glass-hover {
+		transition: background-color 300ms ease, border-color 300ms ease;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.glass-hover:hover {
+			background: var(--surface-hover);
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+	}
+
+	/* Spring-feel lift for pressable cards — transform + opacity only.
+	 * NOTE: the :active state must NOT use transform — scaling the card moves
+	 * child buttons (e.g. the edit pencil on an event card) out from under the
+	 * pointer between mousedown and mouseup, silently swallowing the click. */
+	.lift {
+		transition: transform 400ms var(--ease-out), opacity 400ms var(--ease-out),
+			box-shadow 400ms var(--ease-out), background-color 300ms ease,
+			border-color 300ms ease, filter 300ms ease;
+		transition-delay: var(--stagger-delay, 0ms);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.lift:hover {
+			transform: translateY(-2px);
+			background: var(--surface-hover);
+			border-color: rgba(255, 255, 255, 0.12);
+			box-shadow: inset 0 1px 0 var(--surface-hairline),
+				0 12px 32px -16px rgba(0, 0, 0, 0.6);
+			transition-delay: 0ms;
+			will-change: transform;
+		}
+	}
+	.lift:active {
+		filter: brightness(0.94);
+		transition-duration: 100ms;
+		transition-delay: 0ms;
+	}
+
+	/* Size-specific tracking — tighten display text, loosen micro labels */
+	.tracking-display {
+		letter-spacing: -0.02em;
+	}
+	.tracking-micro {
+		letter-spacing: 0.04em;
+	}
+}
+
+/* ── Accessibility ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	.lift,
+	.glass-hover {
+		transition: none;
+	}
+	.lift:hover {
+		transform: none;
+	}
+}	@media (prefers-reduced-transparency: reduce) {
+		.glass,
+		.glass-heavy,
+		.glass-modal,
+		.sidebar-material {
+			background: rgba(24, 24, 26, 0.92);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+			box-shadow: none;
+		}
+	}
