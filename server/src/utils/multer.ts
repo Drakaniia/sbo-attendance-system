@@ -15,6 +15,19 @@ const storage = multer.memoryStorage();
 // 	},
 // });
 
-const upload = multer({ storage: storage });
+const ALLOWED_MIMETYPES = [
+	'text/csv',
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
+
+const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
+	if (ALLOWED_MIMETYPES.includes(file.mimetype)) {
+		cb(null, true);
+	} else {
+		cb(new Error('Only CSV (.csv) and Excel (.xlsx) files are allowed'));
+	}
+};
+
+const upload = multer({ storage, fileFilter });
 
 export default upload;

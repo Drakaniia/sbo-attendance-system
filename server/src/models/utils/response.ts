@@ -20,6 +20,8 @@ export default class CustomResponse {
 export class CustomPaginatedResponse extends CustomResponse {
 	next: number;
 	prev: number;
+	totalPages: number | undefined;
+	total: number | undefined;
 
 	constructor(
 		success: boolean,
@@ -27,10 +29,14 @@ export class CustomPaginatedResponse extends CustomResponse {
 		message: string,
 		next: number,
 		prev: number,
+		totalPages?: number,
+		total?: number,
 		error?: string | undefined
 	) {
 		super(success, data, message, error);
 		this.next = next;
 		this.prev = prev;
+		this.totalPages = totalPages;
+		this.total = total;
 	}
 }

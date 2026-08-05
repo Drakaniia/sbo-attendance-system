@@ -12,6 +12,7 @@ export interface IStudent extends mongoose.Document {
 	course: string;
 	year: number;
 	email?: string;
+	isPlaceholder: boolean;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -26,6 +27,7 @@ export const StudentSchema = new Schema<IStudent>(
 		email: { type: String, required: false },
 		year: { type: Number, required: true },
 		course: { type: String, required: false },
+		isPlaceholder: { type: Boolean, default: false, required: false },
 	},
 	{ timestamps: true }
 );

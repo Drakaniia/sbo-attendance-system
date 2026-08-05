@@ -5,6 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "nodemon --watch src --files ./src/app.ts index.d.ts",
+		"build": "tsc",
+		"start": "node dist/app.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
@@ -26,6 +28,7 @@
 		"mongoose": "^8.18.0",
 		"multer": "^2.0.2",
 		"rate-limiter-flexible": "^8.0.1",
+		"xlsx": "^0.18.5",
 		"zod": "^4.1.1"
 	},
 	"devDependencies": {
@@ -34,6 +37,7 @@
 		"@types/express": "^5.0.3",
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/multer": "^2.0.0",
+		"@types/xlsx": "^0.0.35",
 		"nodemon": "^3.1.10",
 		"ts-node": "^10.9.2"
 	}
