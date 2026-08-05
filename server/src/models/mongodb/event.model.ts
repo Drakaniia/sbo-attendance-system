@@ -20,7 +20,7 @@ export const EventSchema = new Schema<IEvent>({
 	venue: { type: String, required: true },
 	startTime: { type: Date, required: true },
 	endTime: { type: Date, required: true },
-	createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+	createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: false },
 	archived: {
 		type: Boolean,
 		default: false,

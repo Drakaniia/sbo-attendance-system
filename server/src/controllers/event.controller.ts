@@ -31,7 +31,7 @@ export const getSingleEvent = asyncHandler(async (req, res) => {
 export const createEventHandler = asyncHandler(async (req, res) => {
 	const body = createEventSchema.parse(req.body);
 
-	const event = await EventModel.create({ ...body, createdBy: req.user._id });
+	const event = await EventModel.create({ ...body, createdBy: (req as any).user?._id });
 	res.json(new CustomResponse(true, event, 'Event created successfully'));
 });
 

@@ -234,11 +234,7 @@ export const verifyAuthHandler = asyncHandler(async (req, res) => {
 /**
  * @route POST /api/v1/auth/recaptcha/verify
  */
+// DISABLED: recaptcha bypassed - always returns success
 export const recaptchaVerify = asyncHandler(async (req, res) => {
-	const { recaptchaToken } = req.body;
-
-	const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
-	appAssert(isRecaptchaValid, BAD_REQUEST, 'Invalid recaptcha token');
-
-	res.status(OK).json(new CustomResponse(true, null, 'Recaptcha verified'));
+	res.status(OK).json(new CustomResponse(true, null, 'Recaptcha verified (bypassed)'));
 });

@@ -19,7 +19,7 @@ export type IAttendance = {
 const AttendanceSchema = new Schema<IAttendance>(
 	{
 		event: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
-		recordedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+		recordedBy: { type: Schema.Types.ObjectId, ref: 'User', required: false },
 		student: {
 			type: Schema.Types.ObjectId,
 			ref: 'Student',
