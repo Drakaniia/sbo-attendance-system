@@ -8,13 +8,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import Header from '../components/ui/header';
 import { useNotification } from '../hooks/useNotification';
-import Recaptcha from '../components/Recaptcha';
-import { useState } from 'react';
+// import Recaptcha from '../components/Recaptcha'; // DISABLED: recaptcha bypassed
 
 export type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function Signup() {
-	const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 	const notification = useNotification();
 	const navigate = useNavigate();
 
@@ -28,11 +26,6 @@ export default function Signup() {
 	});
 
 	const onSubmit = async (formData: SignupFormValues) => {
-		if (!recaptchaToken) {
-			setError('root', { message: 'Please complete the reCAPTCHA' });
-			return;
-		}
-
 		try {
 			await axiosInstance.post('/auth/signup', formData);
 
@@ -100,7 +93,7 @@ export default function Signup() {
 				</p>
 
 				<div className='flex justify-end gap-2'>
-					<Recaptcha onVerify={setRecaptchaToken} />
+					{/* <Recaptcha onVerify={setRecaptchaToken} /> DISABLED: recaptcha bypassed */}
 					<Button disabled={isSubmitting} type='submit'>
 						Submit
 					</Button>

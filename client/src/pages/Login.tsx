@@ -10,13 +10,11 @@ import Header from '../components/ui/header';
 import { useNotification } from '../hooks/useNotification';
 import type { User } from '../types/user';
 import type { APIResponse } from '../types/api-response';
-import Recaptcha from '../components/Recaptcha';
-import { useState } from 'react';
+// import Recaptcha from '../components/Recaptcha'; // DISABLED: recaptcha bypassed
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
-	const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 	const notification = useNotification();
 	const navigate = useNavigate();
 	const {
@@ -29,11 +27,6 @@ export default function Login() {
 	});
 
 	const onSubmit = async (formData: LoginFormValues) => {
-		if (!recaptchaToken) {
-			setError('root', { message: 'Please complete the reCAPTCHA' });
-			return;
-		}
-
 		try {
 			const { data } = await axiosInstance.post<APIResponse<User>>(
 				'/auth/login',
@@ -82,7 +75,7 @@ export default function Login() {
 					</Link>
 				</p>
 				<div className='flex justify-end gap-2'>
-					<Recaptcha onVerify={setRecaptchaToken} />
+					{/* <Recaptcha onVerify={setRecaptchaToken} /> DISABLED: recaptcha bypassed */}
 					<Button disabled={isSubmitting} type='submit'>
 						Submit
 					</Button>
