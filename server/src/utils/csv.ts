@@ -118,12 +118,26 @@ export const serverlessCSVLoader = async (
 							middlename: row.middlename,
 						});
 
-						// Save the student to the database if the `save` flag is true
+						// Save the student to the database if the `save` flag is true.
+						// Existing records (e.g. placeholders auto-created from scans) are
+						// merged by studentID instead of skipped, so names/courses get
+						// filled in once the masterlist is uploaded.
 						if (save) {
 							const existingStudent = await StudentModel.findOne({
 								studentID: row.studentID,
 							});
-							if (!existingStudent) {
+							if (existingStudent) {
+								existingStudent.set({
+									firstname: row.firstname,
+									lastname: row.lastname,
+									middlename: row.middlename,
+									course: row.course,
+									year: parseInt(row.year),
+									gender: row.gender,
+									isPlaceholder: false,
+								});
+								await existingStudent.save();
+							} else {
 								await newStudent.save();
 							}
 						}
