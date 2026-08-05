@@ -5,6 +5,7 @@ import CustomResponse, {
 } from '../models/utils/response';
 import StudentModel from '../models/mongodb/student.model';
 import appAssert from '../errors/app-assert';
+import { AppErrorCodes } from '../constants';
 import { BAD_REQUEST, NOT_FOUND } from '../constants/http';
 import EventModel from '../models/mongodb/event.model';
 import { differenceInMinutes, format } from 'date-fns';
@@ -122,7 +123,8 @@ export const getSingleAttendanceHandler = asyncHandler(async (req, res) => {
 	appAssert(
 		!existingAttendance?.timeIn,
 		BAD_REQUEST,
-		'Student has already checked in'
+		'Student has already checked in',
+		AppErrorCodes.AlreadyCheckedIn
 	);
 
 	const attendance = await AttendanceModel.create({
@@ -179,7 +181,12 @@ export const getSingleAttendanceHandler = asyncHandler(async (req, res) => {
 	}
 
 	// If the student has checked in, update the record
-	appAssert(!attendance.timeOut, BAD_REQUEST, 'Student has already checked out');
+	appAssert(
+		!attendance.timeOut,
+		BAD_REQUEST,
+		'Student has already checked out',
+		AppErrorCodes.AlreadyCheckedOut
+	);
 	attendance.timeOut = new Date();
 	await attendance.save();
 

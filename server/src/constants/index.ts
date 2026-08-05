@@ -12,4 +12,6 @@ export const DB_MODEL = {
 
 export enum AppErrorCodes {
 	InvalidAccessToken = 'InvalidAccessToken',
+	AlreadyCheckedIn = 'AlreadyCheckedIn',
+	AlreadyCheckedOut = 'AlreadyCheckedOut',
 }

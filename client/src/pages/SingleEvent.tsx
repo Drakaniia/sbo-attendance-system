@@ -3,7 +3,7 @@ import Header from '../components/ui/header';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '../constants';
 import { fetchSingleEvent } from '../api/event';
-import { Check, ChevronLeft, Download, ScanLine, X } from 'lucide-react';
+import { Check, ChevronLeft, Download, ScanLine, TriangleAlert, X } from 'lucide-react';
 import type { Event } from '../types/event';
 import { format, isSameDay } from 'date-fns';
 import LiveClock from '../components/LiveClock';
@@ -22,7 +22,7 @@ import EventStatusPill from '../components/EventStatusPill';
 type TimeType = 'Time In' | 'Time Out';
 
 type ScanFeedback = {
-	type: 'success' | 'error';
+	type: 'success' | 'duplicate' | 'error';
 	message: string;
 	studentID: string;
 };
@@ -30,6 +30,11 @@ type ScanFeedback = {
 const STUDENT_ID_LENGTH = 10;
 const SUCCESS_FLASH_MS = 700;
 const ERROR_OVERLAY_MS = 1600;
+const DUPLICATE_OVERLAY_MS = 2000;
+
+// Server error codes for a student who has already been recorded for this
+// event — a soft warning, not a failure.
+const DUPLICATE_ERROR_CODES = new Set(['AlreadyCheckedIn', 'AlreadyCheckedOut']);
 
 export default function SingleEvent() {
 	const studentIDInputRef = useRef<HTMLInputElement>(null);
@@ -160,13 +165,33 @@ export default function SingleEvent() {
 			});
 		} catch (error) {
 			console.error('Failed to record attendance', error);
-			// Red overlay with the reason + the scanned ID
-			showFeedback(
-				'error',
-				error instanceof Error ? error.message : 'Failed to record attendance',
-				id,
-				ERROR_OVERLAY_MS
-			);
+			// The axios interceptor rejects with a plain { status, message,
+			// errorCode } object, not an Error instance.
+			const err = error as {
+				status?: number;
+				message?: string;
+				errorCode?: string;
+			};
+
+			if (err?.errorCode && DUPLICATE_ERROR_CODES.has(err.errorCode)) {
+				// Duplicate scan — the student is already recorded for this
+				// event. Warm orange flash instead of a red error.
+				console.warn('Duplicate attendance scan', err);
+				showFeedback(
+					'duplicate',
+					err.message ?? 'Student already recorded',
+					id,
+					DUPLICATE_OVERLAY_MS
+				);
+			} else {
+				// Red overlay with the reason + the scanned ID
+				showFeedback(
+					'error',
+					err?.message ?? 'Failed to record attendance',
+					id,
+					ERROR_OVERLAY_MS
+				);
+			}
 		} finally {
 			isSubmittingRef.current = false;
 			setIsSubmitting(false);
@@ -242,16 +267,20 @@ export default function SingleEvent() {
 						</div>
 
 						<div
-							className={cn(
-								'relative rounded-2xl',
-								feedback?.type === 'success' &&
-									'animate-[flash-success_ease-out_forwards]'
-							)}
-							style={
-								feedback?.type === 'success'
-									? { animationDuration: `${SUCCESS_FLASH_MS}ms` }
+						className={cn(
+							'relative rounded-2xl',
+							feedback?.type === 'success' &&
+								'animate-[flash-success_ease-out_forwards]',
+							feedback?.type === 'duplicate' &&
+								'animate-[flash-warning_ease-out_forwards]'
+						)}
+						style={
+							feedback?.type === 'success'
+								? { animationDuration: `${SUCCESS_FLASH_MS}ms` }
+								: feedback?.type === 'duplicate'
+									? { animationDuration: `${DUPLICATE_OVERLAY_MS}ms` }
 									: undefined
-							}
+						}
 						>
 							<ScanLine className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 pointer-events-none' />
 							<input
@@ -337,20 +366,29 @@ export default function SingleEvent() {
 				</aside>
 			</div>
 
-			{/* Error feedback — full-screen red flash. Non-blocking so the next
-			    scan can be recorded while the operator reads the reason. */}
+			{/* Feedback — full-screen flash. Red for errors, warm orange for
+			    duplicate scans. Non-blocking so the next scan can be recorded
+			    while the operator reads the message. */}
 			<AnimatePresence>
-				{feedback?.type === 'error' && (
+				{feedback && feedback.type !== 'success' && (
 					<motion.div
-						role='alert'
-						className='fixed inset-0 z-[100] flex items-center justify-center bg-red-500/10 backdrop-blur-[2px] pointer-events-none'
+						role={feedback.type === 'error' ? 'alert' : 'status'}
+						className={cn(
+							'fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-[2px] pointer-events-none',
+							feedback.type === 'error' ? 'bg-red-500/10' : 'bg-amber-500/10'
+						)}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={reduceMotion ? { duration: 0 } : { duration: 0.15 }}
 					>
 						<motion.div
-							className='flex flex-col items-center gap-3 rounded-2xl px-12 py-9 border border-red-500/30 bg-red-500/[0.08]'
+							className={cn(
+								'flex flex-col items-center gap-3 rounded-2xl px-12 py-9 border',
+								feedback.type === 'error'
+									? 'border-red-500/30 bg-red-500/[0.08]'
+									: 'border-amber-500/30 bg-amber-500/[0.08]'
+							)}
 							initial={
 								reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 4 }
 							}
@@ -364,8 +402,17 @@ export default function SingleEvent() {
 									: { type: 'spring', bounce: 0, duration: 0.3 }
 							}
 						>
-							<div className='flex items-center justify-center w-14 h-14 rounded-full bg-red-500/15'>
-								<X className='w-7 h-7 text-red-400' />
+							<div
+								className={cn(
+									'flex items-center justify-center w-14 h-14 rounded-full',
+									feedback.type === 'error' ? 'bg-red-500/15' : 'bg-amber-500/15'
+								)}
+							>
+								{feedback.type === 'error' ? (
+									<X className='w-7 h-7 text-red-400' />
+								) : (
+									<TriangleAlert className='w-7 h-7 text-amber-400' />
+								)}
 							</div>
 							<p className='text-white font-semibold text-lg'>
 								{feedback.message}
