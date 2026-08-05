@@ -1,198 +1,145 @@
-import _ from 'lodash';
-import { Table, Select, Loader, Text } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import type { Student } from '../types/student';
-import {
-	useStudentFilterStore,
-	type StudentFilterValues,
-} from '../store/studentsFilter';
-import { QUERY_KEYS } from '../constants';
-import { fetchAvailableCourses, fetchStudents } from '../api/student';
-import { queryClient } from '../main';
+import { cn } from '../lib/utils';
 
 interface StudentsTableProps {
 	students: Student[] | undefined;
 	isLoading: boolean;
 }
 
+/** Deterministic pastel for the avatar, derived from the student's name. */
+const AVATAR_COLORS = [
+	'bg-blue-400/15 text-blue-300',
+	'bg-emerald-400/15 text-emerald-300',
+	'bg-violet-400/15 text-violet-300',
+	'bg-amber-400/15 text-amber-300',
+	'bg-rose-400/15 text-rose-300',
+	'bg-sky-400/15 text-sky-300',
+	'bg-pink-400/15 text-pink-300',
+];
+
+function avatarColor(name: string): string {
+	let hash = 0;
+	for (let i = 0; i < name.length; i++) {
+		hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+	}
+	return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
+function initialsOf(student: Student): string {
+	return `${student.firstname[0] ?? ''}${student.lastname[0] ?? ''}`.toUpperCase();
+}
+
 export default function StudentsTable({
 	students,
 	isLoading,
 }: StudentsTableProps) {
-	// const navigate = useNavigate();
-
 	return (
-		<Table highlightOnHover>
-			<Table.Thead>
-				<Table.Tr>
-					<Table.Th style={{ width: 100 }}>Student ID</Table.Th>
-					<Table.Th style={{ width: 250 }}>Full name</Table.Th>
-					<Table.Th style={{ width: 150 }}>
-						<TableHeadCoursePicker />
-					</Table.Th>
-					<Table.Th style={{ width: 100 }}>
-						<TableHeadYearPicker />
-					</Table.Th>
-					<Table.Th style={{ width: 100 }}>
-						<TableHeadGenderPicker />
-					</Table.Th>
-				</Table.Tr>
-			</Table.Thead>
-
-			<Table.Tbody>
-				{isLoading && (
-					<Table.Tr>
-						<Table.Td colSpan={7}>
-							<div style={{ textAlign: 'center', padding: '1rem' }}>
-								<Loader size='sm' />
-							</div>
-						</Table.Td>
-					</Table.Tr>
-				)}
-
-				{!students?.length && !isLoading && (
-					<Table.Tr>
-						<Table.Td colSpan={7}>
-							<Text ta='center'>No students</Text>
-						</Table.Td>
-					</Table.Tr>
-				)}
-
-				{students?.map((student) => (
-					<Table.Tr
-						className='transition-all'
-						key={student._id}
-						// style={{ cursor: 'pointer' }}
-						// onClick={() => navigate(`/student/${student.studentID}`)}
-					>
-						<Table.Td>{student.studentID}</Table.Td>
-						<Table.Td>
-							{_.startCase(
-								`${student.firstname} ${student.middlename ?? ''} ${
-									student.lastname
-								}`.toLowerCase()
+		<div className='glass rounded-2xl overflow-hidden'>
+			<div className='overflow-x-auto'>
+				<table className='w-full text-sm min-w-[640px]'>
+					<thead>
+						<tr className='border-b border-white/[0.06]'>
+							{['Student ID', 'Full name', 'Course', 'Year', 'Gender'].map(
+								(head) => (
+									<th
+										key={head}
+										className='text-left py-3.5 px-4 first:pl-6 last:pr-6 text-[11px] font-medium text-white/30 uppercase tracking-micro whitespace-nowrap'
+									>
+										{head}
+									</th>
+								)
 							)}
-						</Table.Td>
-						<Table.Td>{student.course}</Table.Td>
-						<Table.Td>{student.year}</Table.Td>
-						<Table.Td>{student.gender}</Table.Td>
-					</Table.Tr>
-				))}
-			</Table.Tbody>
+						</tr>
+					</thead>
+					<tbody>
+						{isLoading &&
+							[0, 1, 2, 3, 4].map((i) => (
+								<tr
+									key={i}
+									className='border-b border-white/[0.03] animate-pulse'
+								>
+									<td className='py-3.5 px-4 first:pl-6'>
+										<div className='h-3 w-24 rounded-full bg-white/[0.05]' />
+									</td>
+									<td className='py-3.5 px-4'>
+										<div className='flex items-center gap-3'>
+											<div className='w-8 h-8 rounded-full bg-white/[0.05]' />
+											<div className='h-3 w-36 rounded-full bg-white/[0.05]' />
+										</div>
+									</td>
+									<td className='py-3.5 px-4'>
+										<div className='h-3 w-16 rounded-full bg-white/[0.05]' />
+									</td>
+									<td className='py-3.5 px-4'>
+										<div className='h-3 w-8 rounded-full bg-white/[0.05]' />
+									</td>
+									<td className='py-3.5 px-4 last:pr-6'>
+										<div className='h-3 w-12 rounded-full bg-white/[0.05]' />
+									</td>
+								</tr>
+							))}
 
-			{/* <Table.Tfoot>
-				<Table.Tr>
-					<Table.Td colSpan={6}>Total</Table.Td>
-					<Table.Td style={{ textAlign: 'right' }}>{totalAmount}</Table.Td>
-				</Table.Tr>
-			</Table.Tfoot> */}
-		</Table>
-	);
-}
-
-function TableHeadCoursePicker() {
-	const { course, page, pageSize, setCourse, getFilterValues } =
-		useStudentFilterStore((state) => state);
-	const { data: courses } = useQuery({
-		queryKey: [QUERY_KEYS.STUDENT_COURSES],
-		queryFn: fetchAvailableCourses,
-	});
-
-	const prefetch = (course: string) => {
-		if (course !== 'All') {
-			const filters = { ...getFilterValues(), course };
-			const data = queryClient.getQueryData([QUERY_KEYS.STUDENTS, filters]);
-
-			if (data) return;
-
-			queryClient.prefetchQuery({
-				queryKey: [QUERY_KEYS.STUDENTS, filters],
-				queryFn: () => fetchStudents(filters, page, pageSize),
-			});
-		}
-	};
-
-	return (
-		<Select
-			placeholder='Course'
-			value={course}
-			onChange={(value) => value && setCourse(value)}
-			data={courses ? ['All', ...courses] : ['All']}
-			onDropdownOpen={() => courses?.forEach(prefetch)}
-			// styles={{ input: { border: 'none' } }}
-		/>
-	);
-}
-
-function TableHeadYearPicker() {
-	const { page, pageSize, year, setYear, getFilterValues } =
-		useStudentFilterStore((state) => state);
-	const yearsOptions = ['All', '1', '2', '3', '4'];
-
-	const prefetch = (selectedYear: StudentFilterValues['year']) => {
-		if (selectedYear !== 'All') {
-			const filters = { ...getFilterValues(), year: selectedYear };
-			const data = queryClient.getQueryData([QUERY_KEYS.STUDENTS, filters]);
-
-			if (data) return;
-
-			queryClient.prefetchQuery({
-				queryKey: [QUERY_KEYS.STUDENTS, filters],
-				queryFn: () => fetchStudents(filters, page, pageSize),
-			});
-		}
-	};
-
-	return (
-		<Select
-			placeholder='Year'
-			value={year}
-			onChange={(value) =>
-				value && setYear(value as StudentFilterValues['year'])
-			}
-			data={yearsOptions}
-			onDropdownOpen={() =>
-				yearsOptions.forEach((year) =>
-					prefetch(year as StudentFilterValues['year'])
-				)
-			}
-			// styles={{ input: { border: 'none' } }}
-		/>
-	);
-}
-
-function TableHeadGenderPicker() {
-	const { page, pageSize, gender, setGender, getFilterValues } =
-		useStudentFilterStore((state) => state);
-	const gendersOptions = ['All', 'M', 'F'];
-
-	const prefetch = async (selectedGender: StudentFilterValues['gender']) => {
-		if (selectedGender !== 'All') {
-			const filters = { ...getFilterValues(), gender: selectedGender };
-			const data = queryClient.getQueryData([QUERY_KEYS.STUDENTS, filters]);
-			if (data) return;
-
-			await queryClient.prefetchQuery({
-				queryKey: [QUERY_KEYS.STUDENTS, filters],
-				queryFn: () => fetchStudents(filters, page, pageSize),
-			});
-		}
-	};
-
-	return (
-		<Select
-			placeholder='Gender'
-			value={gender}
-			onChange={(value) =>
-				value && setGender(value as StudentFilterValues['gender'])
-			}
-			data={gendersOptions}
-			onDropdownOpen={() =>
-				gendersOptions.forEach((gender) =>
-					prefetch(gender as StudentFilterValues['gender'])
-				)
-			}
-			// styles={{ input: { border: 'none' } }}
-		/>
+						{!isLoading &&
+							students?.map((student, i) => {
+								const name = `${student.firstname} ${
+									student.middlename ? student.middlename + ' ' : ''
+								}${student.lastname}`.trim();
+								return (
+									<motion.tr
+										key={student._id}
+										className='border-b border-white/[0.03] transition-colors hover:bg-white/[0.02]'
+										initial={{ opacity: 0, y: 8 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{
+											type: 'spring',
+											bounce: 0,
+											duration: 0.35,
+											delay: i * 0.03,
+										}}
+									>
+										<td className='py-3.5 px-4 first:pl-6 font-mono text-xs text-white/60 tabular-nums whitespace-nowrap'>
+											{student.studentID}
+										</td>
+										<td className='py-3.5 px-4 whitespace-nowrap'>
+											<div className='flex items-center gap-3'>
+												<div
+													className={cn(
+														'w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-semibold',
+														avatarColor(name)
+													)}
+												>
+													{initialsOf(student)}
+												</div>
+												<span className='font-medium text-white/85'>
+													{name}
+												</span>
+											</div>
+										</td>
+										<td className='py-3.5 px-4 text-white/50 whitespace-nowrap'>
+											{student.course}
+										</td>
+										<td className='py-3.5 px-4 text-white/50 tabular-nums'>
+											{student.year}
+										</td>
+										<td className='py-3.5 px-4 last:pr-6'>
+											<span
+												className={cn(
+													'inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border border-white/[0.08] bg-white/[0.04]',
+													student.gender === 'M'
+														? 'text-sky-300'
+														: 'text-pink-300'
+												)}
+											>
+												{student.gender === 'M' ? 'Male' : 'Female'}
+											</span>
+										</td>
+									</motion.tr>
+								);
+							})}
+					</tbody>
+				</table>
+			</div>
+		</div>
 	);
 }

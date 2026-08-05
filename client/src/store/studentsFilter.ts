@@ -31,9 +31,9 @@ export const useStudentFilterStore = create<StudentFiltersState>(
 		year: 'All',
 		setPage: (page) => set({ page: page }),
 		setSearch: (search) => set({ search: search, page: 1 }),
-		setCourse: (course) => set({ course: course }),
-		setYear: (year) => set({ year: year }),
-		setGender: (gender) => set({ gender: gender }),
+		setCourse: (course) => set({ course: course, page: 1 }),
+		setYear: (year) => set({ year: year, page: 1 }),
+		setGender: (gender) => set({ gender: gender, page: 1 }),
 		getFilterValues: () => ({
 			page: get().page,
 			pageSize: get().pageSize,

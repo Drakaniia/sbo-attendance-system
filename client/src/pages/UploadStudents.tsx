@@ -35,9 +35,10 @@ export default function UploadStudents() {
 			<FileInput
 				disabled={loading}
 				onChange={onSubmit}
+				accept='.csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 				leftSection={icon}
-				label='Upload a CSV file of students'
-				placeholder='Your CV'
+				label='Upload CSV or Excel file'
+				placeholder='Select file'
 				leftSectionPointerEvents='none'
 			/>
 		</div>
