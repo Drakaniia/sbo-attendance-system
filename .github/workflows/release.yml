@@ -1,0 +1,81 @@
+name: Release
+
+# Builds installers for all platforms and publishes them to a GitHub
+# Release whenever a tag matching `v*` is pushed (e.g. `git tag v0.1.0`).
+# The `__VERSION__` placeholder in tagName/releaseName is replaced with the
+# app version from src-tauri/tauri.conf.json by tauri-action.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish ${{ matrix.platform }} (${{ matrix.args || 'default' }})
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest # Arm based Macs (M1 and above)
+            args: '--target aarch64-apple-darwin'
+          - platform: macos-latest # Intel based Macs
+            args: '--target x86_64-apple-darwin'
+          - platform: ubuntu-22.04
+            args: ''
+          - platform: windows-latest
+            args: ''
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+          cache: true
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Only needed on macOS runners — targets the two Apple Silicon
+          # / Intel arch builds defined in the matrix above.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install system dependencies (Ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+
+      - name: Install root dependencies (Tauri CLI)
+        run: bun install
+
+      - name: Install frontend dependencies
+        working-directory: client
+        run: bun install
+
+      - name: Build and publish
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # The Tauri CLI is a devDependency of the root package.json, so
+          # `bun tauri` resolves the local binary (there is no `tauri` script).
+          tauriScript: 'bun tauri'
+          tagName: v__VERSION__ # replaced with the app version from tauri.conf.json
+          releaseName: 'SEATS v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+          generateReleaseNotes: true
+          args: ${{ matrix.args }}
