@@ -35,16 +35,22 @@ export default function StudentsTable({
 	isLoading,
 }: StudentsTableProps) {
 	return (
-		<div className='glass rounded-2xl overflow-hidden'>
-			<div className='overflow-x-auto'>
-				<table className='w-full text-sm min-w-[640px]'>
+		<div className='glass w-full min-w-0 overflow-hidden rounded-2xl'>
+			<table className='w-full table-fixed text-sm'>
 					<thead>
 						<tr className='border-b border-white/[0.06]'>
 							{['Student ID', 'Full name', 'Course', 'Year', 'Gender'].map(
 								(head) => (
 									<th
 										key={head}
-										className='text-left py-3.5 px-4 first:pl-6 last:pr-6 text-[11px] font-medium text-white/30 uppercase tracking-micro whitespace-nowrap'
+										className={cn(
+											'break-words px-2 py-3 text-left text-[10px] font-medium uppercase tracking-micro text-white/30 first:pl-3 last:pr-3 sm:px-4 sm:py-3.5 sm:text-[11px] sm:first:pl-6 sm:last:pr-6',
+										head === 'Student ID' && 'w-[34%] sm:w-[20%]',
+										head === 'Full name' && 'w-[66%] sm:w-[35%]',
+										head === 'Course' && 'hidden sm:table-cell sm:w-[20%]',
+										head === 'Year' && 'hidden sm:table-cell sm:w-[10%]',
+										head === 'Gender' && 'hidden sm:table-cell sm:w-[15%]'
+									)}
 									>
 										{head}
 									</th>
@@ -59,23 +65,23 @@ export default function StudentsTable({
 									key={i}
 									className='border-b border-white/[0.03] animate-pulse'
 								>
-									<td className='py-3.5 px-4 first:pl-6'>
+									<td className='px-2 py-3 first:pl-3 sm:px-4 sm:py-3.5 sm:first:pl-6'>
 										<div className='h-3 w-24 rounded-full bg-white/[0.05]' />
 									</td>
-									<td className='py-3.5 px-4'>
-										<div className='flex items-center gap-3'>
+									<td className='px-2 py-3 sm:px-4 sm:py-3.5'>
+										<div className='flex min-w-0 items-center gap-3'>
 											<div className='w-8 h-8 rounded-full bg-white/[0.05]' />
 											<div className='h-3 w-36 rounded-full bg-white/[0.05]' />
 										</div>
 									</td>
-									<td className='py-3.5 px-4'>
-										<div className='h-3 w-16 rounded-full bg-white/[0.05]' />
+									<td className='hidden px-2 py-3 sm:table-cell sm:px-4 sm:py-3.5'>
+										<div className='h-3 w-full max-w-16 rounded-full bg-white/[0.05]' />
 									</td>
-									<td className='py-3.5 px-4'>
-										<div className='h-3 w-8 rounded-full bg-white/[0.05]' />
+									<td className='hidden px-2 py-3 sm:table-cell sm:px-4 sm:py-3.5'>
+										<div className='h-3 w-full max-w-8 rounded-full bg-white/[0.05]' />
 									</td>
-									<td className='py-3.5 px-4 last:pr-6'>
-										<div className='h-3 w-12 rounded-full bg-white/[0.05]' />
+									<td className='hidden px-2 py-3 last:pr-3 sm:table-cell sm:px-4 sm:py-3.5 sm:last:pr-6'>
+										<div className='h-3 w-full max-w-12 rounded-full bg-white/[0.05]' />
 									</td>
 								</tr>
 							))}
@@ -98,11 +104,11 @@ export default function StudentsTable({
 											delay: i * 0.03,
 										}}
 									>
-										<td className='py-3.5 px-4 first:pl-6 font-mono text-xs text-white/60 tabular-nums whitespace-nowrap'>
+										<td className='break-all px-2 py-3 text-xs font-mono tabular-nums text-white/60 first:pl-3 sm:px-4 sm:py-3.5 sm:first:pl-6'>
 											{student.studentID}
 										</td>
-										<td className='py-3.5 px-4 whitespace-nowrap'>
-											<div className='flex items-center gap-3'>
+										<td className='min-w-0 break-words px-2 py-3 sm:px-4 sm:py-3.5'>
+											<div className='flex min-w-0 items-center gap-3'>
 												<div
 													className={cn(
 														'w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-semibold',
@@ -110,19 +116,22 @@ export default function StudentsTable({
 													)}
 												>
 													{initialsOf(student)}
-												</div>
-												<span className='font-medium text-white/85'>
+												</div><span className='min-w-0 break-words font-medium text-white/85'>
 													{name}
+													<span className='mt-0.5 block break-words text-[11px] font-normal text-white/35 sm:hidden'>
+														{student.course} · Year {student.year} ·{' '}
+														{student.gender === 'M' ? 'Male' : 'Female'}
+													</span>
 												</span>
 											</div>
 										</td>
-										<td className='py-3.5 px-4 text-white/50 whitespace-nowrap'>
+										<td className='hidden break-words px-2 py-3 text-white/50 sm:table-cell sm:px-4 sm:py-3.5'>
 											{student.course}
 										</td>
-										<td className='py-3.5 px-4 text-white/50 tabular-nums'>
+										<td className='hidden px-2 py-3 tabular-nums text-white/50 sm:table-cell sm:px-4 sm:py-3.5'>
 											{student.year}
 										</td>
-										<td className='py-3.5 px-4 last:pr-6'>
+										<td className='hidden px-2 py-3 last:pr-3 sm:table-cell sm:px-4 sm:py-3.5 sm:last:pr-6'>
 											<span
 												className={cn(
 													'inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border border-white/[0.08] bg-white/[0.04]',
@@ -139,7 +148,6 @@ export default function StudentsTable({
 							})}
 					</tbody>
 				</table>
-			</div>
 		</div>
 	);
 }

@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import ImportStudentsButton from '../components/buttons/ImportStudentsButton';
+import ImportStudentsButton from '../components/ImportStudentsButton';
 import StudentsTable from '../components/StudentsTable';
 import StudentFilterBar from '../components/StudentFilterBar';
-import Header from '../components/ui/header';
+import Header from '../components/ui/Header';
 import LiveClock from '../components/LiveClock';
 import Pagination from '../components/ui/Pagination';
 import { QUERY_KEYS } from '../constants';
-import { useStudentFilterStore } from '../store/studentsFilter';
+import { useStudentFilterStore } from '../store/students-filter';
 import { fetchStudents } from '../api/student';
-import { AlertTriangle, RefreshCw, SearchX, Users } from 'lucide-react';
+import { Warning, ArrowsClockwise, MagnifyingGlass, User } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { cn } from '../lib/utils';
 
@@ -37,38 +37,38 @@ export default function Students() {
 	return (
 		<div className='flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5'>
 			{/* Sticky toolbar — translucent chrome, content scrolls beneath */}
-			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4'>
+			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5'>
 				<div className='flex items-center justify-between gap-4'>
-					<div>
-						<Header className='!text-2xl !tracking-tight'>Students</Header>
-						<p className='text-white/40 text-sm mt-1'>
-							{format(new Date(), 'EEEE, MMMM d, yyyy')}
-							{data?.total != null && (
-								<>
-									{' '}
-									· <span className='text-white/60 tabular-nums'>
-										{data.total}
-									</span>{' '}
-									students
-								</>
-							)}
-						</p>
-					</div>
-					<div className='flex items-center gap-3'>
-						<div className='hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60'>
-							<span className='relative flex w-2 h-2'>
-								<span className='absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping' />
-								<span className='relative inline-flex w-2 h-2 rounded-full bg-emerald-400' />
-							</span>
-							<LiveClock
-								format='12'
-								showSeconds
-								className='tabular-nums text-white/60'
-							/>
+					<div className='min-w-0'>
+							<Header className='!text-2xl !tracking-tight truncate'>Students</Header>
+							<p className='text-white/40 text-sm mt-1 truncate'>
+								{format(new Date(), 'EEEE, MMMM d, yyyy')}
+								{data?.total != null && (
+									<>
+										{' '}
+										· <span className='text-white/60 tabular-nums'>
+											{data.total}
+										</span>{' '}
+										students
+									</>
+								)}
+							</p>
 						</div>
-						<ImportStudentsButton />
+						<div className='flex items-center gap-3'>
+							<div className='hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60'>
+								<span className='relative flex w-2 h-2'>
+									<span className='absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping' />
+									<span className='relative inline-flex w-2 h-2 rounded-full bg-emerald-400' />
+								</span>
+								<LiveClock
+									format='12'
+									showSeconds
+									className='tabular-nums text-white/60'
+								/>
+							</div>
+							<ImportStudentsButton />
+						</div>
 					</div>
-				</div>
 			</header>
 
 			{/* Filter bar */}
@@ -108,7 +108,7 @@ function ErrorState({ onRetry, isRetrying }: ErrorStateProps) {
 			className='glass rounded-2xl p-10 flex flex-col items-center gap-4 text-center border-red-500/20'
 		>
 			<div className='flex items-center justify-center w-14 h-14 rounded-full bg-red-500/15'>
-				<AlertTriangle className='w-7 h-7 text-red-400' />
+				<Warning className='w-7 h-7 text-red-400' />
 			</div>
 			<div>
 				<p className='text-white font-semibold text-lg'>
@@ -124,7 +124,7 @@ function ErrorState({ onRetry, isRetrying }: ErrorStateProps) {
 				disabled={isRetrying}
 				className='inline-flex items-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:opacity-50'
 			>
-				<RefreshCw
+				<ArrowsClockwise
 					className={cn('w-4 h-4', isRetrying && 'motion-safe:animate-spin')}
 				/>
 				{isRetrying ? 'Retrying…' : 'Try again'}
@@ -153,9 +153,9 @@ function EmptyState({ filtered }: EmptyStateProps) {
 		<div className='glass rounded-2xl p-10 flex flex-col items-center gap-4 text-center'>
 			<div className='flex items-center justify-center w-14 h-14 rounded-full bg-white/[0.04]'>
 				{filtered ? (
-					<SearchX className='w-7 h-7 text-white/40' />
+					<MagnifyingGlass className='w-7 h-7 text-white/40' />
 				) : (
-					<Users className='w-7 h-7 text-white/40' />
+					<User className='w-7 h-7 text-white/40' />
 				)}
 			</div>
 			<div>
