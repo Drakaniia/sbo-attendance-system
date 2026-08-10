@@ -9,12 +9,7 @@ import { DashboardBarChart } from '../components/charts/DashboardBarChart';
 import { DashboardPieChart } from '../components/charts/DashboardPieChart';
 import HeatmapChart from '../components/charts/heatmap/HeatmapChart';
 import type { HeatmapDailyEntry, HeatmapHourlyEntry } from '../api/reports';
-import {
-	useReportsData,
-	DONUT_COLORS,
-	TREND_COLORS,
-	YEAR_COLORS,
-} from '../hooks/useReportsData';
+import { useReportsData, DONUT_COLORS, TREND_COLORS, YEAR_COLORS } from '../hooks/useReportsData';
 
 export default function Reports() {
 	const {
@@ -128,9 +123,7 @@ export default function Reports() {
 									<h3 className="text-base font-semibold text-white tracking-tight">
 										Attendance Trend
 									</h3>
-									<p className="text-xs text-white/30 mt-0.5">
-										Daily check-ins &amp; check-outs
-									</p>
+									<p className="text-xs text-white/30 mt-0.5">Daily check-ins &amp; check-outs</p>
 								</div>
 								<div className="flex items-center gap-3 text-xs">
 									<div className="flex items-center gap-1.5">
@@ -169,9 +162,7 @@ export default function Reports() {
 								<h3 className="text-base font-semibold text-white tracking-tight">
 									Event Breakdown
 								</h3>
-								<p className="text-xs text-white/30 mt-0.5">
-									Check-ins &amp; check-outs per event
-								</p>
+								<p className="text-xs text-white/30 mt-0.5">Check-ins &amp; check-outs per event</p>
 							</div>
 							<DashboardBarChart
 								data={eventChartData}
@@ -194,9 +185,7 @@ export default function Reports() {
 								<h3 className="text-base font-semibold text-white tracking-tight">
 									Course Distribution
 								</h3>
-								<p className="text-xs text-white/30 mt-0.5">
-									Students per course
-								</p>
+								<p className="text-xs text-white/30 mt-0.5">Students per course</p>
 							</div>
 							<DashboardPieChart
 								data={courseChartData}
@@ -213,9 +202,7 @@ export default function Reports() {
 								<h3 className="text-base font-semibold text-white tracking-tight">
 									Year Distribution
 								</h3>
-								<p className="text-xs text-white/30 mt-0.5">
-									Students per year level
-								</p>
+								<p className="text-xs text-white/30 mt-0.5">Students per year level</p>
 							</div>
 							<DashboardPieChart
 								data={yearChartData}
@@ -237,12 +224,8 @@ export default function Reports() {
 					{/* Leaderboard */}
 					<div className="glass glass-hover rounded-2xl p-5">
 						<div className="mb-4">
-							<h3 className="text-base font-semibold text-white tracking-tight">
-								Leaderboard
-							</h3>
-							<p className="text-xs text-white/30 mt-0.5">
-								Top students by attendance
-							</p>
+							<h3 className="text-base font-semibold text-white tracking-tight">Leaderboard</h3>
+							<p className="text-xs text-white/30 mt-0.5">Top students by attendance</p>
 						</div>
 						{leaderboardLoading ? (
 							<div className="overflow-x-auto">
@@ -257,7 +240,7 @@ export default function Reports() {
 													>
 														{h}
 													</th>
-												),
+												)
 											)}
 										</tr>
 									</thead>
@@ -309,15 +292,11 @@ export default function Reports() {
 												className="border-b border-white/[0.03] transition-colors hover:bg-white/[0.02] motion-safe:opacity-0 motion-safe:animate-[fadeIn_0.4s_ease-out_forwards]"
 												style={{ animationDelay: `${i * 40}ms` }}
 											>
-												<td className="py-3 px-3 text-white/40 font-mono text-xs">
-													{i + 1}
-												</td>
+												<td className="py-3 px-3 text-white/40 font-mono text-xs">{i + 1}</td>
 												<td className="py-3 px-3 text-white/70 font-mono text-xs">
 													{entry.studentId}
 												</td>
-												<td className="py-3 px-3 text-white/80 font-medium">
-													{entry.name || '—'}
-												</td>
+												<td className="py-3 px-3 text-white/80 font-medium">{entry.name || '—'}</td>
 												<td className="py-3 px-3 text-white/50 text-xs">
 													{entry.course ? `${entry.course}/${entry.year}` : '—'}
 												</td>

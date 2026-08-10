@@ -71,8 +71,8 @@ export default function ReportToolbar({
 	}, []);
 
 	return (
-		<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5'>
-			<div className='flex items-center justify-between gap-4'>
+		<header className="sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5">
+			<div className="flex items-center justify-between gap-4">
 				{/* Left: title + subtitle */}
 				<motion.div
 					initial={reduceMotion ? false : { opacity: 0, y: -8 }}
@@ -82,32 +82,32 @@ export default function ReportToolbar({
 						bounce: 0,
 						duration: 0.4,
 					}}
-					className='min-w-0'
+					className="min-w-0"
 				>
-					<div className='flex items-center gap-3'>
+					<div className="flex items-center gap-3">
 						{/* Slide-over toggle (visible below 1280px) */}
 						{onToggleSidebar && (
 							<button
-								type='button'
+								type="button"
 								onClick={onToggleSidebar}
-								className='xl:hidden p-2 -ml-2 rounded-xl text-white/50 hover:text-white/80 hover:bg-white/[0.06] transition-colors active:scale-90'
-								aria-label='Toggle filters'
+								className="xl:hidden p-2 -ml-2 rounded-xl text-white/50 hover:text-white/80 hover:bg-white/[0.06] transition-colors active:scale-90"
+								aria-label="Toggle filters"
 							>
-								<FadersHorizontal className='w-5 h-5' />
+								<FadersHorizontal className="w-5 h-5" />
 							</button>
 						)}
-					<h1 className='text-2xl font-bold tracking-tight text-white flex items-center gap-2 truncate'>
-						Reports
-						{isRefreshing && (
-							<span className='inline-block w-2 h-2 rounded-full bg-indigo-400 motion-safe:animate-pulse' />
-						)}
-					</h1>
+						<h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2 truncate">
+							Reports
+							{isRefreshing && (
+								<span className="inline-block w-2 h-2 rounded-full bg-indigo-400 motion-safe:animate-pulse" />
+							)}
+						</h1>
 					</div>
 					{subtitle && (
-						<p className='text-white/40 text-sm mt-1 truncate'>
+						<p className="text-white/40 text-sm mt-1 truncate">
 							{subtitle}
 							{selectedEventTitle && (
-								<span className='text-indigo-400/70'>
+								<span className="text-indigo-400/70">
 									{' – '}
 									{selectedEventTitle}
 								</span>
@@ -117,22 +117,19 @@ export default function ReportToolbar({
 				</motion.div>
 
 				{/* Right: controls */}
-				<div className='flex items-center gap-2'>
+				<div className="flex items-center gap-2">
 					{/* Date Range Picker */}
-					<DateRangePicker
-						value={dateRange}
-						onChange={onDateRangeChange}
-					/>
+					<DateRangePicker value={dateRange} onChange={onDateRangeChange} />
 
 					{/* CSV Export dropdown */}
-					<div className='relative'>
+					<div className="relative">
 						<button
-							type='button'
+							type="button"
 							onClick={() => setCsvMenuOpen((o) => !o)}
-							className='flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]'
+							className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
 						>
-							<DownloadSimple className='w-4 h-4' />
-							<span className='hidden sm:inline'>CSV</span>
+							<DownloadSimple className="w-4 h-4" />
+							<span className="hidden sm:inline">CSV</span>
 							<CaretDown
 								className={cn(
 									'w-3 h-3 text-white/40 transition-transform duration-200',
@@ -143,23 +140,20 @@ export default function ReportToolbar({
 
 						{csvMenuOpen && (
 							<>
-								<div
-									className='fixed inset-0 z-20'
-									onClick={() => setCsvMenuOpen(false)}
-								/>
-								<div className='absolute right-0 top-[calc(100%+8px)] z-30 w-48 glass-modal rounded-2xl p-1.5 origin-top-right motion-safe:animate-[fadeIn_0.15s_ease-out_forwards]'>
+								<div className="fixed inset-0 z-20" onClick={() => setCsvMenuOpen(false)} />
+								<div className="absolute right-0 top-[calc(100%+8px)] z-30 w-48 glass-modal rounded-2xl p-1.5 origin-top-right motion-safe:animate-[fadeIn_0.15s_ease-out_forwards]">
 									<button
-										type='button'
+										type="button"
 										onClick={() => handleCsvExport('all')}
-										className='w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors'
+										className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors"
 									>
 										Export all events
 									</button>
 									{selectedEventId && (
 										<button
-											type='button'
+											type="button"
 											onClick={() => handleCsvExport('event')}
-											className='w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors'
+											className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors"
 										>
 											Export this event only
 										</button>
@@ -171,13 +165,13 @@ export default function ReportToolbar({
 
 					{/* Print button */}
 					<button
-						type='button'
+						type="button"
 						onClick={handlePrint}
-						className='flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]'
-						title='Print or save as PDF'
+						className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
+						title="Print or save as PDF"
 					>
-						<Printer className='w-4 h-4' />
-						<span className='hidden sm:inline'>Print</span>
+						<Printer className="w-4 h-4" />
+						<span className="hidden sm:inline">Print</span>
 					</button>
 				</div>
 			</div>

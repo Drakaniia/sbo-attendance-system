@@ -6,7 +6,7 @@ import { invoke } from '@tauri-apps/api/core';
 function assertTauri(): void {
 	if (typeof invoke !== 'function') {
 		throw new Error(
-			'This feature requires the SEATS desktop app — it is not available in a browser preview.',
+			'This feature requires the SEATS desktop app — it is not available in a browser preview.'
 		);
 	}
 }

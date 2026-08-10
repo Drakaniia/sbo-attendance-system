@@ -12,11 +12,7 @@ const SIZES = {
 	md: 'px-2.5 py-1 text-[11px] gap-1.5',
 };
 
-export default function EventStatusPill({
-	event,
-	className,
-	size = 'md',
-}: EventStatusPillProps) {
+export default function EventStatusPill({ event, className, size = 'md' }: EventStatusPillProps) {
 	const status: EventStatus = getEventStatusInfo(
 		new Date(event.startTime),
 		new Date(event.endTime)

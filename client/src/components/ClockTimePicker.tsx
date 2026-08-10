@@ -27,7 +27,7 @@ export default function ClockTimePicker({ label, value, onChange }: ClockTimePic
 	return (
 		<TimePicker
 			label={label}
-			format='12h'
+			format="12h"
 			value={toTimeString(value)}
 			onChange={(time) => {
 				if (!time) return;

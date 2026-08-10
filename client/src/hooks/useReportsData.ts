@@ -95,13 +95,9 @@ export function useReportsData(): ReportsData {
 
 	// ── Derive stable date params ────────────────────
 	const startDate =
-		dateRange.preset !== 'all' && 'startDate' in dateRange
-			? dateRange.startDate
-			: undefined;
+		dateRange.preset !== 'all' && 'startDate' in dateRange ? dateRange.startDate : undefined;
 	const endDate =
-		dateRange.preset !== 'all' && 'startDate' in dateRange
-			? dateRange.endDate
-			: undefined;
+		dateRange.preset !== 'all' && 'startDate' in dateRange ? dateRange.endDate : undefined;
 
 	// ── Data fetching ────────────────────────────────
 	const { data: stats, isLoading: statsLoading } = useQuery({

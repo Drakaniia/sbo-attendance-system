@@ -33,11 +33,7 @@ type DateRangePickerProps = {
 	className?: string;
 };
 
-export default function DateRangePicker({
-	value,
-	onChange,
-	className,
-}: DateRangePickerProps) {
+export default function DateRangePicker({ value, onChange, className }: DateRangePickerProps) {
 	const reduceMotion = useReducedMotion();
 	const [open, setOpen] = useState(false);
 	const [showCustom, setShowCustom] = useState(false);
@@ -91,7 +87,8 @@ export default function DateRangePicker({
 						endDate: toISODate(endOfMonth(last)),
 					};
 				},
-			},		];
+			},
+		];
 	}, []);
 
 	// ── Close on Escape / outside click ──────────────
@@ -160,9 +157,9 @@ export default function DateRangePicker({
 	return (
 		<div ref={rootRef} className={cn('relative', className)}>
 			<button
-				type='button'
+				type="button"
 				onClick={() => setOpen((o) => !o)}
-				aria-haspopup='listbox'
+				aria-haspopup="listbox"
 				aria-expanded={open}
 				className={cn(
 					'flex items-center gap-2 px-3.5 py-2 rounded-full border text-sm transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]',
@@ -171,8 +168,8 @@ export default function DateRangePicker({
 						: 'border-white/[0.08] bg-white/[0.04] text-white/60 hover:bg-white/[0.06] hover:text-white/80'
 				)}
 			>
-				<Calendar className='w-4 h-4 text-white/40' />
-				<span className='max-w-[180px] truncate'>{displayLabel}</span>
+				<Calendar className="w-4 h-4 text-white/40" />
+				<span className="max-w-[180px] truncate">{displayLabel}</span>
 				<CaretDown
 					className={cn(
 						'w-3.5 h-3.5 text-white/40 transition-transform duration-200',
@@ -184,37 +181,23 @@ export default function DateRangePicker({
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className='absolute right-0 top-[calc(100%+8px)] z-30 w-64 glass-modal rounded-2xl p-1.5 origin-top-right'
-						initial={
-							reduceMotion
-								? { opacity: 0 }
-								: { opacity: 0, scale: 0.95, y: -6 }
-						}
-						animate={
-							reduceMotion
-								? { opacity: 1 }
-								: { opacity: 1, scale: 1, y: 0 }
-						}
-						exit={
-							reduceMotion
-								? { opacity: 0 }
-								: { opacity: 0, scale: 0.95, y: -6 }
-						}
+						className="absolute right-0 top-[calc(100%+8px)] z-30 w-64 glass-modal rounded-2xl p-1.5 origin-top-right"
+						initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -6 }}
+						animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+						exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -6 }}
 						transition={
-							reduceMotion
-								? { duration: 0.1 }
-								: { type: 'spring', bounce: 0, duration: 0.3 }
+							reduceMotion ? { duration: 0.1 } : { type: 'spring', bounce: 0, duration: 0.3 }
 						}
 					>
 						{!showCustom ? (
 							<>
-								<div className='max-h-64 overflow-y-auto'>
+								<div className="max-h-64 overflow-y-auto">
 									{presets.map((preset) => {
 										const active = value.preset === preset.key;
 										return (
 											<button
 												key={preset.key}
-												type='button'
+												type="button"
 												onClick={() => handleSelect(preset)}
 												className={cn(
 													'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-sm text-left transition-colors',
@@ -224,19 +207,17 @@ export default function DateRangePicker({
 												)}
 											>
 												{preset.label}
-												{active && (
-													<Check className='w-4 h-4 text-indigo-400' />
-												)}
+												{active && <Check className="w-4 h-4 text-indigo-400" />}
 											</button>
 										);
 									})}
 
 									{/* Divider */}
-									<div className='my-1 border-t border-white/[0.06]' />
+									<div className="my-1 border-t border-white/[0.06]" />
 
 									{/* All time */}
 									<button
-										type='button'
+										type="button"
 										onClick={handleAllTime}
 										className={cn(
 											'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-sm text-left transition-colors',
@@ -246,14 +227,12 @@ export default function DateRangePicker({
 										)}
 									>
 										All time
-										{value.preset === 'all' && (
-											<Check className='w-4 h-4 text-indigo-400' />
-										)}
+										{value.preset === 'all' && <Check className="w-4 h-4 text-indigo-400" />}
 									</button>
 
 									{/* Custom trigger */}
 									<button
-										type='button'
+										type="button"
 										onClick={() => setShowCustom(true)}
 										className={cn(
 											'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-sm text-left transition-colors',
@@ -263,67 +242,63 @@ export default function DateRangePicker({
 										)}
 									>
 										Custom…
-										{value.preset === 'custom' && (
-											<Check className='w-4 h-4 text-indigo-400' />
-										)}
+										{value.preset === 'custom' && <Check className="w-4 h-4 text-indigo-400" />}
 									</button>
 								</div>
 							</>
 						) : (
 							/* Custom date range sub-panel */
-							<div className='p-2'>
-								<div className='flex items-center justify-between mb-3'>
+							<div className="p-2">
+								<div className="flex items-center justify-between mb-3">
 									<button
-										type='button'
+										type="button"
 										onClick={() => setShowCustom(false)}
-										className='text-xs text-white/40 hover:text-white/70 transition-colors'
+										className="text-xs text-white/40 hover:text-white/70 transition-colors"
 									>
 										← Back
 									</button>
-									<span className='text-xs font-medium text-white/50'>
-										Custom range
-									</span>
-									<div className='w-8' />
+									<span className="text-xs font-medium text-white/50">Custom range</span>
+									<div className="w-8" />
 								</div>
 
-								<div className='flex flex-col gap-2.5 mb-3'>
-									<label className='flex flex-col gap-1'>
-										<span className='text-[10px] text-white/30 uppercase tracking-micro'>
+								<div className="flex flex-col gap-2.5 mb-3">
+									<label className="flex flex-col gap-1">
+										<span className="text-[10px] text-white/30 uppercase tracking-micro">
 											Start date
 										</span>
 										<input
-											type='date'
+											type="date"
 											value={customStart}
 											onChange={(e) => setCustomStart(e.target.value)}
-											className='w-full rounded-lg bg-white/[0.06] border border-white/[0.08] px-3 py-2 text-sm text-white outline-none transition-[border-color,background-color] duration-200 focus:border-indigo-400/40 focus:bg-white/[0.1] [color-scheme:dark]'
+											className="w-full rounded-lg bg-white/[0.06] border border-white/[0.08] px-3 py-2 text-sm text-white outline-none transition-[border-color,background-color] duration-200 focus:border-indigo-400/40 focus:bg-white/[0.1] [color-scheme:dark]"
 										/>
 									</label>
-									<label className='flex flex-col gap-1'>
-										<span className='text-[10px] text-white/30 uppercase tracking-micro'>
+									<label className="flex flex-col gap-1">
+										<span className="text-[10px] text-white/30 uppercase tracking-micro">
 											End date
 										</span>
 										<input
-											type='date'
+											type="date"
 											value={customEnd}
 											onChange={(e) => setCustomEnd(e.target.value)}
-											className='w-full rounded-lg bg-white/[0.06] border border-white/[0.08] px-3 py-2 text-sm text-white outline-none transition-[border-color,background-color] duration-200 focus:border-indigo-400/40 focus:bg-white/[0.1] [color-scheme:dark]'
+											className="w-full rounded-lg bg-white/[0.06] border border-white/[0.08] px-3 py-2 text-sm text-white outline-none transition-[border-color,background-color] duration-200 focus:border-indigo-400/40 focus:bg-white/[0.1] [color-scheme:dark]"
 										/>
 									</label>
 								</div>
 
-								<div className='flex items-center justify-end gap-2'>
+								<div className="flex items-center justify-end gap-2">
 									<button
-										type='button'
+										type="button"
 										onClick={() => setShowCustom(false)}
-										className='px-3 py-1.5 rounded-full text-xs font-medium text-white/40 hover:text-white/70 transition-colors'
+										className="px-3 py-1.5 rounded-full text-xs font-medium text-white/40 hover:text-white/70 transition-colors"
 									>
 										Cancel
 									</button>
 									<button
-										type='button'
+										type="button"
 										onClick={handleCustomApply}
 										disabled={!customStart || !customEnd}
-										className='px-3 py-1.5 rounded-full bg-indigo-500 hover:bg-indigo-400 disabled:bg-white/[0.08] disabled:text-white/30 text-white text-xs font-semibold transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:active:scale-100'
+										className="px-3 py-1.5 rounded-full bg-indigo-500 hover:bg-indigo-400 disabled:bg-white/[0.08] disabled:text-white/30 text-white text-xs font-semibold transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:active:scale-100"
 									>
 										Apply
 									</button>

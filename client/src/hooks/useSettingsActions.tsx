@@ -38,8 +38,7 @@ export function useSettingsActions(): SettingsActions {
 			.catch(() => setDbPath('Unknown'));
 
 		// Attempt to read package version from the Tauri app
-		const appVer =
-			typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : null;
+		const appVer = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : null;
 		setVersion(appVer ?? '0.1.0');
 	}, []);
 
@@ -126,9 +125,7 @@ export function useSettingsActions(): SettingsActions {
 			setKioskEnabled(enabled);
 			notification({
 				title: enabled ? 'Kiosk mode on' : 'Kiosk mode off',
-				message: enabled
-					? 'Press Escape to exit fullscreen'
-					: 'Window restored to normal size',
+				message: enabled ? 'Press Escape to exit fullscreen' : 'Window restored to normal size',
 				icon: enabled ? <ArrowsOut /> : <Desktop />,
 				color: 'teal',
 			});

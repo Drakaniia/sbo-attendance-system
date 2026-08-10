@@ -11,12 +11,8 @@ export function HeatmapHeader({
 	return (
 		<div className="flex items-center justify-between">
 			<div>
-				<h3 className="text-base font-semibold text-white tracking-tight">
-					Attendance Heatmap
-				</h3>
-				<p className="text-xs text-white/30 mt-0.5">
-					When students check in and out
-				</p>
+				<h3 className="text-base font-semibold text-white tracking-tight">Attendance Heatmap</h3>
+				<p className="text-xs text-white/30 mt-0.5">When students check in and out</p>
 			</div>
 
 			{/* iOS-style segmented control */}
@@ -37,9 +33,7 @@ export function HeatmapHeader({
 					onClick={() => onViewChange('hourly')}
 					className={cn(
 						'relative z-10 px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-200',
-						view === 'hourly'
-							? 'text-white'
-							: 'text-white/40 hover:text-white/60',
+						view === 'hourly' ? 'text-white' : 'text-white/40 hover:text-white/60'
 					)}
 				>
 					By Hour
@@ -49,9 +43,7 @@ export function HeatmapHeader({
 					onClick={() => onViewChange('daily')}
 					className={cn(
 						'relative z-10 px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-200',
-						view === 'daily'
-							? 'text-white'
-							: 'text-white/40 hover:text-white/60',
+						view === 'daily' ? 'text-white' : 'text-white/40 hover:text-white/60'
 					)}
 				>
 					By Day &amp; Hour

@@ -19,7 +19,7 @@ export default function AppRouter() {
 		{
 			path: '/',
 			element: <App />,
-				children: [
+			children: [
 				{
 					index: true,
 					element: <Dashboard />,

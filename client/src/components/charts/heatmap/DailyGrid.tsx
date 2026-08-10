@@ -1,5 +1,12 @@
 import { motion } from 'framer-motion';
-import { CELL_GAP, CELL_SIZE, DAY_LABELS, HOUR_LABELS, heatmapColor, getTooltipLabel } from './color';
+import {
+	CELL_GAP,
+	CELL_SIZE,
+	DAY_LABELS,
+	HOUR_LABELS,
+	heatmapColor,
+	getTooltipLabel,
+} from './color';
 
 export function DailyGrid({
 	dailyMap,
@@ -13,19 +20,11 @@ export function DailyGrid({
 	dailyMax: number;
 	animateKey: string;
 	reduceMotion: boolean;
-	onCellHover: (
-		e: React.MouseEvent,
-		day: number,
-		hour: number,
-		count: number,
-	) => void;
+	onCellHover: (e: React.MouseEvent, day: number, hour: number, count: number) => void;
 	onMouseLeave: () => void;
 }) {
 	return (
-		<div
-			className="overflow-x-auto"
-			onMouseLeave={onMouseLeave}
-		>
+		<div className="overflow-x-auto" onMouseLeave={onMouseLeave}>
 			{/* Hour labels (above grid, offset by day label column) */}
 			<div
 				className="grid mb-1 ml-10"
@@ -62,15 +61,9 @@ export function DailyGrid({
 						}}
 					>
 						{Array.from({ length: 24 }, (_, hour) => {
-							const count =
-								dailyMap.get(`${dayIdx}-${hour}`) ?? 0;
+							const count = dailyMap.get(`${dayIdx}-${hour}`) ?? 0;
 							const color = heatmapColor(count, dailyMax);
-							const label = getTooltipLabel(
-								'daily',
-								hour,
-								count,
-								dayIdx,
-							);
+							const label = getTooltipLabel('daily', hour, count, dayIdx);
 
 							return (
 								<motion.div
@@ -81,29 +74,14 @@ export function DailyGrid({
 										height: CELL_SIZE,
 										backgroundColor: color,
 									}}
-									initial={
-										reduceMotion
-											? false
-											: { opacity: 0, scale: 0.8 }
-									}
+									initial={reduceMotion ? false : { opacity: 0, scale: 0.8 }}
 									animate={{ opacity: 1, scale: 1 }}
 									transition={{
-										delay: reduceMotion
-											? 0
-											: (dayIdx * 24 + hour) * 0.0025,
-										duration: reduceMotion
-											? 0
-											: 0.25,
+										delay: reduceMotion ? 0 : (dayIdx * 24 + hour) * 0.0025,
+										duration: reduceMotion ? 0 : 0.25,
 										ease: 'easeOut',
 									}}
-									onMouseEnter={(e) =>
-										onCellHover(
-											e,
-											dayIdx,
-											hour,
-											count,
-										)
-									}
+									onMouseEnter={(e) => onCellHover(e, dayIdx, hour, count)}
 									title={label}
 								/>
 							);

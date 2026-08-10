@@ -4,10 +4,7 @@ export function SkeletonGrid({ rows }: { rows: number }) {
 	return (
 		<div className="space-y-[3px]">
 			{Array.from({ length: rows }, (_, r) => (
-				<div
-					key={r}
-					className="flex items-center gap-[3px]"
-				>
+				<div key={r} className="flex items-center gap-[3px]">
 					{rows > 1 && (
 						<div className="w-10 shrink-0 flex justify-end pr-2">
 							<div

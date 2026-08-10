@@ -53,44 +53,35 @@ export type AttendanceTrendData = {
 	total: number;
 };
 
-export const fetchDashboardStats =
-	async (): Promise<DashboardStats | null> => {
-		const { data } = await axiosInstance.get<APIResponse<DashboardStats>>(
-			'/dashboard/stats'
-		);
-		return data.data;
-	};
-
-export const fetchEventAttendanceData =
-	async (): Promise<EventAttendanceData[]> => {
-		const { data } = await axiosInstance.get<
-			APIResponse<EventAttendanceData[]>
-		>('/dashboard/event-attendance');
-		return data.data;
-	};
-
-export const fetchCourseDistribution =
-	async (): Promise<CourseDistributionData[]> => {
-		const { data } = await axiosInstance.get<
-			APIResponse<CourseDistributionData[]>
-		>('/dashboard/course-distribution');
-		return data.data;
-	};
-
-export const fetchRecentActivity = async (
-	limit?: number
-): Promise<RecentActivityData[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<RecentActivityData[]>
-	>(`/dashboard/recent-activity?limit=${limit ?? 8}`);
+export const fetchDashboardStats = async (): Promise<DashboardStats | null> => {
+	const { data } = await axiosInstance.get<APIResponse<DashboardStats>>('/dashboard/stats');
 	return data.data;
 };
 
-export const fetchAttendanceTrend = async (
-	days?: number
-): Promise<AttendanceTrendData[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<AttendanceTrendData[]>
-	>(`/dashboard/attendance-trend?days=${days ?? 14}`);
+export const fetchEventAttendanceData = async (): Promise<EventAttendanceData[]> => {
+	const { data } = await axiosInstance.get<APIResponse<EventAttendanceData[]>>(
+		'/dashboard/event-attendance'
+	);
+	return data.data;
+};
+
+export const fetchCourseDistribution = async (): Promise<CourseDistributionData[]> => {
+	const { data } = await axiosInstance.get<APIResponse<CourseDistributionData[]>>(
+		'/dashboard/course-distribution'
+	);
+	return data.data;
+};
+
+export const fetchRecentActivity = async (limit?: number): Promise<RecentActivityData[]> => {
+	const { data } = await axiosInstance.get<APIResponse<RecentActivityData[]>>(
+		`/dashboard/recent-activity?limit=${limit ?? 8}`
+	);
+	return data.data;
+};
+
+export const fetchAttendanceTrend = async (days?: number): Promise<AttendanceTrendData[]> => {
+	const { data } = await axiosInstance.get<APIResponse<AttendanceTrendData[]>>(
+		`/dashboard/attendance-trend?days=${days ?? 14}`
+	);
 	return data.data;
 };

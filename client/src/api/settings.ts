@@ -9,8 +9,6 @@ export type ResetSummary = {
 
 /** Delete all students, events, and attendance records. */
 export const deleteAllData = async (): Promise<ResetSummary> => {
-	const { data } = await axiosInstance.delete<APIResponse<ResetSummary>>(
-		'/settings/data'
-	);
+	const { data } = await axiosInstance.delete<APIResponse<ResetSummary>>('/settings/data');
 	return data.data;
 };

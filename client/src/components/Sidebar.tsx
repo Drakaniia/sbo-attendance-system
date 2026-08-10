@@ -40,7 +40,7 @@ function NavItem({ item, collapsed }: NavItemProps) {
 							/>
 						) : (
 							<motion.span
-								layoutId='sidebar-active-pill'
+								layoutId="sidebar-active-pill"
 								className={cn(
 									'absolute inset-0 border border-white/[0.08] bg-white/[0.07]',
 									collapsed ? 'rounded-full' : 'rounded-xl'
@@ -84,9 +84,7 @@ function NavItem({ item, collapsed }: NavItemProps) {
 
 export default function Sidebar() {
 	const reduceMotion = useReducedMotion();
-	const [collapsed, setCollapsed] = useState(
-		() => localStorage.getItem(STORAGE_KEY) === '1'
-	);
+	const [collapsed, setCollapsed] = useState(() => localStorage.getItem(STORAGE_KEY) === '1');
 
 	useEffect(() => {
 		try {
@@ -100,21 +98,16 @@ export default function Sidebar() {
 		<motion.aside
 			initial={false}
 			animate={{ width: collapsed ? WIDTH_RAIL : WIDTH_FULL }}
-			transition={
-				reduceMotion ? { duration: 0 } : { type: 'spring', bounce: 0.15, duration: 0.5 }
-			}
-			className='sidebar-material sticky top-0 z-40 flex h-full shrink-0 flex-col border-r border-white/[0.06]'
+			transition={reduceMotion ? { duration: 0 } : { type: 'spring', bounce: 0.15, duration: 0.5 }}
+			className="sidebar-material sticky top-0 z-40 flex h-full shrink-0 flex-col border-r border-white/[0.06]"
 		>
 			{/* Wordmark — display tracking tight, micro caps subtitle */}
 			<div
-				className={cn(
-					'flex items-center gap-3 px-5 pb-5 pt-6',
-					collapsed && 'justify-center px-0'
-				)}
+				className={cn('flex items-center gap-3 px-5 pb-5 pt-6', collapsed && 'justify-center px-0')}
 			>
 				<img
-					src='/images/SBO_LOGO.jpg'
-					alt='SBO logo'
+					src="/images/SBO_LOGO.jpg"
+					alt="SBO logo"
 					className={cn(
 						'h-11 w-11 shrink-0 rounded-full object-cover ring-1 ring-white/10 transition-all duration-300',
 						collapsed && 'h-9 w-9'
@@ -126,10 +119,10 @@ export default function Sidebar() {
 						collapsed ? 'max-w-0 opacity-0' : 'max-w-64 opacity-100'
 					)}
 				>
-					<p className='whitespace-nowrap text-[17px] font-bold leading-tight tracking-display text-white'>
+					<p className="whitespace-nowrap text-[17px] font-bold leading-tight tracking-display text-white">
 						SEATS
 					</p>
-					<p className='whitespace-nowrap text-[10px] font-medium uppercase tracking-micro text-white/35'>
+					<p className="whitespace-nowrap text-[10px] font-medium uppercase tracking-micro text-white/35">
 						Student Event Attendance
 					</p>
 				</div>
@@ -137,28 +130,24 @@ export default function Sidebar() {
 
 			{/* Sections */}
 			<nav
-				aria-label='Primary'
+				aria-label="Primary"
 				className={cn('flex-1 overflow-visible pb-4', collapsed ? 'px-0' : 'px-3')}
 			>
 				{NAV_SECTIONS.map((section) => (
-					<div key={section.label} className='mb-4 last:mb-0'>
+					<div key={section.label} className="mb-4 last:mb-0">
 						<div
 							className={cn(
 								'overflow-hidden transition-all duration-300 ease-apple-out',
 								collapsed ? 'max-h-0 opacity-0' : 'max-h-8 opacity-100'
 							)}
 						>
-							<p className='px-3 pb-2 text-[10px] font-semibold uppercase tracking-micro text-white/25'>
+							<p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-micro text-white/25">
 								{section.label}
 							</p>
 						</div>
-						<div className='space-y-1'>
+						<div className="space-y-1">
 							{section.items.map((item) => (
-								<NavItem
-									key={item.title}
-									item={item}
-									collapsed={collapsed}
-								/>
+								<NavItem key={item.title} item={item} collapsed={collapsed} />
 							))}
 						</div>
 					</div>
@@ -166,7 +155,7 @@ export default function Sidebar() {
 			</nav>
 
 			{/* Footer — collapse toggle */}
-			<div className='border-t border-white/[0.06] p-3'>
+			<div className="border-t border-white/[0.06] p-3">
 				<button
 					onClick={() => setCollapsed((v) => !v)}
 					aria-pressed={collapsed}
@@ -185,11 +174,11 @@ export default function Sidebar() {
 						)}
 					/>
 					{!collapsed && (
-						<span className='ml-3 whitespace-nowrap text-[13px] font-medium text-white/55 group-hover:text-white/85'>
+						<span className="ml-3 whitespace-nowrap text-[13px] font-medium text-white/55 group-hover:text-white/85">
 							Collapse sidebar
 						</span>
 					)}
-					{collapsed && <RailTooltip label='Expand sidebar' />}
+					{collapsed && <RailTooltip label="Expand sidebar" />}
 				</button>
 			</div>
 		</motion.aside>

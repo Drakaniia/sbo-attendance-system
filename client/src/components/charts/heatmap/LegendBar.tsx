@@ -3,9 +3,7 @@ import { CELL_GAP, CELL_SIZE } from './color';
 export function LegendBar() {
 	return (
 		<div className="flex flex-col items-center gap-1 shrink-0">
-			<span className="text-[10px] font-medium text-white/25 tracking-micro">
-				Less
-			</span>
+			<span className="text-[10px] font-medium text-white/25 tracking-micro">Less</span>
 			<div
 				className="w-3 rounded-md"
 				style={{
@@ -15,9 +13,7 @@ export function LegendBar() {
 					borderRadius: 6,
 				}}
 			/>
-			<span className="text-[10px] font-medium text-white/25 tracking-micro">
-				More
-			</span>
+			<span className="text-[10px] font-medium text-white/25 tracking-micro">More</span>
 		</div>
 	);
 }

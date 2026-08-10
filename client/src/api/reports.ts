@@ -63,7 +63,7 @@ export type HeatmapHourlyEntry = {
 
 export type HeatmapDailyEntry = {
 	dayOfWeek: number; // 0=Mon … 6=Sun
-	hour: number;       // 0–23
+	hour: number; // 0–23
 	count: number;
 };
 
@@ -87,9 +87,7 @@ function buildQuery(
 // ── API functions ───────────────────────────────────────────────────────
 
 /** 1. Aggregate stats for the selected date range and optional event. */
-export const fetchReportsStats = async (
-	query: ReportsQuery
-): Promise<ReportsStats> => {
+export const fetchReportsStats = async (query: ReportsQuery): Promise<ReportsStats> => {
 	const { data } = await axiosInstance.get<APIResponse<ReportsStats>>(
 		`/reports/stats${buildQuery(query)}`
 	);
@@ -100,9 +98,9 @@ export const fetchReportsStats = async (
 export const fetchAttendanceTrend = async (
 	query: ReportsQuery
 ): Promise<AttendanceTrendEntry[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<AttendanceTrendEntry[]>
-	>(`/reports/attendance-trend${buildQuery(query)}`);
+	const { data } = await axiosInstance.get<APIResponse<AttendanceTrendEntry[]>>(
+		`/reports/attendance-trend${buildQuery(query)}`
+	);
 	return data.data;
 };
 
@@ -110,9 +108,9 @@ export const fetchAttendanceTrend = async (
 export const fetchEventBreakdown = async (
 	query: Omit<ReportsQuery, 'eventId'>
 ): Promise<EventBreakdownEntry[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<EventBreakdownEntry[]>
-	>(`/reports/event-breakdown${buildQuery(query)}`);
+	const { data } = await axiosInstance.get<APIResponse<EventBreakdownEntry[]>>(
+		`/reports/event-breakdown${buildQuery(query)}`
+	);
 	return data.data;
 };
 
@@ -120,9 +118,9 @@ export const fetchEventBreakdown = async (
 export const fetchCourseDistribution = async (
 	query: ReportsQuery
 ): Promise<CourseDistributionEntry[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<CourseDistributionEntry[]>
-	>(`/reports/course-distribution${buildQuery(query)}`);
+	const { data } = await axiosInstance.get<APIResponse<CourseDistributionEntry[]>>(
+		`/reports/course-distribution${buildQuery(query)}`
+	);
 	return data.data;
 };
 
@@ -130,9 +128,9 @@ export const fetchCourseDistribution = async (
 export const fetchYearDistribution = async (
 	query: ReportsQuery
 ): Promise<YearDistributionEntry[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<YearDistributionEntry[]>
-	>(`/reports/year-distribution${buildQuery(query)}`);
+	const { data } = await axiosInstance.get<APIResponse<YearDistributionEntry[]>>(
+		`/reports/year-distribution${buildQuery(query)}`
+	);
 	return data.data;
 };
 
@@ -140,9 +138,9 @@ export const fetchYearDistribution = async (
 export const fetchLeaderboard = async (
 	query: ReportsQuery & { limit?: number; sortBy?: 'total' | 'rate' }
 ): Promise<LeaderboardEntry[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<LeaderboardEntry[]>
-	>(`/reports/leaderboard${buildQuery(query)}`);
+	const { data } = await axiosInstance.get<APIResponse<LeaderboardEntry[]>>(
+		`/reports/leaderboard${buildQuery(query)}`
+	);
 	return data.data;
 };
 
@@ -150,20 +148,17 @@ export const fetchLeaderboard = async (
 export const fetchHeatmap = async (
 	query: ReportsQuery & { mode?: 'hourly' | 'daily' }
 ): Promise<HeatmapHourlyEntry[] | HeatmapDailyEntry[]> => {
-	const { data } = await axiosInstance.get<
-		APIResponse<HeatmapHourlyEntry[] | HeatmapDailyEntry[]>
-	>(`/reports/heatmap${buildQuery(query)}`);
+	const { data } = await axiosInstance.get<APIResponse<HeatmapHourlyEntry[] | HeatmapDailyEntry[]>>(
+		`/reports/heatmap${buildQuery(query)}`
+	);
 	return data.data;
 };
 
 /** 8. Download merged attendance CSV for the selected date range/event. */
-export const downloadReportsCsv = async (
-	query: ReportsQuery
-): Promise<void> => {
-	const response = await axiosInstance.get(
-		`/reports/export-csv${buildQuery(query)}`,
-		{ responseType: 'blob' }
-	);
+export const downloadReportsCsv = async (query: ReportsQuery): Promise<void> => {
+	const response = await axiosInstance.get(`/reports/export-csv${buildQuery(query)}`, {
+		responseType: 'blob',
+	});
 
 	const url = window.URL.createObjectURL(new Blob([response.data]));
 	const link = document.createElement('a');

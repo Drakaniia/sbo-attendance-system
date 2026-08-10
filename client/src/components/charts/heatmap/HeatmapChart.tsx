@@ -48,12 +48,12 @@ export default function HeatmapChart({
 	// Max counts for color scaling
 	const hourlyMax = useMemo(
 		() => hourlyData.reduce((max, e) => Math.max(max, e.count), 0),
-		[hourlyData],
+		[hourlyData]
 	);
 
 	const dailyMax = useMemo(
 		() => dailyData.reduce((max, e) => Math.max(max, e.count), 0),
-		[dailyData],
+		[dailyData]
 	);
 
 	const hasHourlyData = hourlyData.length > 0;
@@ -61,18 +61,15 @@ export default function HeatmapChart({
 	const hasData = view === 'hourly' ? hasHourlyData : hasDailyData;
 
 	// ── Tooltip handlers ────────────────────────────
-	const handleCellHover = useCallback(
-		(e: React.MouseEvent, label: string) => {
-			if (!gridRef.current) return;
-			const rect = gridRef.current.getBoundingClientRect();
-			setTooltip({
-				label,
-				x: e.clientX - rect.left + 12,
-				y: e.clientY - rect.top - 40,
-			});
-		},
-		[],
-	);
+	const handleCellHover = useCallback((e: React.MouseEvent, label: string) => {
+		if (!gridRef.current) return;
+		const rect = gridRef.current.getBoundingClientRect();
+		setTooltip({
+			label,
+			x: e.clientX - rect.left + 12,
+			y: e.clientY - rect.top - 40,
+		});
+	}, []);
 
 	const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
@@ -131,10 +128,7 @@ export default function HeatmapChart({
 							animateKey={animateKey}
 							reduceMotion={reduceMotion ?? false}
 							onCellHover={(e, day, hour, count) =>
-								handleCellHover(
-									e,
-									getTooltipLabel('daily', hour, count, day),
-								)
+								handleCellHover(e, getTooltipLabel('daily', hour, count, day))
 							}
 							onMouseLeave={handleMouseLeave}
 						/>

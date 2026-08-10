@@ -30,39 +30,31 @@ function pageWindow(page: number, totalPages: number): (number | '…')[] {
  * Apple-style pager — circular current-page pill, spring press feedback,
  * ellipsis windowing, and proper aria-current/nav semantics.
  */
-export default function Pagination({
-	page,
-	totalPages,
-	onChange,
-	className,
-}: PaginationProps) {
+export default function Pagination({ page, totalPages, onChange, className }: PaginationProps) {
 	return (
 		<nav
-			aria-label='Pagination'
+			aria-label="Pagination"
 			className={cn('flex items-center justify-center gap-1', className)}
 		>
 			<button
-				type='button'
+				type="button"
 				onClick={() => onChange(page - 1)}
 				disabled={page <= 1}
-				aria-label='Previous page'
-				className='p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.06] transition-colors active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed'
+				aria-label="Previous page"
+				className="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.06] transition-colors active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed"
 			>
-				<CaretLeft className='w-4 h-4' />
+				<CaretLeft className="w-4 h-4" />
 			</button>
 
 			{pageWindow(page, totalPages).map((item, i) =>
 				item === '…' ? (
-					<span
-						key={`ellipsis-${i}`}
-						className='px-1.5 text-white/30 select-none'
-					>
+					<span key={`ellipsis-${i}`} className="px-1.5 text-white/30 select-none">
 						…
 					</span>
 				) : (
 					<button
 						key={item}
-						type='button'
+						type="button"
 						onClick={() => onChange(item)}
 						aria-current={item === page ? 'page' : undefined}
 						className={cn(
@@ -78,13 +70,13 @@ export default function Pagination({
 			)}
 
 			<button
-				type='button'
+				type="button"
 				onClick={() => onChange(page + 1)}
 				disabled={page >= totalPages}
-				aria-label='Next page'
-				className='p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.06] transition-colors active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed'
+				aria-label="Next page"
+				className="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.06] transition-colors active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed"
 			>
-				<CaretRight className='w-4 h-4' />
+				<CaretRight className="w-4 h-4" />
 			</button>
 		</nav>
 	);

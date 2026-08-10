@@ -1,10 +1,4 @@
-import {
-	ChartBar,
-	Calendar,
-	GraduationCap,
-	SquaresFour,
-	Gear,
-} from '@phosphor-icons/react';
+import { ChartBar, Calendar, GraduationCap, SquaresFour, Gear } from '@phosphor-icons/react';
 
 export type SidebarItem = {
 	title: string;

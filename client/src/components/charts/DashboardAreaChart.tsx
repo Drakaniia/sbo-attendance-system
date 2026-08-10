@@ -20,7 +20,8 @@ type AreaChartProps = {
 	curveType?: 'monotone' | 'linear' | 'step' | 'basis';
 	gradientFrom?: string;
 	gradientTo?: string;
-};	export function DashboardAreaChart({
+};
+export function DashboardAreaChart({
 	data,
 	dataKeys,
 	xKey,
@@ -37,55 +38,34 @@ type AreaChartProps = {
 	const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 	const axisColor = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
 
-	const gradientId = useMemo(
-		() => `areaGradient-${dataKeys[0]?.key ?? 'default'}`,
-		[dataKeys]
-	);
+	const gradientId = useMemo(() => `areaGradient-${dataKeys[0]?.key ?? 'default'}`, [dataKeys]);
 
 	if (!data || data.length === 0) {
 		return (
-			<div
-				className='flex items-center justify-center text-white/30 text-sm'
-				style={{ height }}
-			>
+			<div className="flex items-center justify-center text-white/30 text-sm" style={{ height }}>
 				No data available
 			</div>
 		);
 	}
 
 	return (
-		<ResponsiveContainer width='100%' height={height}>
-			<AreaChart
-				data={data}
-				margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
-			>
+		<ResponsiveContainer width="100%" height={height}>
+			<AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
 				<defs>
-					<linearGradient
-						id={gradientId}
-						x1='0'
-						y1='0'
-						x2='0'
-						y2='1'
-					>
+					<linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
 						<stop
-							offset='0%'
+							offset="0%"
 							stopColor={gradientFrom || dataKeys[0]?.color || '#3b82f6'}
 							stopOpacity={0.3}
 						/>
 						<stop
-							offset='100%'
+							offset="100%"
 							stopColor={gradientTo || gradientFrom || dataKeys[0]?.color || '#3b82f6'}
 							stopOpacity={0.02}
 						/>
 					</linearGradient>
 				</defs>
-				{showGrid && (
-					<CartesianGrid
-						strokeDasharray='3 3'
-						stroke={gridColor}
-						vertical={false}
-					/>
-				)}
+				{showGrid && <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />}
 				<XAxis
 					dataKey={xKey}
 					axisLine={false}
@@ -102,9 +82,7 @@ type AreaChartProps = {
 				/>
 				<Tooltip
 					contentStyle={{
-						background: isDark
-							? 'rgba(30,30,30,0.95)'
-							: 'rgba(255,255,255,0.95)',
+						background: isDark ? 'rgba(30,30,30,0.95)' : 'rgba(255,255,255,0.95)',
 						border: '1px solid rgba(255,255,255,0.1)',
 						borderRadius: '12px',
 						backdropFilter: 'blur(12px)',
@@ -131,7 +109,7 @@ type AreaChartProps = {
 						}}
 						name={dk.name}
 						animationDuration={reducedMotion ? 0 : 1200}
-						animationEasing='ease-out'
+						animationEasing="ease-out"
 					/>
 				))}
 			</AreaChart>

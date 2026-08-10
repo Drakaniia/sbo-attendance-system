@@ -31,13 +31,13 @@ bun run dev        # plain `vite` — the API at 127.0.0.1:8000 must be up separ
 
 ## Scripts
 
-| Script        | Description                                   |
-| ------------- | --------------------------------------------- |
-| `bun run dev` | Start the Vite dev server                     |
-| `bun run build` | Type-check (`tsc -b`) and production build  |
-| `bun run lint` | ESLint                                        |
-| `bun run preview` | Preview the production build              |
-| `bun run tauri` | Tauri CLI passthrough (e.g. `tauri build`)  |
+| Script            | Description                                |
+| ----------------- | ------------------------------------------ |
+| `bun run dev`     | Start the Vite dev server                  |
+| `bun run build`   | Type-check (`tsc -b`) and production build |
+| `bun run lint`    | ESLint                                     |
+| `bun run preview` | Preview the production build               |
+| `bun run tauri`   | Tauri CLI passthrough (e.g. `tauri build`) |
 
 ## Project layout
 

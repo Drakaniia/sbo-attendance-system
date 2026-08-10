@@ -110,10 +110,7 @@ export default function SingleEvent() {
 	) => {
 		setFeedback({ type, message, studentID: id });
 		if (feedbackTimerRef.current) window.clearTimeout(feedbackTimerRef.current);
-		feedbackTimerRef.current = window.setTimeout(
-			() => setFeedback(null),
-			duration
-		);
+		feedbackTimerRef.current = window.setTimeout(() => setFeedback(null), duration);
 	};
 
 	const submitAttendance = async (id: string) => {
@@ -127,15 +124,9 @@ export default function SingleEvent() {
 
 		try {
 			if (timeType === 'Time In') {
-				await axiosInstance.post(
-					`/attendance/record/time-in/event/${eventID}`,
-					{ studentID: id }
-				);
+				await axiosInstance.post(`/attendance/record/time-in/event/${eventID}`, { studentID: id });
 			} else {
-				await axiosInstance.post(
-					`/attendance/record/time-out/event/${eventID}`,
-					{ studentID: id }
-				);
+				await axiosInstance.post(`/attendance/record/time-out/event/${eventID}`, { studentID: id });
 			}
 
 			notification({
@@ -144,12 +135,7 @@ export default function SingleEvent() {
 				color: 'teal',
 			});
 			// Green flash on the input
-			showFeedback(
-				'success',
-				'Attendance Recorded Successfully',
-				id,
-				SUCCESS_FLASH_MS
-			);
+			showFeedback('success', 'Attendance Recorded Successfully', id, SUCCESS_FLASH_MS);
 
 			await queryClient.invalidateQueries({
 				queryKey: [QUERY_KEYS.ATTENDANCES, eventID],
@@ -179,12 +165,7 @@ export default function SingleEvent() {
 				);
 			} else {
 				// Red overlay with the reason + the scanned ID
-				showFeedback(
-					'error',
-					err?.message ?? 'Failed to record attendance',
-					id,
-					ERROR_OVERLAY_MS
-				);
+				showFeedback('error', err?.message ?? 'Failed to record attendance', id, ERROR_OVERLAY_MS);
 			}
 		} finally {
 			isSubmittingRef.current = false;
@@ -195,9 +176,7 @@ export default function SingleEvent() {
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		// Text input keeps leading zeros intact — only keep digits, cap at 10.
-		const digits = e.target.value
-			.replace(/\D/g, '')
-			.slice(0, STUDENT_ID_LENGTH);
+		const digits = e.target.value.replace(/\D/g, '').slice(0, STUDENT_ID_LENGTH);
 		setStudentID(digits);
 
 		// Auto-submit once a full 10-digit code is present
@@ -218,14 +197,14 @@ export default function SingleEvent() {
 
 	if (isLoading || isLoadingAttendances) {
 		return (
-			<div className='flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5'>
-				<div className='h-20 rounded-2xl glass animate-pulse' />
-				<div className='flex gap-5'>
-					<div className='flex-1 space-y-5'>
-						<div className='h-48 rounded-2xl glass animate-pulse' />
-						<div className='h-72 rounded-2xl glass animate-pulse' />
+			<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
+				<div className="h-20 rounded-2xl glass animate-pulse" />
+				<div className="flex gap-5">
+					<div className="flex-1 space-y-5">
+						<div className="h-48 rounded-2xl glass animate-pulse" />
+						<div className="h-72 rounded-2xl glass animate-pulse" />
 					</div>
-					<div className='w-[30%] h-64 rounded-2xl glass animate-pulse' />
+					<div className="w-[30%] h-64 rounded-2xl glass animate-pulse" />
 				</div>
 			</div>
 		);
@@ -236,44 +215,35 @@ export default function SingleEvent() {
 	}
 
 	return (
-		<div className='flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5'>
+		<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
 			{/* Sticky toolbar */}
-			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5'>
+			<header className="sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5">
 				<EventHeader event={event} reduceMotion={reduceMotion} />
 			</header>
 
-			<div className='flex gap-5 items-start'>
+			<div className="flex gap-5 items-start">
 				{/* left section */}
-				<div className='flex flex-col gap-5 flex-1 min-w-0'>
+				<div className="flex flex-col gap-5 flex-1 min-w-0">
 					{/* Scan card */}
-					<section className='glass glass-hover rounded-2xl p-5'>
-						<div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4'>
+					<section className="glass glass-hover rounded-2xl p-5">
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
 							<div>
-								<p className='text-base font-semibold text-white tracking-tight'>
-									Scan attendance
-								</p>
-								<p className='text-sm text-white/40 mt-0.5'>
+								<p className="text-base font-semibold text-white tracking-tight">Scan attendance</p>
+								<p className="text-sm text-white/40 mt-0.5">
 									Scan a student ID to record their{' '}
-									{timeType === 'Time In'
-										? 'time in'
-										: 'time out'}
+									{timeType === 'Time In' ? 'time in' : 'time out'}
 								</p>
 							</div>
 
 							{/* Apple segmented control — sliding thumb, spring, interruptible */}
-							<SegmentedControl
-								value={timeType}
-								onChange={setTimeType}
-							/>
+							<SegmentedControl value={timeType} onChange={setTimeType} />
 						</div>
 
 						<div
 							className={cn(
 								'relative rounded-2xl',
-								feedback?.type === 'success' &&
-									'animate-[flash-success_ease-out_forwards]',
-								feedback?.type === 'duplicate' &&
-									'animate-[flash-warning_ease-out_forwards]'
+								feedback?.type === 'success' && 'animate-[flash-success_ease-out_forwards]',
+								feedback?.type === 'duplicate' && 'animate-[flash-warning_ease-out_forwards]'
 							)}
 							style={
 								feedback?.type === 'success'
@@ -285,7 +255,7 @@ export default function SingleEvent() {
 										: undefined
 							}
 						>
-							<Scan className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 pointer-events-none' />
+							<Scan className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 pointer-events-none" />
 							<input
 								ref={studentIDInputRef}
 								value={studentID}
@@ -293,26 +263,23 @@ export default function SingleEvent() {
 								onKeyDown={onKeyDown}
 								onBlur={onBlur}
 								autoFocus
-								aria-label='Student ID'
+								aria-label="Student ID"
 								disabled={isSubmitting}
-								className='w-full rounded-2xl bg-white/[0.04] border border-white/[0.08] pl-12 pr-4 py-4 font-mono text-lg tracking-[0.35em] text-white placeholder:text-white/30 placeholder:tracking-normal outline-none transition-[border-color,background-color] duration-200 focus:border-blue-400/40 focus:bg-white/[0.06] disabled:opacity-50'
-								type='text'
-								inputMode='numeric'
-								autoComplete='off'
-								placeholder='Scan or type student ID'
+								className="w-full rounded-2xl bg-white/[0.04] border border-white/[0.08] pl-12 pr-4 py-4 font-mono text-lg tracking-[0.35em] text-white placeholder:text-white/30 placeholder:tracking-normal outline-none transition-[border-color,background-color] duration-200 focus:border-blue-400/40 focus:bg-white/[0.06] disabled:opacity-50"
+								type="text"
+								inputMode="numeric"
+								autoComplete="off"
+								placeholder="Scan or type student ID"
 							/>
 						</div>
 					</section>
 
 					{/* recently recorded */}
-					<section className='glass glass-hover rounded-2xl p-5'>
-						<div className='flex items-center justify-between mb-3'>
-							<p className='text-base font-semibold text-white tracking-tight'>
-								Recently recorded
-							</p>
-							<span className='text-xs text-white/40 tabular-nums'>
-								{attendanceTotal ?? attendances?.length ?? 0}{' '}
-								records
+					<section className="glass glass-hover rounded-2xl p-5">
+						<div className="flex items-center justify-between mb-3">
+							<p className="text-base font-semibold text-white tracking-tight">Recently recorded</p>
+							<span className="text-xs text-white/40 tabular-nums">
+								{attendanceTotal ?? attendances?.length ?? 0} records
 							</span>
 						</div>
 						<AttendanceTable
@@ -320,16 +287,10 @@ export default function SingleEvent() {
 							onAttendanceUpdated={async () => {
 								setPage(1);
 								await queryClient.invalidateQueries({
-									queryKey: [
-										QUERY_KEYS.ATTENDANCES,
-										eventID,
-									],
+									queryKey: [QUERY_KEYS.ATTENDANCES, eventID],
 								});
 								await queryClient.invalidateQueries({
-									queryKey: [
-										QUERY_KEYS.EVENT_ATTENDANCE_SUMMARY,
-										eventID,
-									],
+									queryKey: [QUERY_KEYS.EVENT_ATTENDANCE_SUMMARY, eventID],
 								});
 							}}
 						/>
@@ -338,38 +299,36 @@ export default function SingleEvent() {
 								page={page}
 								totalPages={attendanceTotalPages}
 								onChange={setPage}
-								className='mt-4'
+								className="mt-4"
 							/>
 						)}
 					</section>
 				</div>
 
 				{/* Right section */}
-				<aside className='w-[30%] shrink-0 space-y-5'>
+				<aside className="w-[30%] shrink-0 space-y-5">
 					<EventAttendanceSummary event={event} />
 
 					{/* Export */}
-					<div className='glass glass-hover rounded-2xl p-5'>
-						<p className='text-[11px] font-semibold text-white/40 uppercase tracking-micro mb-4'>
+					<div className="glass glass-hover rounded-2xl p-5">
+						<p className="text-[11px] font-semibold text-white/40 uppercase tracking-micro mb-4">
 							Export
 						</p>
 						<a
-							href={`http://127.0.0.1:8000/api/v1/attendance/event/${
-								event._id
-							}/download/csv`}
-							target='_blank'
-							rel='noreferrer'
-							className='w-full inline-flex items-center justify-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2.5 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97]'
+							href={`http://127.0.0.1:8000/api/v1/attendance/event/${event._id}/download/csv`}
+							target="_blank"
+							rel="noreferrer"
+							className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2.5 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
 						>
-							<DownloadSimple className='w-4 h-4' />
+							<DownloadSimple className="w-4 h-4" />
 							Download CSV
 						</a>
 					</div>
 
 					{/* Live clock */}
-					<div className='glass rounded-2xl p-5 flex items-center justify-between'>
+					<div className="glass rounded-2xl p-5 flex items-center justify-between">
 						<LiveClock />
-						<EventStatusPill event={event} size='sm' />
+						<EventStatusPill event={event} size="sm" />
 					</div>
 				</aside>
 			</div>
@@ -377,11 +336,7 @@ export default function SingleEvent() {
 			{/* Feedback — full-screen flash. Red for errors, warm orange for
 			    duplicate scans. Non-blocking so the next scan can be recorded
 			    while the operator reads the message. */}
-			<ScanFeedbackOverlay
-				feedback={feedback}
-				reduceMotion={reduceMotion}
-			/>
+			<ScanFeedbackOverlay feedback={feedback} reduceMotion={reduceMotion} />
 		</div>
 	);
 }
-

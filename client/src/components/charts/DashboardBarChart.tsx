@@ -19,7 +19,8 @@ type BarChartProps = {
 	showGrid?: boolean;
 	layout?: 'vertical' | 'horizontal';
 	rounded?: boolean;
-};	export function DashboardBarChart({
+};
+export function DashboardBarChart({
 	data,
 	dataKeys,
 	xKey,
@@ -37,23 +38,18 @@ type BarChartProps = {
 
 	if (!data || data.length === 0) {
 		return (
-			<div
-				className='flex items-center justify-center text-white/30 text-sm'
-				style={{ height }}
-			>
+			<div className="flex items-center justify-center text-white/30 text-sm" style={{ height }}>
 				No data available
 			</div>
 		);
 	}
 
-	const barRadius: [number, number, number, number] = rounded
-		? [6, 6, 0, 0]
-		: [0, 0, 0, 0];
+	const barRadius: [number, number, number, number] = rounded ? [6, 6, 0, 0] : [0, 0, 0, 0];
 
 	const reversedData = layout === 'vertical' ? [...data].reverse() : data;
 
 	return (
-		<ResponsiveContainer width='100%' height={height}>
+		<ResponsiveContainer width="100%" height={height}>
 			<BarChart
 				data={reversedData}
 				layout={layout}
@@ -61,7 +57,7 @@ type BarChartProps = {
 			>
 				{showGrid && (
 					<CartesianGrid
-						strokeDasharray='3 3'
+						strokeDasharray="3 3"
 						stroke={gridColor}
 						vertical={false}
 						horizontal={layout === 'vertical'}
@@ -76,7 +72,7 @@ type BarChartProps = {
 							tick={{ fill: axisColor, fontSize: 11 }}
 							dy={8}
 							angle={-25}
-							textAnchor='end'
+							textAnchor="end"
 							interval={0}
 						/>
 						<YAxis
@@ -90,14 +86,14 @@ type BarChartProps = {
 				) : (
 					<>
 						<XAxis
-							type='number'
+							type="number"
 							axisLine={false}
 							tickLine={false}
 							tick={{ fill: axisColor, fontSize: 12 }}
 							allowDecimals={false}
 						/>
 						<YAxis
-							type='category'
+							type="category"
 							dataKey={xKey}
 							axisLine={false}
 							tickLine={false}
@@ -108,9 +104,7 @@ type BarChartProps = {
 				)}
 				<Tooltip
 					contentStyle={{
-						background: isDark
-							? 'rgba(30,30,30,0.95)'
-							: 'rgba(255,255,255,0.95)',
+						background: isDark ? 'rgba(30,30,30,0.95)' : 'rgba(255,255,255,0.95)',
 						border: '1px solid rgba(255,255,255,0.1)',
 						borderRadius: '12px',
 						backdropFilter: 'blur(12px)',
@@ -129,17 +123,13 @@ type BarChartProps = {
 						radius={barRadius}
 						barSize={layout === 'horizontal' ? 32 : 16}
 						animationDuration={reducedMotion ? 0 : 1000}
-						animationEasing='ease-out'
+						animationEasing="ease-out"
 					>
 						{data.map((_, index) => (
 							<Cell
 								key={`cell-${index}`}
 								fill={dk.color}
-								fillOpacity={
-									layout === 'vertical'
-										? 1 - index * 0.05
-										: 0.85
-								}
+								fillOpacity={layout === 'vertical' ? 1 - index * 0.05 : 0.85}
 							/>
 						))}
 					</Bar>

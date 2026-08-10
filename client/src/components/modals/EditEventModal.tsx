@@ -14,21 +14,21 @@ export default function EditEventModal({ event }: EditEventModalProps) {
 	return (
 		<>
 			<button
-				type='button'
+				type="button"
 				onClick={() => setOpened(true)}
-				aria-label='Edit event'
-				title='Edit event'
-				className='group/btn p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.08] transition-colors active:bg-white/[0.12]'
+				aria-label="Edit event"
+				title="Edit event"
+				className="group/btn p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.08] transition-colors active:bg-white/[0.12]"
 			>
-				<PencilSimple className='w-4 h-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90' />
+				<PencilSimple className="w-4 h-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90" />
 			</button>
 
 			<AppleModal
 				opened={opened}
 				onClose={() => setOpened(false)}
-				title='Edit Event'
+				title="Edit Event"
 				subtitle={event.title}
-				size='lg'
+				size="lg"
 			>
 				<CreateEventForm event={event} onSuccess={() => setOpened(false)} />
 			</AppleModal>

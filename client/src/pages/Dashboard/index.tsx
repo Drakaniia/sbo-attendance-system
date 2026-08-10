@@ -1,12 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-	Calendar,
-	Users,
-	ClipboardText,
-	Pulse,
-	UserCheck,
-	Warning,
-} from '@phosphor-icons/react';
+import { Calendar, Users, ClipboardText, Pulse, UserCheck, Warning } from '@phosphor-icons/react';
 import { QUERY_KEYS } from '../../constants';
 import {
 	fetchDashboardStats,
@@ -97,8 +90,7 @@ export default function Dashboard() {
 		staleTime: 30_000,
 	});
 
-	const hasErrors =
-		statsError || eventError || courseError || activityError || trendError;
+	const hasErrors = statsError || eventError || courseError || activityError || trendError;
 
 	const retry = () => {
 		refetchStats();
@@ -110,10 +102,7 @@ export default function Dashboard() {
 
 	const eventChartData =
 		eventAttendance?.map((e) => ({
-			name:
-				e.title.length > 16
-					? e.title.slice(0, 14) + '...'
-					: e.title,
+			name: e.title.length > 16 ? e.title.slice(0, 14) + '...' : e.title,
 			'Check-ins': e.checkIns,
 			'Check-outs': e.checkOuts,
 		})) ?? [];
@@ -132,18 +121,17 @@ export default function Dashboard() {
 		})) ?? [];
 
 	return (
-		<div className='flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5'>
+		<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
 			{/* Error Banner */}
 			{hasErrors && (
-				<div className='rounded-2xl border border-red-500/20 bg-red-500/[0.06] px-5 py-3 flex items-center justify-between gap-3 text-sm text-red-300 motion-safe:animate-[fadeIn_0.4s_ease-out_forwards]'>
-					<div className='flex items-center gap-3'>
-						<Warning className='w-4 h-4 shrink-0' />
-						Some data could not be loaded. Showing available
-						information only.
+				<div className="rounded-2xl border border-red-500/20 bg-red-500/[0.06] px-5 py-3 flex items-center justify-between gap-3 text-sm text-red-300 motion-safe:animate-[fadeIn_0.4s_ease-out_forwards]">
+					<div className="flex items-center gap-3">
+						<Warning className="w-4 h-4 shrink-0" />
+						Some data could not be loaded. Showing available information only.
 					</div>
 					<button
 						onClick={retry}
-						className='shrink-0 px-3 py-1 rounded-lg bg-red-500/15 border border-red-500/20 text-red-300 text-xs font-medium transition-[background-color,transform] duration-150 ease-apple-out hover:bg-red-500/25 active:scale-[0.97]'
+						className="shrink-0 px-3 py-1 rounded-lg bg-red-500/15 border border-red-500/20 text-red-300 text-xs font-medium transition-[background-color,transform] duration-150 ease-apple-out hover:bg-red-500/25 active:scale-[0.97]"
 					>
 						Retry
 					</button>
@@ -154,19 +142,19 @@ export default function Dashboard() {
 			<DashboardHeader />
 
 			{/* Stat Cards Grid */}
-			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4'>
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
 				<StatCard
-					title='Total Events'
+					title="Total Events"
 					value={stats?.totalEvents ?? 0}
 					icon={Calendar}
-					color='#3b82f6'
+					color="#3b82f6"
 					delay={0}
 				/>
 				<StatCard
-					title='Active Events'
+					title="Active Events"
 					value={stats?.activeEvents ?? 0}
 					icon={Pulse}
-					color='#10b981'
+					color="#10b981"
 					trend={stats && stats.activeEvents > 0 ? 'up' : 'neutral'}
 					trendValue={
 						stats
@@ -176,24 +164,24 @@ export default function Dashboard() {
 					delay={60}
 				/>
 				<StatCard
-					title='Total Students'
+					title="Total Students"
 					value={stats?.totalStudents ?? 0}
 					icon={Users}
-					color='#8b5cf6'
+					color="#8b5cf6"
 					delay={120}
 				/>
 				<StatCard
-					title='Total Records'
+					title="Total Records"
 					value={stats?.totalAttendances ?? 0}
 					icon={ClipboardText}
-					color='#f59e0b'
+					color="#f59e0b"
 					delay={180}
 				/>
 				<StatCard
-					title='Attendance Rate'
+					title="Attendance Rate"
 					value={`${stats?.attendanceRate ?? 0}%`}
 					icon={UserCheck}
-					color='#ec4899'
+					color="#ec4899"
 					trend={
 						stats && stats.attendanceRate >= 70
 							? 'up'
@@ -201,42 +189,40 @@ export default function Dashboard() {
 								? 'neutral'
 								: 'down'
 					}
-					trendValue='check-out rate'
+					trendValue="check-out rate"
 					delay={240}
 				/>
 			</div>
 
 			{/* Charts Row */}
-			<div className='grid grid-cols-1 lg:grid-cols-2 gap-5'>
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 				{/* Event Attendance Bar Chart */}
-				<div className='glass glass-hover rounded-2xl p-5'>
-					<div className='flex items-center justify-between mb-4'>
+				<div className="glass glass-hover rounded-2xl p-5">
+					<div className="flex items-center justify-between mb-4">
 						<div>
-							<h3 className='text-base font-semibold text-white tracking-tight'>
+							<h3 className="text-base font-semibold text-white tracking-tight">
 								Event Attendance
 							</h3>
-							<p className='text-xs text-white/30 mt-0.5'>
-								Check-ins vs Check-outs per event
-							</p>
+							<p className="text-xs text-white/30 mt-0.5">Check-ins vs Check-outs per event</p>
 						</div>
-						<div className='flex items-center gap-3 text-xs'>
-							<div className='flex items-center gap-1.5'>
+						<div className="flex items-center gap-3 text-xs">
+							<div className="flex items-center gap-1.5">
 								<div
-									className='w-2.5 h-2.5 rounded-sm'
+									className="w-2.5 h-2.5 rounded-sm"
 									style={{
 										background: EVENT_COLORS.checkIns,
 									}}
 								/>
-								<span className='text-white/50'>In</span>
+								<span className="text-white/50">In</span>
 							</div>
-							<div className='flex items-center gap-1.5'>
+							<div className="flex items-center gap-1.5">
 								<div
-									className='w-2.5 h-2.5 rounded-sm'
+									className="w-2.5 h-2.5 rounded-sm"
 									style={{
 										background: EVENT_COLORS.checkOuts,
 									}}
 								/>
-								<span className='text-white/50'>Out</span>
+								<span className="text-white/50">Out</span>
 							</div>
 						</div>
 					</div>
@@ -254,20 +240,18 @@ export default function Dashboard() {
 								name: 'Check-outs',
 							},
 						]}
-						xKey='name'
+						xKey="name"
 						height={280}
 					/>
 				</div>
 
 				{/* Course Distribution Donut */}
-				<div className='glass glass-hover rounded-2xl p-5'>
-					<div className='mb-2'>
-						<h3 className='text-base font-semibold text-white tracking-tight'>
+				<div className="glass glass-hover rounded-2xl p-5">
+					<div className="mb-2">
+						<h3 className="text-base font-semibold text-white tracking-tight">
 							Course Distribution
 						</h3>
-						<p className='text-xs text-white/30 mt-0.5'>
-							Students enrolled per course
-						</p>
+						<p className="text-xs text-white/30 mt-0.5">Students enrolled per course</p>
 					</div>
 					<DashboardPieChart
 						data={courseChartData}
@@ -280,30 +264,26 @@ export default function Dashboard() {
 			</div>
 
 			{/* Attendance Trend Area Chart */}
-			<div className='glass glass-hover rounded-2xl p-5'>
-				<div className='flex items-center justify-between mb-4'>
+			<div className="glass glass-hover rounded-2xl p-5">
+				<div className="flex items-center justify-between mb-4">
 					<div>
-						<h3 className='text-base font-semibold text-white tracking-tight'>
-							Attendance Trend
-						</h3>
-						<p className='text-xs text-white/30 mt-0.5'>
-							Daily check-ins & check-outs (14 days)
-						</p>
+						<h3 className="text-base font-semibold text-white tracking-tight">Attendance Trend</h3>
+						<p className="text-xs text-white/30 mt-0.5">Daily check-ins & check-outs (14 days)</p>
 					</div>
-					<div className='flex items-center gap-3 text-xs'>
-						<div className='flex items-center gap-1.5'>
+					<div className="flex items-center gap-3 text-xs">
+						<div className="flex items-center gap-1.5">
 							<div
-								className='w-2.5 h-2.5 rounded-sm'
+								className="w-2.5 h-2.5 rounded-sm"
 								style={{ background: TREND_COLORS.checkIns }}
 							/>
-							<span className='text-white/50'>Check-ins</span>
+							<span className="text-white/50">Check-ins</span>
 						</div>
-						<div className='flex items-center gap-1.5'>
+						<div className="flex items-center gap-1.5">
 							<div
-								className='w-2.5 h-2.5 rounded-sm'
+								className="w-2.5 h-2.5 rounded-sm"
 								style={{ background: TREND_COLORS.checkOuts }}
 							/>
-							<span className='text-white/50'>Check-outs</span>
+							<span className="text-white/50">Check-outs</span>
 						</div>
 					</div>
 				</div>
@@ -321,9 +301,9 @@ export default function Dashboard() {
 							name: 'Check-outs',
 						},
 					]}
-					xKey='date'
+					xKey="date"
 					height={280}
-					curveType='monotone'
+					curveType="monotone"
 					gradientFrom={TREND_COLORS.checkIns}
 					gradientTo={TREND_COLORS.checkOuts}
 				/>

@@ -32,7 +32,7 @@ export default function InputField<T extends FieldValues>({
 	isDisabled = false,
 }: InputFieldProps<T>) {
 	return (
-		<div className='space-y-1 text-muted-foreground w-full'>
+		<div className="space-y-1 text-muted-foreground w-full">
 			<InputLabel htmlFor={id}>{label}</InputLabel>
 			<Input
 				disabled={isDisabled}
@@ -45,9 +45,7 @@ export default function InputField<T extends FieldValues>({
 				placeholder={placeholder}
 			/>
 			{errors[name] && errors[name].message && (
-				<p className='text-xs text-red-500'>
-					{errors[name].message.toString()}
-				</p>
+				<p className="text-xs text-red-500">{errors[name].message.toString()}</p>
 			)}
 		</div>
 	);

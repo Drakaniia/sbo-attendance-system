@@ -63,33 +63,19 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 				case 'title':
 					return a.title.localeCompare(b.title) * dir;
 				case 'date':
-					return (
-						a.startTime.localeCompare(b.startTime) * dir
-					);
+					return a.startTime.localeCompare(b.startTime) * dir;
 				case 'checkIns':
 					return (a.checkIns - b.checkIns) * dir;
 				case 'checkOuts':
 					return (a.checkOuts - b.checkOuts) * dir;
 				case 'rate': {
-					const rateA =
-						a.checkIns > 0
-							? (a.checkOuts / a.checkIns) * 100
-							: 0;
-					const rateB =
-						b.checkIns > 0
-							? (b.checkOuts / b.checkIns) * 100
-							: 0;
+					const rateA = a.checkIns > 0 ? (a.checkOuts / a.checkIns) * 100 : 0;
+					const rateB = b.checkIns > 0 ? (b.checkOuts / b.checkIns) * 100 : 0;
 					return (rateA - rateB) * dir;
 				}
 				case 'status': {
-					const rateA =
-						a.checkIns > 0
-							? (a.checkOuts / a.checkIns) * 100
-							: 0;
-					const rateB =
-						b.checkIns > 0
-							? (b.checkOuts / b.checkIns) * 100
-							: 0;
+					const rateA = a.checkIns > 0 ? (a.checkOuts / a.checkIns) * 100 : 0;
+					const rateB = b.checkIns > 0 ? (b.checkOuts / b.checkIns) * 100 : 0;
 					return (rateA - rateB) * dir;
 				}
 				default:
@@ -119,7 +105,7 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 		<th
 			className={cn(
 				'px-3 py-3 text-xs font-medium text-white/30 uppercase tracking-wider cursor-pointer select-none hover:text-white/50 transition-colors',
-				className,
+				className
 			)}
 			onClick={() => handleSort(field)}
 		>
@@ -149,30 +135,18 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 						</thead>
 						<tbody>
 							{Array.from({ length: 5 }).map((_, i) => (
-								<tr
-									key={`skel-${i}`}
-									className="border-b border-white/[0.03]"
-								>
-									{Array.from({ length: 6 }).map(
-										(_, j) => (
-											<td
-												key={j}
-												className="px-3 py-3"
-											>
-												<div
-													className="h-4 rounded bg-white/[0.04] animate-pulse"
-													style={{
-														animationDelay: `${i * 100}ms`,
-														width: j === 0
-															? '70%'
-															: j === 1
-																? '30%'
-																: '50%',
-													}}
-												/>
-											</td>
-										),
-									)}
+								<tr key={`skel-${i}`} className="border-b border-white/[0.03]">
+									{Array.from({ length: 6 }).map((_, j) => (
+										<td key={j} className="px-3 py-3">
+											<div
+												className="h-4 rounded bg-white/[0.04] animate-pulse"
+												style={{
+													animationDelay: `${i * 100}ms`,
+													width: j === 0 ? '70%' : j === 1 ? '30%' : '50%',
+												}}
+											/>
+										</td>
+									))}
 								</tr>
 							))}
 						</tbody>
@@ -189,9 +163,7 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 				<TableTitle />
 				<div className="flex flex-col items-center justify-center py-12 text-white/20">
 					<CheckCircle className="w-10 h-10 mb-2 opacity-30" />
-					<p className="text-sm">
-						No events with attendance data in this period
-					</p>
+					<p className="text-sm">No events with attendance data in this period</p>
 				</div>
 			</div>
 		);
@@ -204,48 +176,18 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 				<table className="w-full text-sm">
 					<thead>
 						<tr className="border-b border-white/[0.06]">
-							<Header
-								field="title"
-								label="Event"
-								className="text-left"
-							/>
-							<Header
-								field="date"
-								label="Date"
-								className="text-left"
-							/>
-							<Header
-								field="checkIns"
-								label="Check-ins"
-								className="text-right"
-							/>
-							<Header
-								field="checkOuts"
-								label="Check-outs"
-								className="text-right"
-							/>
-							<Header
-								field="rate"
-								label="Rate"
-								className="text-right"
-							/>
-							<Header
-								field="status"
-								label="Status"
-								className="text-left"
-							/>
+							<Header field="title" label="Event" className="text-left" />
+							<Header field="date" label="Date" className="text-left" />
+							<Header field="checkIns" label="Check-ins" className="text-right" />
+							<Header field="checkOuts" label="Check-outs" className="text-right" />
+							<Header field="rate" label="Rate" className="text-right" />
+							<Header field="status" label="Status" className="text-left" />
 						</tr>
 					</thead>
 					<tbody>
 						{sorted.map((entry, i) => {
 							const rate =
-								entry.checkIns > 0
-									? Math.round(
-											(entry.checkOuts /
-												entry.checkIns) *
-												100,
-										)
-									: 0;
+								entry.checkIns > 0 ? Math.round((entry.checkOuts / entry.checkIns) * 100) : 0;
 							const status = getCompletionStatus(rate);
 							const meta = STATUS_META[status];
 							const StatusIcon = meta.icon;
@@ -270,16 +212,10 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 									}}
 								>
 									<td className="px-3 py-3 text-white/80 font-medium min-w-[160px]">
-										{entry.title.length > 24
-											? entry.title.slice(0, 22) +
-												'…'
-											: entry.title}
+										{entry.title.length > 24 ? entry.title.slice(0, 22) + '…' : entry.title}
 									</td>
 									<td className="px-3 py-3 text-white/50 text-xs min-w-[90px]">
-										{format(
-											new Date(entry.startTime),
-											'MMM d, yyyy',
-										)}
+										{format(new Date(entry.startTime), 'MMM d, yyyy')}
 									</td>
 									<td className="px-3 py-3 text-right text-white/60 tabular-nums">
 										{entry.checkIns}
@@ -290,12 +226,9 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 									<td className="px-3 py-3 text-right tabular-nums font-medium">
 										<span
 											className={cn(
-												status === 'high' &&
-													'text-emerald-400',
-												status === 'medium' &&
-													'text-amber-400',
-												status === 'low' &&
-													'text-red-400',
+												status === 'high' && 'text-emerald-400',
+												status === 'medium' && 'text-amber-400',
+												status === 'low' && 'text-red-400'
 											)}
 										>
 											{rate}%
@@ -305,7 +238,7 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 										<span
 											className={cn(
 												'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium',
-												meta.className,
+												meta.className
 											)}
 										>
 											<StatusIcon className="w-3.5 h-3.5" />
@@ -334,12 +267,8 @@ const COLUMNS = [
 function TableTitle() {
 	return (
 		<div className="mb-4">
-			<h3 className="text-base font-semibold text-white tracking-tight">
-				Event Completion Rates
-			</h3>
-			<p className="text-xs text-white/30 mt-0.5">
-				Check-in to check-out ratios per event
-			</p>
+			<h3 className="text-base font-semibold text-white tracking-tight">Event Completion Rates</h3>
+			<p className="text-xs text-white/30 mt-0.5">Check-in to check-out ratios per event</p>
 		</div>
 	);
 }

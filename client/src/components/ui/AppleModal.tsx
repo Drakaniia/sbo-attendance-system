@@ -1,10 +1,4 @@
-import {
-	useEffect,
-	useId,
-	useRef,
-	type PropsWithChildren,
-	type ReactNode,
-} from 'react';
+import { useEffect, useId, useRef, type PropsWithChildren, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X } from '@phosphor-icons/react';
@@ -46,16 +40,16 @@ export default function AppleModal({
 	const panelRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<Element | null>(null);
 
-		// Remember the trigger, restore focus on close.
-		// preventScroll so focusing the modal panel doesn't jump the page.
-		useEffect(() => {
-			if (opened) {
-				triggerRef.current = document.activeElement;
-				panelRef.current?.focus({ preventScroll: true });
-			} else if (triggerRef.current instanceof HTMLElement) {
-				triggerRef.current.focus();
-			}
-		}, [opened]);
+	// Remember the trigger, restore focus on close.
+	// preventScroll so focusing the modal panel doesn't jump the page.
+	useEffect(() => {
+		if (opened) {
+			triggerRef.current = document.activeElement;
+			panelRef.current?.focus({ preventScroll: true });
+		} else if (triggerRef.current instanceof HTMLElement) {
+			triggerRef.current.focus();
+		}
+	}, [opened]);
 
 	// Escape to close
 	useEffect(() => {
@@ -67,25 +61,25 @@ export default function AppleModal({
 		return () => window.removeEventListener('keydown', onKey);
 	}, [opened, onClose]);
 
-		// Scroll lock the background while open.
-		// Compensate for scrollbar width so the page doesn't jump when overflow is hidden
-		// (critical for modals triggered from scrolled-down content like table rows).
-		// Save/restore scroll position to prevent loss when toggling overflow.
-		useEffect(() => {
-			if (!opened) return;
-			const scrollY = window.scrollY;
-			const originalOverflow = document.body.style.overflow;
-			const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+	// Scroll lock the background while open.
+	// Compensate for scrollbar width so the page doesn't jump when overflow is hidden
+	// (critical for modals triggered from scrolled-down content like table rows).
+	// Save/restore scroll position to prevent loss when toggling overflow.
+	useEffect(() => {
+		if (!opened) return;
+		const scrollY = window.scrollY;
+		const originalOverflow = document.body.style.overflow;
+		const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-			document.body.style.overflow = 'hidden';
-			document.body.style.paddingRight = `${scrollbarWidth}px`;
+		document.body.style.overflow = 'hidden';
+		document.body.style.paddingRight = `${scrollbarWidth}px`;
 
-			return () => {
-				document.body.style.overflow = originalOverflow;
-				document.body.style.paddingRight = '';
-				window.scrollTo(0, scrollY);
-			};
-		}, [opened]);
+		return () => {
+			document.body.style.overflow = originalOverflow;
+			document.body.style.paddingRight = '';
+			window.scrollTo(0, scrollY);
+		};
+	}, [opened]);
 
 	// Trap Tab focus inside the panel
 	useEffect(() => {
@@ -94,9 +88,9 @@ export default function AppleModal({
 			if (e.key !== 'Tab') return;
 			const panel = panelRef.current;
 			if (!panel) return;
-			const focusables = Array.from(
-				panel.querySelectorAll<HTMLElement>(FOCUSABLE)
-			).filter((el) => el.offsetParent !== null);
+			const focusables = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+				(el) => el.offsetParent !== null
+			);
 			if (focusables.length === 0) return;
 			const first = focusables[0];
 			const last = focusables[focusables.length - 1];
@@ -116,10 +110,10 @@ export default function AppleModal({
 	return createPortal(
 		<AnimatePresence>
 			{opened && (
-				<div className='fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-0 sm:p-6'>
+				<div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-0 sm:p-6">
 					{/* Scrim — dims to focus */}
 					<motion.div
-						className='absolute inset-0 bg-black/60 backdrop-blur-sm'
+						className="absolute inset-0 bg-black/60 backdrop-blur-sm"
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
@@ -129,8 +123,8 @@ export default function AppleModal({
 					{/* Sheet — scales in, mirror path out */}
 					<motion.div
 						ref={panelRef}
-						role='dialog'
-						aria-modal='true'
+						role="dialog"
+						aria-modal="true"
 						aria-labelledby={titleId}
 						tabIndex={-1}
 						className={cn(
@@ -141,34 +135,27 @@ export default function AppleModal({
 						animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
 						exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 24 }}
 						transition={
-							reduceMotion
-								? { duration: 0.15 }
-								: { type: 'spring', bounce: 0, duration: 0.45 }
+							reduceMotion ? { duration: 0.15 } : { type: 'spring', bounce: 0, duration: 0.45 }
 						}
 					>
-						<div className='flex items-start justify-between gap-4 px-6 pt-6 pb-1'>
-							<div className='min-w-0'>
+						<div className="flex items-start justify-between gap-4 px-6 pt-6 pb-1">
+							<div className="min-w-0">
 								{title && (
-									<h2
-										id={titleId}
-										className='text-xl font-bold tracking-display text-white'
-									>
+									<h2 id={titleId} className="text-xl font-bold tracking-display text-white">
 										{title}
 									</h2>
 								)}
-								{subtitle && (
-									<p className='text-sm text-white/40 mt-0.5'>{subtitle}</p>
-								)}
+								{subtitle && <p className="text-sm text-white/40 mt-0.5">{subtitle}</p>}
 							</div>
 							<button
 								onClick={onClose}
-								aria-label='Close'
-								className='shrink-0 p-2 -mr-2 -mt-1 rounded-full text-white/50 hover:text-white hover:bg-white/[0.08] transition-colors active:scale-90'
+								aria-label="Close"
+								className="shrink-0 p-2 -mr-2 -mt-1 rounded-full text-white/50 hover:text-white hover:bg-white/[0.08] transition-colors active:scale-90"
 							>
-								<X className='w-5 h-5' />
+								<X className="w-5 h-5" />
 							</button>
 						</div>
-						<div className='px-6 py-4 max-h-[70vh] overflow-y-auto'>{children}</div>
+						<div className="px-6 py-4 max-h-[70vh] overflow-y-auto">{children}</div>
 					</motion.div>
 				</div>
 			)}

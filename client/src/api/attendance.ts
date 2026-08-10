@@ -3,9 +3,7 @@ import type { APIPaginatedResponse } from '../types/api-response';
 import axiosInstance from './axios-instance';
 
 /** Fetch recent attendances across all events (global feed). */
-export const fetchRecentAttendances = async (
-	limit: number = 20
-): Promise<Attendance[]> => {
+export const fetchRecentAttendances = async (limit: number = 20): Promise<Attendance[]> => {
 	const { data } = await axiosInstance.get(`/attendance?limit=${limit}`);
 	return data.data;
 };
@@ -22,10 +20,7 @@ export const fetchRecentlyRecordedAttendances = async (
 
 		return data;
 	} catch (error) {
-		console.error(
-			'Failed to fetch recently recorded attendances for an event',
-			error
-		);
+		console.error('Failed to fetch recently recorded attendances for an event', error);
 		throw error;
 	}
 };
@@ -52,10 +47,7 @@ export const updateAttendanceStudentID = async (
 	studentID: string
 ): Promise<Attendance> => {
 	try {
-		const { data } = await axiosInstance.patch(
-			`/attendance/${attendanceID}`,
-			{ studentID }
-		);
+		const { data } = await axiosInstance.patch(`/attendance/${attendanceID}`, { studentID });
 		return data.data;
 	} catch (error) {
 		console.error('Failed to update attendance student ID', error);

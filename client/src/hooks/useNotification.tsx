@@ -17,9 +17,7 @@ type NotificationContextType = {
 const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
-	const [notification, setNotification] = useState<NotificationData | null>(
-		null
-	);
+	const [notification, setNotification] = useState<NotificationData | null>(null);
 
 	const showNotification = (data: NotificationData) => {
 		setNotification(data);
@@ -33,7 +31,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 		<NotificationContext.Provider value={{ showNotification }}>
 			{children}
 			{notification && (
-				<div className='absolute bottom-3 left-3 z-50'>
+				<div className="absolute bottom-3 left-3 z-50">
 					{notification.icon ? (
 						<Notification
 							title={notification.title}
@@ -65,7 +63,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useNotification = () => {
 	const ctx = useContext(NotificationContext);
-	if (!ctx)
-		throw new Error('useNotification must be used within NotificationProvider');
+	if (!ctx) throw new Error('useNotification must be used within NotificationProvider');
 	return ctx.showNotification;
 };

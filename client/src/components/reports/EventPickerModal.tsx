@@ -39,7 +39,7 @@ export default function EventPickerModal({
 			(e) =>
 				e.title.toLowerCase().includes(q) ||
 				e.type.toLowerCase().includes(q) ||
-				e.venue.toLowerCase().includes(q),
+				e.venue.toLowerCase().includes(q)
 		);
 	}, [events, search]);
 
@@ -79,16 +79,14 @@ export default function EventPickerModal({
 						'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm text-left transition-colors',
 						selectedEventId === null
 							? 'text-white bg-indigo-400/[0.1]'
-							: 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]',
+							: 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
 					)}
 				>
 					<div className="flex items-center gap-2.5">
 						<Calendar className="w-4 h-4 text-indigo-400/60" />
 						<span className="font-medium">All Events</span>
 					</div>
-					{selectedEventId === null && (
-						<Check className="w-4 h-4 text-indigo-400 shrink-0" />
-					)}
+					{selectedEventId === null && <Check className="w-4 h-4 text-indigo-400 shrink-0" />}
 				</button>
 
 				{/* Divider */}
@@ -97,10 +95,7 @@ export default function EventPickerModal({
 				{/* Loading state */}
 				{isLoading &&
 					Array.from({ length: 5 }).map((_, i) => (
-						<div
-							key={`skel-${i}`}
-							className="flex items-center gap-3 px-3 py-2.5"
-						>
+						<div key={`skel-${i}`} className="flex items-center gap-3 px-3 py-2.5">
 							<div className="w-4 h-4 rounded bg-white/[0.04] animate-pulse" />
 							<div
 								className="h-3 rounded bg-white/[0.04] animate-pulse flex-1"
@@ -114,9 +109,7 @@ export default function EventPickerModal({
 					<div className="flex flex-col items-center justify-center py-8 text-center">
 						<Calendar className="w-10 h-10 text-white/10 mb-3" />
 						<p className="text-sm text-white/30">
-							{search.trim()
-								? 'No events match your search'
-								: 'No events found'}
+							{search.trim() ? 'No events match your search' : 'No events found'}
 						</p>
 						{onCreateEvent && (
 							<button
@@ -147,32 +140,24 @@ export default function EventPickerModal({
 									'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm text-left transition-colors',
 									isSelected
 										? 'text-white bg-indigo-400/[0.1]'
-										: 'text-white/60 hover:text-white hover:bg-white/[0.04]',
+										: 'text-white/60 hover:text-white hover:bg-white/[0.04]'
 								)}
 							>
 								<div className="flex items-center gap-2.5 min-w-0">
 									<div
 										className={cn(
 											'w-2 h-2 rounded-full shrink-0',
-											isSelected
-												? 'bg-indigo-400'
-												: 'bg-white/20',
+											isSelected ? 'bg-indigo-400' : 'bg-white/20'
 										)}
 									/>
 									<div className="min-w-0">
-										<p className="text-sm font-medium truncate">
-											{event.title}
-										</p>
-										<p className="text-[11px] text-white/30 mt-0.5">
-											{event.type}
-										</p>
+										<p className="text-sm font-medium truncate">{event.title}</p>
+										<p className="text-[11px] text-white/30 mt-0.5">{event.type}</p>
 									</div>
 								</div>
 								<div className="flex items-center gap-2 shrink-0">
-								<EventStatusPill event={event} size="sm" />
-									{isSelected && (
-										<Check className="w-4 h-4 text-indigo-400" />
-									)}
+									<EventStatusPill event={event} size="sm" />
+									{isSelected && <Check className="w-4 h-4 text-indigo-400" />}
 								</div>
 							</button>
 						);

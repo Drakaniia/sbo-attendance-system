@@ -1,12 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import Header from '../../components/ui/Header';
 import { useSettingsActions } from '../../hooks/useSettingsActions';
-import {
-	AboutSection,
-	DatabaseSection,
-	DisplaySection,
-	ResetDataModal,
-} from './SettingsSections';
+import { AboutSection, DatabaseSection, DisplaySection, ResetDataModal } from './SettingsSections';
 
 export default function Settings() {
 	const reduceMotion = useReducedMotion();
@@ -27,9 +22,9 @@ export default function Settings() {
 	} = useSettingsActions();
 
 	return (
-		<div className='flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5'>
+		<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
 			{/* ── Sticky header ─────────────────────────── */}
-			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5'>
+			<header className="sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5">
 				<motion.div
 					initial={reduceMotion ? false : { opacity: 0, y: -8 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -38,14 +33,11 @@ export default function Settings() {
 						bounce: 0,
 						duration: 0.4,
 					}}
-					className='min-w-0'
+					className="min-w-0"
 				>
-					<Header className='!text-2xl !tracking-tight truncate'>
-						Settings
-					</Header>
-					<p className='text-white/40 text-sm mt-1 truncate'>
-						Manage your database, display preferences, and app
-						information
+					<Header className="!text-2xl !tracking-tight truncate">Settings</Header>
+					<p className="text-white/40 text-sm mt-1 truncate">
+						Manage your database, display preferences, and app information
 					</p>
 				</motion.div>
 			</header>
@@ -59,10 +51,7 @@ export default function Settings() {
 				onRestore={handleRestore}
 				onDeleteClick={() => setResetOpen(true)}
 			/>
-			<DisplaySection
-				kioskEnabled={kioskEnabled}
-				onKioskToggle={handleKioskToggle}
-			/>
+			<DisplaySection kioskEnabled={kioskEnabled} onKioskToggle={handleKioskToggle} />
 			<AboutSection dbPath={dbPath} version={version} />
 			<ResetDataModal
 				open={resetOpen}

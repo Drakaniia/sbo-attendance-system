@@ -18,7 +18,8 @@ type PieChartProps = {
 	innerRadius?: number;
 	outerRadius?: number;
 	showLegend?: boolean;
-};	export function DashboardPieChart({
+};
+export function DashboardPieChart({
 	data,
 	colors,
 	height = 300,
@@ -30,17 +31,11 @@ type PieChartProps = {
 	const reducedMotion = useReducedMotion();
 	const isDark = theme === 'dark';
 
-	const total = useMemo(
-		() => data.reduce((sum, d) => sum + d.value, 0),
-		[data]
-	);
+	const total = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data]);
 
 	if (!data || data.length === 0) {
 		return (
-			<div
-				className='flex items-center justify-center text-white/30 text-sm'
-				style={{ height }}
-			>
+			<div className="flex items-center justify-center text-white/30 text-sm" style={{ height }}>
 				No data available
 			</div>
 		);
@@ -72,8 +67,8 @@ type PieChartProps = {
 				x={x}
 				y={y}
 				fill={isDark ? '#fff' : '#333'}
-				textAnchor='middle'
-				dominantBaseline='central'
+				textAnchor="middle"
+				dominantBaseline="central"
 				fontSize={12}
 				fontWeight={600}
 			>{`${(safePercent * 100).toFixed(0)}%`}</text>
@@ -81,37 +76,33 @@ type PieChartProps = {
 	};
 
 	return (
-		<ResponsiveContainer width='100%' height={height}>
+		<ResponsiveContainer width="100%" height={height}>
 			<PieChart>
 				<Pie
 					data={data}
-					cx='50%'
-					cy='50%'
+					cx="50%"
+					cy="50%"
 					innerRadius={innerRadius}
 					outerRadius={outerRadius}
 					paddingAngle={3}
 					cornerRadius={6}
-					dataKey='value'
-					nameKey='name'
+					dataKey="value"
+					nameKey="name"
 					labelLine={false}
 					label={renderCustomLabel}
 					animationDuration={reducedMotion ? 0 : 1200}
-					animationEasing='ease-out'
+					animationEasing="ease-out"
 				>
 					{data.map((_, index) => (
-						<Cell
-							key={`cell-${index}`}
-							fill={colors[index % colors.length]}
-							stroke='transparent'
-						/>
+						<Cell key={`cell-${index}`} fill={colors[index % colors.length]} stroke="transparent" />
 					))}
 				</Pie>
 				{/* Center text showing total */}
 				<text
-					x='50%'
-					y='47%'
-					textAnchor='middle'
-					dominantBaseline='middle'
+					x="50%"
+					y="47%"
+					textAnchor="middle"
+					dominantBaseline="middle"
 					fill={isDark ? '#fff' : '#333'}
 					fontSize={28}
 					fontWeight={700}
@@ -119,10 +110,10 @@ type PieChartProps = {
 					{total}
 				</text>
 				<text
-					x='50%'
-					y='57%'
-					textAnchor='middle'
-					dominantBaseline='middle'
+					x="50%"
+					y="57%"
+					textAnchor="middle"
+					dominantBaseline="middle"
 					fill={isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)'}
 					fontSize={11}
 					fontWeight={500}
@@ -131,9 +122,7 @@ type PieChartProps = {
 				</text>
 				<Tooltip
 					contentStyle={{
-						background: isDark
-							? 'rgba(30,30,30,0.95)'
-							: 'rgba(255,255,255,0.95)',
+						background: isDark ? 'rgba(30,30,30,0.95)' : 'rgba(255,255,255,0.95)',
 						border: '1px solid rgba(255,255,255,0.1)',
 						borderRadius: '12px',
 						backdropFilter: 'blur(12px)',
@@ -144,9 +133,9 @@ type PieChartProps = {
 				/>
 				{showLegend && (
 					<Legend
-						verticalAlign='bottom'
+						verticalAlign="bottom"
 						height={36}
-						iconType='circle'
+						iconType="circle"
 						iconSize={8}
 						formatter={(value: string) => (
 							<span

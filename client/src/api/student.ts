@@ -10,12 +10,9 @@ export const fetchStudents = async (
 ): Promise<APIPaginatedResponse<Student[]> | undefined> => {
 	const defaultFilterValue = 'All';
 
-	filters.course =
-		filters.course === defaultFilterValue ? undefined : filters.course;
-	filters.year =
-		filters.year === defaultFilterValue ? undefined : filters.year;
-	filters.gender =
-		filters.gender === defaultFilterValue ? undefined : filters.gender;
+	filters.course = filters.course === defaultFilterValue ? undefined : filters.course;
+	filters.year = filters.year === defaultFilterValue ? undefined : filters.year;
+	filters.gender = filters.gender === defaultFilterValue ? undefined : filters.gender;
 
 	let url = `/student?page=${page}&pageSize=${pageSize}`;
 	if (filters.search) url = url + `&search=${filters.search}`;
@@ -24,16 +21,12 @@ export const fetchStudents = async (
 	if (filters.gender) url = url + `&gender=${filters.gender}`;
 	if (filters.sortBy) url = url + `&sortBy=${filters.sortBy}`;
 
-	const { data } = await axiosInstance.get<APIPaginatedResponse<Student[]>>(
-		url
-	);
+	const { data } = await axiosInstance.get<APIPaginatedResponse<Student[]>>(url);
 
 	return data;
 };
 
-export const fetchAvailableCourses = async (): Promise<
-	string[] | undefined
-> => {
+export const fetchAvailableCourses = async (): Promise<string[] | undefined> => {
 	const { data } = await axiosInstance.get(`/student/courses`);
 
 	return data.data;

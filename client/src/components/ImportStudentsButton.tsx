@@ -22,8 +22,7 @@ export default function ImportStudentsButton() {
 			await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS] });
 			await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENT_COURSES] });
 		} catch (err) {
-			const msg =
-				err instanceof Error ? err.message : 'Unknown error';
+			const msg = err instanceof Error ? err.message : 'Unknown error';
 			// "No file selected" is not an error — the user just cancelled.
 			if (msg === 'No file selected') return;
 
@@ -38,15 +37,15 @@ export default function ImportStudentsButton() {
 
 	return (
 		<button
-			type='button'
+			type="button"
 			onClick={handleImport}
 			disabled={loading}
-			className='inline-flex items-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed'
+			className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
 		>
 			{loading ? (
-				<ArrowCounterClockwise className='w-4 h-4 motion-safe:animate-spin' />
+				<ArrowCounterClockwise className="w-4 h-4 motion-safe:animate-spin" />
 			) : (
-				<UploadSimple className='w-4 h-4' />
+				<UploadSimple className="w-4 h-4" />
 			)}
 			{loading ? 'Importing…' : 'Import Students'}
 		</button>
