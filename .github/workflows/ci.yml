@@ -5,9 +5,13 @@ on:
     branches: [master]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   frontend:
-    name: Frontend — lint & build
+    name: Frontend — format, lint, typecheck, build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -20,16 +24,86 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+          cache: true
 
       - name: Install dependencies
         run: bun install
 
-      # `bun run lint` includes import/no-unresolved (via eslint-plugin-import),
-      # which fails on imports that don't resolve — e.g. stale relative paths
-      # left behind after moving a file or folder.
+      - name: Format check
+        run: bun run format:check
+
       - name: Lint (incl. import resolution)
+        # `bun run lint` includes import/no-unresolved (via eslint-plugin-import),
+        # which fails on imports that don't resolve — e.g. stale relative paths
+        # left behind after moving a file or folder.
         run: bun run lint
 
-      # tsc -b + vite build; also surfaces TS2307 for unresolved modules.
+      - name: Typecheck
+        run: bun run typecheck
+
       - name: Build
         run: bun run build
+
+  backend:
+    name: Backend — fmt, clippy, test, build
+    # Ubuntu 22.04 — the release workflow uses the same image, and the
+    # Tauri system deps below only exist there (24.04 dropped
+    # libappindicator3-dev in favour of libayatana-appindicator3-dev).
+    runs-on: ubuntu-22.04
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+          cache: true
+
+      # The Rust crate embeds the frontend bundle at compile time via
+      # tauri::generate_context!() (frontendDist: ../client/dist), so the
+      # frontend must be built before cargo can compile.
+      - name: Build frontend assets
+        working-directory: client
+        run: |
+          bun install
+          bun run build
+
+      - name: Install Tauri system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Check formatting
+        working-directory: src-tauri
+        run: cargo fmt --check
+
+      - name: Lint (clippy)
+        working-directory: src-tauri
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run Rust tests
+        working-directory: src-tauri
+        run: cargo test --all-features
+
+      # The Tauri config/capability sanity tests are written as Bun tests
+      # (tauri-conf.test.ts, capabilities/window-permissions.test.ts).
+      - name: Run Tauri config tests
+        working-directory: src-tauri
+        run: bun test
+
+      - name: Build
+        working-directory: src-tauri
+        run: cargo build --all-features
