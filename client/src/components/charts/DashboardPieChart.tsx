@@ -5,6 +5,7 @@ import {
 	Tooltip,
 	ResponsiveContainer,
 	Legend,
+	type PieLabelRenderProps,
 } from 'recharts';
 import { useThemeStore } from '../../store/theme';
 import { useMemo } from 'react';
@@ -52,13 +53,19 @@ type PieChartProps = {
 		innerRadius,
 		outerRadius,
 		percent,
-	}: any) => {
+	}: PieLabelRenderProps) => {
+		const safeCx = cx ?? 0;
+		const safeCy = cy ?? 0;
+		const safeMidAngle = midAngle ?? 0;
+		const safeInnerRadius = innerRadius ?? 0;
+		const safeOuterRadius = outerRadius ?? 0;
+		const safePercent = percent ?? 0;
 		const RADIAN = Math.PI / 180;
-		const radius = innerRadius + (outerRadius - innerRadius) * 0.6;
-		const x = cx + radius * Math.cos(-midAngle * RADIAN);
-		const y = cy + radius * Math.sin(-midAngle * RADIAN);
+		const radius = safeInnerRadius + (safeOuterRadius - safeInnerRadius) * 0.6;
+		const x = safeCx + radius * Math.cos(-safeMidAngle * RADIAN);
+		const y = safeCy + radius * Math.sin(-safeMidAngle * RADIAN);
 
-		if (percent < 0.05) return null;
+		if (safePercent < 0.05) return null;
 
 		return (
 			<text
@@ -69,9 +76,7 @@ type PieChartProps = {
 				dominantBaseline='central'
 				fontSize={12}
 				fontWeight={600}
-			>
-				{`${(percent * 100).toFixed(0)}%`}
-			</text>
+			>{`${(safePercent * 100).toFixed(0)}%`}</text>
 		);
 	};
 

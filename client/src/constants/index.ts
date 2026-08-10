@@ -9,4 +9,11 @@ export const QUERY_KEYS = {
 	DASHBOARD_COURSE_DISTRIBUTION: 'dashboard-course-distribution',
 	DASHBOARD_RECENT_ACTIVITY: 'dashboard-recent-activity',
 	DASHBOARD_ATTENDANCE_TREND: 'dashboard-attendance-trend',
+	REPORTS_STATS: 'reports-stats',
+	REPORTS_ATTENDANCE_TREND: 'reports-attendance-trend',
+	REPORTS_EVENT_BREAKDOWN: 'reports-event-breakdown',
+	REPORTS_COURSE_DISTRIBUTION: 'reports-course-distribution',
+	REPORTS_YEAR_DISTRIBUTION: 'reports-year-distribution',
+	REPORTS_LEADERBOARD: 'reports-leaderboard',
+	REPORTS_HEATMAP: 'reports-heatmap',
 };
