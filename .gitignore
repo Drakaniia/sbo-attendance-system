@@ -1,4 +1,13 @@
 node_modules
 package-lock.json
-/data/db/*
-!/data/db/.gitkeep
+
+# Tauri / Rust
+src-tauri/target/
+src-tauri/icons/*.png
+src-tauri/icons/*.icns
+src-tauri/icons/*.ico
+
+# SQLite runtime files (don't commit the live DB)
+*.db
+*.db-shm
+*.db-wal
