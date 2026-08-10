@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { Event } from '../types/event';
 import { QUERY_KEYS } from '../constants';
 import { getEventAttendanceSummary } from '../api/attendance';
-import { TrendingUp } from 'lucide-react';
+import { TrendUp } from '@phosphor-icons/react';
 
 type EventAttendanceSummaryProps = {
 	event: Event;
@@ -79,7 +79,7 @@ export default function EventAttendanceSummary({
 					Attendance Rate
 				</div>
 				<div className='flex items-center gap-1.5'>
-					<TrendingUp className='w-3.5 h-3.5 text-violet-300' />
+					<TrendUp className='w-3.5 h-3.5 text-violet-300' />
 					<p className='text-xl font-bold tracking-display text-white tabular-nums'>
 						{rate}%
 					</p>

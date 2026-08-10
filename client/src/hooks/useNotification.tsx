@@ -60,6 +60,9 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 	);
 };
 
+// Hook + provider intentionally share this file (context must be co-located
+// with the provider); the rule is about fast-refresh, not correctness.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useNotification = () => {
 	const ctx = useContext(NotificationContext);
 	if (!ctx)

@@ -8,10 +8,10 @@ function App() {
 	setNavigate(navigate);
 
 	return (
-		<main className='flex items-start min-h-screen '>
+		<main className='flex h-screen'>
 			<Sidebar />
 
-			<section className='bg-[#0A0A0A] p-5 w-full h-screen overflow-y-scroll'>
+			<section className='min-w-0 flex-1 overflow-y-scroll overscroll-none overflow-x-hidden bg-[#0A0A0A] p-5'>
 				<Outlet />
 			</section>
 		</main>

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useReducedMotion } from '@mantine/hooks';
 import { cn } from '../../lib/utils';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendUp, TrendDown, Minus } from '@phosphor-icons/react';
 import type { CSSProperties } from 'react';
 
 type StatCardProps = {
@@ -77,10 +77,9 @@ export function StatCard({
 	}, [isVisible, numericValue, reducedMotion]);
 
 	const TrendIcon =
-		trend === 'up'
-			? TrendingUp
+		trend === 'up'				? TrendUp
 			: trend === 'down'
-				? TrendingDown
+				? TrendDown
 				: Minus;
 	const trendColor =
 		trend === 'up'

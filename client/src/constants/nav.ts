@@ -1,10 +1,10 @@
 import {
-	BarChart3,
-	CalendarDays,
+	ChartBar,
+	Calendar,
 	GraduationCap,
-	LayoutDashboard,
-	Settings,
-} from 'lucide-react';
+	SquaresFour,
+	Gear,
+} from '@phosphor-icons/react';
 
 export type SidebarItem = {
 	title: string;
@@ -20,22 +20,22 @@ export type NavSection = {
 export const NAV_SECTIONS: NavSection[] = [
 	{
 		label: 'Overview',
-		items: [{ title: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard }],
+		items: [{ title: 'Dashboard', path: '/admin/dashboard', icon: SquaresFour }],
 	},
 	{
 		label: 'Manage',
 		items: [
-			{ title: 'Events', path: '/admin/events', icon: CalendarDays },
+			{ title: 'Events', path: '/admin/events', icon: Calendar },
 			{ title: 'Students', path: '/admin/students', icon: GraduationCap },
 		],
 	},
 	{
 		label: 'Insights',
-		items: [{ title: 'Reports', path: '/admin/reports', icon: BarChart3 }],
+		items: [{ title: 'Reports', path: '/admin/reports', icon: ChartBar }],
 	},
 	{
 		label: 'System',
-		items: [{ title: 'Settings', path: '/admin/settings', icon: Settings }],
+		items: [{ title: 'Settings', path: '/admin/settings', icon: Gear }],
 	},
 ];
 

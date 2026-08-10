@@ -12,7 +12,7 @@ import { useThemeStore } from '../../store/theme';
 import { useReducedMotion } from '@mantine/hooks';
 
 type BarChartProps = {
-	data: Record<string, any>[];
+	data: Record<string, unknown>[];
 	dataKeys: { key: string; color: string; name: string }[];
 	xKey: string;
 	height?: number;
