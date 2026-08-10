@@ -1,31 +1,24 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../components/ui/header';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { QUERY_KEYS } from '../constants';
-import { fetchSingleEvent } from '../api/event';
-import { Check, ChevronLeft, Download, ScanLine, TriangleAlert, X } from 'lucide-react';
-import type { Event } from '../types/event';
-import { format, isSameDay } from 'date-fns';
-import LiveClock from '../components/LiveClock';
+import { QUERY_KEYS } from '../../constants';
+import { fetchSingleEvent } from '../../api/event';
+import { Check, DownloadSimple, Scan } from '@phosphor-icons/react';
+import LiveClock from '../../components/LiveClock';
 import { useEffect, useRef, useState } from 'react';
-import axiosInstance from '../api/axiosInstance';
-import { useNotification } from '../hooks/useNotification';
-import { fetchRecentlyRecordedAttendances } from '../api/attendance';
-import { queryClient } from '../main';
-import AttendanceTable from '../components/AttendanceTable';
-import Pagination from '../components/ui/Pagination';
-import EventAttendanceSummary from '../components/EventAttendanceSummary';
-import { cn } from '../lib/utils';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import EventStatusPill from '../components/EventStatusPill';
-
-type TimeType = 'Time In' | 'Time Out';
-
-type ScanFeedback = {
-	type: 'success' | 'duplicate' | 'error';
-	message: string;
-	studentID: string;
-};
+import axiosInstance from '../../api/axios-instance';
+import { useNotification } from '../../hooks/useNotification';
+import { fetchRecentlyRecordedAttendances } from '../../api/attendance';
+import { queryClient } from '../../main';
+import AttendanceTable from '../../components/AttendanceTable';
+import Pagination from '../../components/ui/Pagination';
+import EventAttendanceSummary from '../../components/EventAttendanceSummary';
+import { cn } from '../../lib/utils';
+import { useReducedMotion } from 'framer-motion';
+import EventStatusPill from '../../components/EventStatusPill';
+import EventHeader from './EventHeader';
+import ScanFeedbackOverlay from './ScanFeedbackOverlay';
+import SegmentedControl from './SegmentedControl';
+import type { ScanFeedback, TimeType } from '../../types/event';
 
 const STUDENT_ID_LENGTH = 10;
 const SUCCESS_FLASH_MS = 700;
@@ -89,21 +82,14 @@ export default function SingleEvent() {
 		}
 	}, [studentID, isSubmitting]);
 
-	// Always-on focus guard — the input should never lose focus during scanning.
-	// When the user clicks a button, link, or other interactive element, let it
-	// keep focus — re-focusing the input would scroll the page to the top.
+	// Always-on focus guard — no matter what, the input is always active.
+	// Barcode scanners emit raw keystrokes into whatever element has focus,
+	// so we must never let the input lose focus while this page is mounted.
 	const onBlur = () => {
-		// Defer so the browser has time to assign focus to the clicked element
+		// Defer so the browser has time to assign focus to the clicked element,
+		// then steal it back unconditionally.
 		setTimeout(() => {
-			const active = document.activeElement;
-			// Only re-focus if nothing intentional was clicked
-			if (
-				!active ||
-				active === document.body ||
-				active === document.documentElement
-			) {
-				studentIDInputRef.current?.focus();
-			}
+			studentIDInputRef.current?.focus();
 		}, 0);
 	};
 
@@ -124,7 +110,10 @@ export default function SingleEvent() {
 	) => {
 		setFeedback({ type, message, studentID: id });
 		if (feedbackTimerRef.current) window.clearTimeout(feedbackTimerRef.current);
-		feedbackTimerRef.current = window.setTimeout(() => setFeedback(null), duration);
+		feedbackTimerRef.current = window.setTimeout(
+			() => setFeedback(null),
+			duration
+		);
 	};
 
 	const submitAttendance = async (id: string) => {
@@ -155,7 +144,12 @@ export default function SingleEvent() {
 				color: 'teal',
 			});
 			// Green flash on the input
-			showFeedback('success', 'Attendance Recorded Successfully', id, SUCCESS_FLASH_MS);
+			showFeedback(
+				'success',
+				'Attendance Recorded Successfully',
+				id,
+				SUCCESS_FLASH_MS
+			);
 
 			await queryClient.invalidateQueries({
 				queryKey: [QUERY_KEYS.ATTENDANCES, eventID],
@@ -201,7 +195,9 @@ export default function SingleEvent() {
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		// Text input keeps leading zeros intact — only keep digits, cap at 10.
-		const digits = e.target.value.replace(/\D/g, '').slice(0, STUDENT_ID_LENGTH);
+		const digits = e.target.value
+			.replace(/\D/g, '')
+			.slice(0, STUDENT_ID_LENGTH);
 		setStudentID(digits);
 
 		// Auto-submit once a full 10-digit code is present
@@ -242,8 +238,8 @@ export default function SingleEvent() {
 	return (
 		<div className='flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5'>
 			{/* Sticky toolbar */}
-			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4'>
-				<TopSection event={event} reduceMotion={reduceMotion} />
+			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5'>
+				<EventHeader event={event} reduceMotion={reduceMotion} />
 			</header>
 
 			<div className='flex gap-5 items-start'>
@@ -258,31 +254,38 @@ export default function SingleEvent() {
 								</p>
 								<p className='text-sm text-white/40 mt-0.5'>
 									Scan a student ID to record their{' '}
-									{timeType === 'Time In' ? 'time in' : 'time out'}
+									{timeType === 'Time In'
+										? 'time in'
+										: 'time out'}
 								</p>
 							</div>
 
 							{/* Apple segmented control — sliding thumb, spring, interruptible */}
-							<SegmentedControl value={timeType} onChange={setTimeType} />
+							<SegmentedControl
+								value={timeType}
+								onChange={setTimeType}
+							/>
 						</div>
 
 						<div
-						className={cn(
-							'relative rounded-2xl',
-							feedback?.type === 'success' &&
-								'animate-[flash-success_ease-out_forwards]',
-							feedback?.type === 'duplicate' &&
-								'animate-[flash-warning_ease-out_forwards]'
-						)}
-						style={
-							feedback?.type === 'success'
-								? { animationDuration: `${SUCCESS_FLASH_MS}ms` }
-								: feedback?.type === 'duplicate'
-									? { animationDuration: `${DUPLICATE_OVERLAY_MS}ms` }
-									: undefined
-						}
+							className={cn(
+								'relative rounded-2xl',
+								feedback?.type === 'success' &&
+									'animate-[flash-success_ease-out_forwards]',
+								feedback?.type === 'duplicate' &&
+									'animate-[flash-warning_ease-out_forwards]'
+							)}
+							style={
+								feedback?.type === 'success'
+									? { animationDuration: `${SUCCESS_FLASH_MS}ms` }
+									: feedback?.type === 'duplicate'
+										? {
+												animationDuration: `${DUPLICATE_OVERLAY_MS}ms`,
+											}
+										: undefined
+							}
 						>
-							<ScanLine className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 pointer-events-none' />
+							<Scan className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 pointer-events-none' />
 							<input
 								ref={studentIDInputRef}
 								value={studentID}
@@ -307,19 +310,26 @@ export default function SingleEvent() {
 							<p className='text-base font-semibold text-white tracking-tight'>
 								Recently recorded
 							</p>
-						<span className='text-xs text-white/40 tabular-nums'>
-							{attendanceTotal ?? attendances?.length ?? 0} records
-						</span>
-					</div>
+							<span className='text-xs text-white/40 tabular-nums'>
+								{attendanceTotal ?? attendances?.length ?? 0}{' '}
+								records
+							</span>
+						</div>
 						<AttendanceTable
 							attendances={attendances ?? []}
 							onAttendanceUpdated={async () => {
 								setPage(1);
 								await queryClient.invalidateQueries({
-									queryKey: [QUERY_KEYS.ATTENDANCES, eventID],
+									queryKey: [
+										QUERY_KEYS.ATTENDANCES,
+										eventID,
+									],
 								});
 								await queryClient.invalidateQueries({
-									queryKey: [QUERY_KEYS.EVENT_ATTENDANCE_SUMMARY, eventID],
+									queryKey: [
+										QUERY_KEYS.EVENT_ATTENDANCE_SUMMARY,
+										eventID,
+									],
 								});
 							}}
 						/>
@@ -344,23 +354,21 @@ export default function SingleEvent() {
 							Export
 						</p>
 						<a
-							href={`${import.meta.env.VITE_API_URL}/attendance/event/${
+							href={`http://127.0.0.1:8000/api/v1/attendance/event/${
 								event._id
 							}/download/csv`}
 							target='_blank'
 							rel='noreferrer'
 							className='w-full inline-flex items-center justify-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2.5 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97]'
 						>
-							<Download className='w-4 h-4' />
+							<DownloadSimple className='w-4 h-4' />
 							Download CSV
 						</a>
 					</div>
 
 					{/* Live clock */}
 					<div className='glass rounded-2xl p-5 flex items-center justify-between'>
-						<Header size='sm' className='!text-lg'>
-							<LiveClock />
-						</Header>
+						<LiveClock />
 						<EventStatusPill event={event} size='sm' />
 					</div>
 				</aside>
@@ -369,165 +377,11 @@ export default function SingleEvent() {
 			{/* Feedback — full-screen flash. Red for errors, warm orange for
 			    duplicate scans. Non-blocking so the next scan can be recorded
 			    while the operator reads the message. */}
-			<AnimatePresence>
-				{feedback && feedback.type !== 'success' && (
-					<motion.div
-						role={feedback.type === 'error' ? 'alert' : 'status'}
-						className={cn(
-							'fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-[2px] pointer-events-none',
-							feedback.type === 'error' ? 'bg-red-500/10' : 'bg-amber-500/10'
-						)}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						transition={reduceMotion ? { duration: 0 } : { duration: 0.15 }}
-					>
-						<motion.div
-							className={cn(
-								'flex flex-col items-center gap-3 rounded-2xl px-12 py-9 border',
-								feedback.type === 'error'
-									? 'border-red-500/30 bg-red-500/[0.08]'
-									: 'border-amber-500/30 bg-amber-500/[0.08]'
-							)}
-							initial={
-								reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 4 }
-							}
-							animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
-							exit={
-								reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 4 }
-							}
-							transition={
-								reduceMotion
-									? { duration: 0.1 }
-									: { type: 'spring', bounce: 0, duration: 0.3 }
-							}
-						>
-							<div
-								className={cn(
-									'flex items-center justify-center w-14 h-14 rounded-full',
-									feedback.type === 'error' ? 'bg-red-500/15' : 'bg-amber-500/15'
-								)}
-							>
-								{feedback.type === 'error' ? (
-									<X className='w-7 h-7 text-red-400' />
-								) : (
-									<TriangleAlert className='w-7 h-7 text-amber-400' />
-								)}
-							</div>
-							<p className='text-white font-semibold text-lg'>
-								{feedback.message}
-							</p>
-							<p className='font-mono text-sm text-white/50'>
-								ID: {feedback.studentID}
-							</p>
-						</motion.div>
-					</motion.div>
-				)}
-			</AnimatePresence>
+			<ScanFeedbackOverlay
+				feedback={feedback}
+				reduceMotion={reduceMotion}
+			/>
 		</div>
 	);
 }
 
-/* ── Segmented control ─────────────────────────────── */
-
-type SegmentedControlProps = {
-	value: TimeType;
-	onChange: (value: TimeType) => void;
-};
-
-function SegmentedControl({ value, onChange }: SegmentedControlProps) {
-	const options: TimeType[] = ['Time In', 'Time Out'];
-
-	return (
-		<div
-			role='radiogroup'
-			aria-label='Record type'
-			className='relative flex p-1 rounded-full bg-white/[0.04] border border-white/[0.08] w-fit'
-		>
-			{options.map((option) => {
-				const active = value === option;
-				return (
-					<button
-						key={option}
-						role='radio'
-						aria-checked={active}
-						onClick={() => onChange(option)}
-						className={cn(
-							'relative z-10 px-4 py-1.5 text-xs font-medium rounded-full transition-colors duration-200 outline-none focus-visible:ring-2 ring-white/30',
-							active ? 'text-white' : 'text-white/50 hover:text-white/70'
-						)}
-					>
-						{active && (
-							<motion.span
-								layoutId='segmented-thumb'
-								className='absolute inset-0 rounded-full bg-white/[0.08] border border-white/[0.1]'
-								transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
-							/>
-						)}
-						<span className='relative'>{option}</span>
-					</button>
-				);
-			})}
-		</div>
-	);
-}
-
-/* ── Top section ───────────────────────────────────── */
-
-type TopSectionProps = {
-	event: Event;
-	reduceMotion: boolean | null;
-};
-
-function TopSection({ event, reduceMotion }: TopSectionProps) {
-	const navigate = useNavigate();
-	const start = new Date(event.startTime);
-	const end = new Date(event.endTime);
-
-	const sameDay = isSameDay(start, end);
-	const dateLabel = sameDay
-		? `${format(start, 'MMM d, yyyy · hh:mm aaa')} – ${format(end, 'hh:mm aaa')}`
-		: `${format(start, 'MMM d, hh:mm aaa')} – ${format(end, 'MMM d, hh:mm aaa')}`;
-
-	return (
-		<motion.div
-			initial={reduceMotion ? false : { opacity: 0, y: -8 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-			className='flex items-center justify-between gap-4'
-		>
-			<div className='flex items-center gap-3 min-w-0'>
-				<motion.button
-					onClick={() => navigate(-1)}
-					whileTap={reduceMotion ? undefined : { scale: 0.9 }}
-					aria-label='Go back'
-					className='shrink-0 p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.08] transition-colors'
-				>
-					<ChevronLeft className='w-5 h-5' />
-				</motion.button>
-				<div className='min-w-0'>
-					<Header className='!text-xl !tracking-tight truncate'>
-						{event.title}
-					</Header>
-					<p className='text-sm text-white/45 truncate'>
-						{event.type} at the {event.venue} · {dateLabel}
-					</p>
-				</div>
-			</div>
-			<div className='shrink-0 flex items-center gap-3'>
-				<div className='hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60'>
-					<span className='relative flex w-2 h-2'>
-						<span className='absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping' />
-						<span className='relative inline-flex w-2 h-2 rounded-full bg-emerald-400' />
-					</span>
-					<LiveClock
-						format='12'
-						showSeconds
-						className='tabular-nums text-white/60'
-					/>
-				</div>
-				<EventStatusPill event={event} className='hidden sm:inline-flex' />
-			</div>
-		</motion.div>
-	);
-}

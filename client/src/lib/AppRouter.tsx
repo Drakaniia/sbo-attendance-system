@@ -1,34 +1,25 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import App from './App';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import NotFound from './pages/NotFount';
+import App from '../App';
 import { MantineProvider } from '@mantine/core';
-import Dashboard from './pages/Dashboard';
-import Attendance from './pages/Attendance';
-import UploadStudents from './pages/UploadStudents';
-import { useThemeStore } from './store/theme';
-import ProtectedRoute from './components/ProtectedRoute';
-import { NotificationProvider } from './hooks/useNotification';
-import Events from './pages/Events';
-import Students from './pages/Students';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import SingleEvent from './pages/SingleEvent';
+import Dashboard from '../pages/Dashboard/index';
+import Attendance from '../pages/Attendance';
+import UploadStudents from '../pages/UploadStudents';
+import { useThemeStore } from '../store/theme';
+import { NotificationProvider } from '../hooks/useNotification';
+import Events from '../pages/Events';
+import Students from '../pages/Students';
+import Reports from '../pages/Reports';
+import Settings from '../pages/Settings/index';
+import SingleEvent from '../pages/SingleEvent/index';
 
-export default function Route() {
+export default function AppRouter() {
 	const theme = useThemeStore((state) => state.theme);
 
 	const route = createBrowserRouter([
 		{
 			path: '/',
-			element: (
-				<ProtectedRoute>
-					<App />
-				</ProtectedRoute>
-			),
-			errorElement: <NotFound />,
-			children: [
+			element: <App />,
+				children: [
 				{
 					index: true,
 					element: <Dashboard />,
@@ -66,14 +57,6 @@ export default function Route() {
 					element: <UploadStudents />,
 				},
 			],
-		},
-		{
-			path: '/login',
-			element: <Login />,
-		},
-		{
-			path: '/signup',
-			element: <Signup />,
 		},
 	]);
 

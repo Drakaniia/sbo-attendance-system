@@ -1,19 +1,31 @@
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import Route from './Route.tsx';
+import AppRouter from './lib/AppRouter';
+import SplashGuard from './components/SplashGuard';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-export const queryClient = new QueryClient();
-const rootElement = document.getElementById('root') as HTMLElement;
+interface ReactRootElement extends HTMLElement {
+	_reactRoot?: ReturnType<typeof createRoot>;
+}
 
-let root = (rootElement as any)._reactRoot ?? createRoot(rootElement);
-(rootElement as any)._reactRoot = root;
+export const queryClient = new QueryClient();
+const rootElement = document.getElementById('root') as ReactRootElement;
+
+const root = rootElement._reactRoot ?? createRoot(rootElement);
+rootElement._reactRoot = root;
 
 root.render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<Route />
+			<SplashGuard>
+				<AppRouter />
+			</SplashGuard>
 		</QueryClientProvider>
 	</StrictMode>
 );
