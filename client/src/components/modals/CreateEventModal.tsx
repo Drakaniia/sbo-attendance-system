@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import CreateEventForm from '../components/forms/CreateEventForm';
-import AppleModal from '../components/ui/AppleModal';
+import { Plus } from '@phosphor-icons/react';
+import CreateEventForm from '../CreateEventForm';
+import AppleModal from '../ui/AppleModal';
 
 export default function CreateEventModal() {
 	const [opened, setOpened] = useState(false);

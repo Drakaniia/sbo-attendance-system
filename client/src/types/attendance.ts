@@ -4,10 +4,12 @@ import type { User } from './user';
 
 export type Attendance = {
 	_id: string;
-	event: Event;
-	recordedBy: User;
-	student: Student;
+	event?: Event | null;
+	recordedBy?: User | null;
+	student?: Student | null;
 	studentID: string;
-	timeIn: Date;
-	timeOut: Date;
+	timeIn: string | null;
+	timeOut: string | null;
+	createdAt: string;
+	updatedAt: string;
 };

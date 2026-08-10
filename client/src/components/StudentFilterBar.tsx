@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Check, ChevronDown, Search, X } from 'lucide-react';
+import { Check, CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { cn } from '../lib/utils';
 import { QUERY_KEYS } from '../constants';
 import {
 	useStudentFilterStore,
 	type StudentFilterValues,
-} from '../store/studentsFilter';
+} from '../store/students-filter';
 import { fetchAvailableCourses, fetchStudents } from '../api/student';
 import { queryClient } from '../main';
 
@@ -70,7 +70,7 @@ function FilterDropdown({
 				)}
 			>
 				<span>{isFiltered ? `${label}: ${value}` : label}</span>
-				<ChevronDown
+				<CaretDown
 					className={cn(
 						'w-3.5 h-3.5 text-white/40 transition-transform duration-200',
 						open && 'rotate-180'
@@ -181,7 +181,7 @@ export default function StudentFilterBar() {
 		<div className='glass rounded-2xl p-3 flex flex-col lg:flex-row lg:items-center gap-3'>
 			{/* Search */}
 			<div className='relative flex-1 min-w-[220px]'>
-				<Search className='absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none' />
+				<MagnifyingGlass className='absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none' />
 				<input
 					type='search'
 					value={search}

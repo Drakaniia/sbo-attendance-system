@@ -1,18 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { createEventSchema } from '../../lib/validations/eventSchema';
+import { createEventSchema } from '../lib/event-schema';
 import type z from 'zod';
-import InputField from '../InputField';
+import InputField from './InputField';
 import { DatePickerInput } from '@mantine/dates';
 import '@mantine/dates/styles.css';
 import { useEffect, useState } from 'react';
-import axiosInstance from '../../api/axiosInstance';
-import { useNotification } from '../../hooks/useNotification';
-import { queryClient } from '../../main';
-import { QUERY_KEYS } from '../../constants';
-import type { Event } from '../../types/event';
-import ClockTimePicker from '../ClockTimePicker';
-import { CalendarClock } from 'lucide-react';
+import axiosInstance from '../api/axios-instance';
+import { useNotification } from '../hooks/useNotification';
+import { queryClient } from '../main';
+import { QUERY_KEYS } from '../constants';
+import type { Event } from '../types/event';
+import ClockTimePicker from './ClockTimePicker';
+import { Timer } from '@phosphor-icons/react';
 
 type EventFormValues = z.infer<typeof createEventSchema>;
 
@@ -147,7 +147,7 @@ export default function CreateEventForm({
 
 			<div className='pt-1'>
 				<p className='flex items-center gap-2 text-[11px] font-semibold text-white/40 uppercase tracking-micro mb-3'>
-					<CalendarClock className='w-3.5 h-3.5' />
+					<Timer className='w-3.5 h-3.5' />
 					Schedule
 				</p>
 				<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>

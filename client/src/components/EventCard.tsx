@@ -3,12 +3,12 @@ import type { Event } from '../types/event';
 import { Link } from 'react-router-dom';
 import { cn, getEventStatusInfo, EVENT_STATUS_META } from '../lib/utils';
 import { queryClient } from '../main';
-import axiosInstance from '../api/axiosInstance';
+import axiosInstance from '../api/axios-instance';
 import { useNotification } from '../hooks/useNotification';
 import { QUERY_KEYS } from '../constants';
 import { useState } from 'react';
-import { Archive, Check, Clock, X } from 'lucide-react';
-import EditEventModal from '../modals/EditEventModal';
+import { Archive, Check, Clock, X } from '@phosphor-icons/react';
+import EditEventModal from './modals/EditEventModal';
 import EventStatusPill from './EventStatusPill';
 
 type EventCardProps = {

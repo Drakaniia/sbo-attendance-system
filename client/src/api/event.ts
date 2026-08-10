@@ -1,5 +1,5 @@
 import type { Event } from '../types/event';
-import axiosInstance from './axiosInstance';
+import axiosInstance from './axios-instance';
 
 export const fetchEvents = async (): Promise<Event[]> => {
 	try {

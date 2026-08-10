@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import type { Attendance } from '../types/attendance';
-import EditAttendanceModal from '../modals/EditAttendanceModal';
+import EditAttendanceModal from './modals/EditAttendanceModal';
 
 type AttendanceTableProps = {
 	attendances: Attendance[];
@@ -38,8 +38,6 @@ export default function AttendanceTable({
 				</thead>
 				<tbody>
 					{attendances.map((attendance) => {
-						const hasIn = !!attendance.timeIn;
-						const hasOut = !!attendance.timeOut;
 						return (
 							<tr
 								key={attendance._id}
@@ -49,19 +47,19 @@ export default function AttendanceTable({
 									{attendance.studentID}
 								</td>
 								<td className='py-3 px-3 font-medium text-white/80 whitespace-nowrap'>
-									{attendance.student.firstname} {attendance.student.lastname}
+									{attendance.student?.firstname ?? '—'} {attendance.student?.lastname ?? ''}
 								</td>
 								<td className='py-3 px-3 text-white/50 whitespace-nowrap'>
-									{attendance.student.course}
+									{attendance.student?.course ?? '—'}
 								</td>
 								<td className='py-3 px-3 text-white/50 tabular-nums'>
-									{attendance.student.year}
+									{attendance.student?.year ?? '—'}
 								</td>
 								<td className='py-3 px-3 text-white/60 tabular-nums whitespace-nowrap'>
-									{hasIn ? format(new Date(attendance.timeIn), TIME_FMT) : '—'}
+									{attendance.timeIn ? format(new Date(attendance.timeIn), TIME_FMT) : '—'}
 								</td>
 								<td className='py-3 px-3 text-white/60 tabular-nums whitespace-nowrap'>
-									{hasOut ? format(new Date(attendance.timeOut), TIME_FMT) : '—'}
+									{attendance.timeOut ? format(new Date(attendance.timeOut), TIME_FMT) : '—'}
 								</td>
 								<td className='py-3 px-3 last:pr-0'>
 									<EditAttendanceModal

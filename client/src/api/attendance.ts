@@ -1,6 +1,14 @@
 import type { Attendance } from '../types/attendance';
 import type { APIPaginatedResponse } from '../types/api-response';
-import axiosInstance from './axiosInstance';
+import axiosInstance from './axios-instance';
+
+/** Fetch recent attendances across all events (global feed). */
+export const fetchRecentAttendances = async (
+	limit: number = 20
+): Promise<Attendance[]> => {
+	const { data } = await axiosInstance.get(`/attendance?limit=${limit}`);
+	return data.data;
+};
 
 export const fetchRecentlyRecordedAttendances = async (
 	eventID: string,

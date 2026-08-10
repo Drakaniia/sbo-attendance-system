@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Check, Loader2, Pencil } from 'lucide-react';
-import AppleModal from '../components/ui/AppleModal';
-import { useNotification } from '../hooks/useNotification';
-import type { Attendance } from '../types/attendance';
-import { updateAttendanceStudentID } from '../api/attendance';
+import { Check, ArrowCounterClockwise, PencilSimple } from '@phosphor-icons/react';
+import AppleModal from '../ui/AppleModal';
+import { useNotification } from '../../hooks/useNotification';
+import type { Attendance } from '../../types/attendance';
+import { updateAttendanceStudentID } from '../../api/attendance';
 import type { AxiosError } from 'axios';
 
 const STUDENT_ID_LENGTH = 10;
@@ -93,7 +93,7 @@ export default function EditAttendanceModal({
 				title='Edit student ID'
 				className='p-1.5 rounded-lg text-white/30 hover:text-white/80 hover:bg-white/[0.06] transition-colors active:scale-90'
 			>
-				<Pencil className='w-3.5 h-3.5' />
+				<PencilSimple className='w-3.5 h-3.5' />
 			</button>
 
 			<AppleModal
@@ -111,12 +111,12 @@ export default function EditAttendanceModal({
 						</p>
 						<div className='space-y-1.5'>
 							<p className='text-sm font-medium text-white/80'>
-								{attendance.student.firstname || '—'}{' '}
-								{attendance.student.lastname || ''}
+								{attendance.student?.firstname || '—'}{' '}
+								{attendance.student?.lastname || ''}
 							</p>
 							<p className='text-xs text-white/40'>
-								{attendance.student.course || 'No course'} · Year{' '}
-								{attendance.student.year}
+								{attendance.student?.course || 'No course'} · Year{' '}
+								{attendance.student?.year ?? '—'}
 							</p>
 							<p className='font-mono text-xs text-white/50'>
 								ID: {attendance.studentID}
@@ -163,7 +163,7 @@ export default function EditAttendanceModal({
 							disabled={isSaving || !isValid || !hasChanged}
 							className='inline-flex items-center gap-2 rounded-full bg-blue-500 hover:bg-blue-400 disabled:bg-white/[0.08] disabled:text-white/30 text-white text-sm font-semibold px-4 py-2 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:active:scale-100'
 						>
-							{isSaving && <Loader2 className='w-3.5 h-3.5 animate-spin' />}
+							{isSaving && <ArrowCounterClockwise className='w-3.5 h-3.5 animate-spin' />}
 							{isSaving ? 'Saving…' : 'Save'}
 						</button>
 					</div>

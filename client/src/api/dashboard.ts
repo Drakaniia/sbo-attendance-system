@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from './axios-instance';
 import type { APIResponse } from '../types/api-response';
 
 export type DashboardStats = {

@@ -1,5 +1,5 @@
-import Header from '../components/ui/header';
-import CreateEventModal from '../modals/CreateEventModal';
+import Header from '../components/ui/Header';
+import CreateEventModal from '../components/modals/CreateEventModal';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '../constants';
 import { fetchEvents } from '../api/event';
@@ -8,13 +8,13 @@ import { useMemo, useState } from 'react';
 import { countEventsStats } from '../lib/utils';
 import { motion, type Variants } from 'framer-motion';
 import {
-	Search,
-	CalendarDays,
-	Activity,
+	MagnifyingGlass,
+	Calendar,
+	Pulse,
 	Sun,
-	CalendarClock,
-	CheckCircle2,
-} from 'lucide-react';
+	Timer,
+	CheckCircle,
+} from '@phosphor-icons/react';
 import LiveClock from '../components/LiveClock';
 import { StatCard } from '../components/charts/StatCard';
 import { format } from 'date-fns';
@@ -39,14 +39,14 @@ const STAT_META = [
 		label: 'Total Events',
 		color: '#3b82f6',
 		delay: 0,
-		icon: CalendarDays,
+		icon: Calendar,
 	},
 	{
 		key: 'ongoing',
 		label: 'Ongoing',
 		color: '#34d399',
 		delay: 60,
-		icon: Activity,
+		icon: Pulse,
 	},
 	{
 		key: 'today',
@@ -60,14 +60,14 @@ const STAT_META = [
 		label: 'Upcoming',
 		color: '#a78bfa',
 		delay: 180,
-		icon: CalendarClock,
+		icon: Timer,
 	},
 	{
 		key: 'ended',
 		label: 'Ended',
 		color: '#f87171',
 		delay: 240,
-		icon: CheckCircle2,
+		icon: CheckCircle,
 	},
 ] as const;
 
@@ -106,29 +106,29 @@ export default function Events() {
 	return (
 		<div className='flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5'>
 			{/* Sticky toolbar — translucent chrome, content scrolls beneath */}
-			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4'>
+			<header className='sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5'>
 				<div className='flex items-center justify-between gap-4'>
-					<div>
-						<Header className='!text-2xl !tracking-tight'>Events</Header>
-						<p className='text-white/40 text-sm mt-1'>
-							{format(new Date(), 'EEEE, MMMM d, yyyy')}
-						</p>
-					</div>
-					<div className='flex items-center gap-3'>
-						<div className='hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60'>
-							<span className='relative flex w-2 h-2'>
-								<span className='absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping' />
-								<span className='relative inline-flex w-2 h-2 rounded-full bg-emerald-400' />
-							</span>
-							<LiveClock
-								format='12'
-								showSeconds
-								className='tabular-nums text-white/60'
-							/>
+					<div className='min-w-0'>
+							<Header className='!text-2xl !tracking-tight truncate'>Events</Header>
+							<p className='text-white/40 text-sm mt-1 truncate'>
+								{format(new Date(), 'EEEE, MMMM d, yyyy')}
+							</p>
 						</div>
-						<CreateEventModal />
+						<div className='flex items-center gap-3'>
+							<div className='hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60'>
+								<span className='relative flex w-2 h-2'>
+									<span className='absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping' />
+									<span className='relative inline-flex w-2 h-2 rounded-full bg-emerald-400' />
+								</span>
+								<LiveClock
+									format='12'
+									showSeconds
+									className='tabular-nums text-white/60'
+								/>
+							</div>
+							<CreateEventModal />
+						</div>
 					</div>
-				</div>
 			</header>
 
 			{/* Stat cards */}
@@ -147,7 +147,7 @@ export default function Events() {
 
 			{/* Search */}
 			<div className='relative'>
-				<Search className='absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none' />
+				<MagnifyingGlass className='absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none' />
 				<input
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
@@ -176,7 +176,7 @@ export default function Events() {
 			) : filteredEvents.length === 0 ? (
 				<div className='glass rounded-2xl py-16 flex flex-col items-center justify-center gap-3 text-center'>
 					<div className='w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center'>
-						<CalendarDays className='w-6 h-6 text-white/30' />
+						<Calendar className='w-6 h-6 text-white/30' />
 					</div>
 					<p className='text-white/60 font-medium'>
 						{search ? 'No events match your search' : 'No events yet'}
