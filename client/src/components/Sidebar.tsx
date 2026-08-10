@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
-import LogoutButton from './buttons/LogoutButton';
+import { CaretLeft } from '@phosphor-icons/react';
 import RailTooltip from './RailTooltip';
 import { NAV_SECTIONS, type SidebarItem } from '../constants/nav';
 import { cn } from '../lib/utils';
@@ -23,9 +22,9 @@ function NavItem({ item, collapsed }: NavItemProps) {
 		<NavLink
 			to={item.path}
 			className={cn(
-				'group relative flex h-10 items-center rounded-xl outline-none transition-[background-color,transform] duration-150 ease-apple-out focus-visible:ring-2 focus-visible:ring-blue-400/50 active:scale-[0.97] [@media(hover:hover)]:hover:bg-white/[0.04]',
-				!collapsed && 'px-3',
-				collapsed && 'justify-center px-0'
+				'group relative flex h-10 items-center outline-none transition-[background-color,transform] duration-150 ease-apple-out focus-visible:ring-2 focus-visible:ring-blue-400/50 active:scale-[0.97] [@media(hover:hover)]:hover:bg-white/[0.03]',
+				!collapsed && 'rounded-xl px-3',
+				collapsed && 'mx-auto w-10 justify-center rounded-full px-0'
 			)}
 		>
 			{({ isActive }) => (
@@ -33,11 +32,19 @@ function NavItem({ item, collapsed }: NavItemProps) {
 					{/* Active pill — slides between items on a critically damped spring */}
 					{isActive &&
 						(reduceMotion ? (
-							<span className='absolute inset-0 rounded-xl border border-white/[0.08] bg-white/[0.09]' />
+							<span
+								className={cn(
+									'absolute inset-0 border border-white/[0.08] bg-white/[0.07]',
+									collapsed ? 'rounded-full' : 'rounded-xl'
+								)}
+							/>
 						) : (
 							<motion.span
 								layoutId='sidebar-active-pill'
-								className='absolute inset-0 rounded-xl border border-white/[0.08] bg-white/[0.09]'
+								className={cn(
+									'absolute inset-0 border border-white/[0.08] bg-white/[0.07]',
+									collapsed ? 'rounded-full' : 'rounded-xl'
+								)}
 								transition={{ type: 'spring', bounce: 0, duration: 0.45 }}
 							/>
 						))}
@@ -96,7 +103,7 @@ export default function Sidebar() {
 			transition={
 				reduceMotion ? { duration: 0 } : { type: 'spring', bounce: 0.15, duration: 0.5 }
 			}
-			className='sidebar-material sticky top-0 z-40 flex h-screen shrink-0 flex-col border-r border-white/[0.06]'
+			className='sidebar-material sticky top-0 z-40 flex h-full shrink-0 flex-col border-r border-white/[0.06]'
 		>
 			{/* Wordmark — display tracking tight, micro caps subtitle */}
 			<div
@@ -158,16 +165,20 @@ export default function Sidebar() {
 				))}
 			</nav>
 
-			{/* Footer — logout + collapse toggle */}
-			<div className='space-y-1 border-t border-white/[0.06] p-3'>
-				<LogoutButton collapsed={collapsed} />
+			{/* Footer — collapse toggle */}
+			<div className='border-t border-white/[0.06] p-3'>
 				<button
 					onClick={() => setCollapsed((v) => !v)}
 					aria-pressed={collapsed}
 					aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-					className='group relative flex h-10 w-full items-center justify-center rounded-xl outline-none transition-[background-color,transform] duration-150 ease-apple-out focus-visible:ring-2 focus-visible:ring-white/40 active:scale-[0.97] [@media(hover:hover)]:hover:bg-white/[0.04]'
+					className={cn(
+						'group relative flex h-10 items-center outline-none transition-[background-color,transform] duration-150 ease-apple-out focus-visible:ring-2 focus-visible:ring-white/40 active:scale-[0.97] [@media(hover:hover)]:hover:bg-white/[0.03]',
+						collapsed
+							? 'mx-auto w-10 justify-center rounded-full'
+							: 'w-full justify-start rounded-xl px-3'
+					)}
 				>
-					<ChevronLeft
+					<CaretLeft
 						className={cn(
 							'h-5 w-5 shrink-0 text-white/45 transition-transform duration-300 ease-apple-out group-hover:text-white/80',
 							collapsed && 'rotate-180'
