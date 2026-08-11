@@ -2,7 +2,7 @@ use rusqlite::{params_from_iter, Connection};
 use serde::Serialize;
 use std::path::Path;
 
-use super::attendance_filter;
+use super::reports_stats::attendance_filter;
 
 // --------------------------------------------------------------------------
 // Response types

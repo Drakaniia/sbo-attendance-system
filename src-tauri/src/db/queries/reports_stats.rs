@@ -2,7 +2,41 @@ use rusqlite::{params_from_iter, Connection};
 use serde::Serialize;
 use std::path::Path;
 
-use super::attendance_filter;
+// --------------------------------------------------------------------------
+// Shared filter helper (was in reports/mod.rs)
+// --------------------------------------------------------------------------
+
+/// Returns (where_clause_sql, param_values) for filtering attendance by
+/// date range and optional event.
+pub(crate) fn attendance_filter(
+    start_date: Option<&str>,
+    end_date: Option<&str>,
+    event_id: Option<&str>,
+) -> (String, Vec<Box<dyn rusqlite::types::ToSql>>) {
+    let mut conditions: Vec<String> = Vec::new();
+    let mut values: Vec<Box<dyn rusqlite::types::ToSql>> = Vec::new();
+
+    if let Some(sd) = start_date {
+        values.push(Box::new(sd.to_string()));
+        conditions.push(format!("a.created_at >= ?{}", values.len()));
+    }
+    if let Some(ed) = end_date {
+        values.push(Box::new(format!("{} 23:59:59", ed)));
+        conditions.push(format!("a.created_at <= ?{}", values.len()));
+    }
+    if let Some(eid) = event_id {
+        values.push(Box::new(eid.to_string()));
+        conditions.push(format!("a.event_id = ?{}", values.len()));
+    }
+
+    let where_clause = if conditions.is_empty() {
+        String::new()
+    } else {
+        format!("WHERE {}", conditions.join(" AND "))
+    };
+
+    (where_clause, values)
+}
 
 // --------------------------------------------------------------------------
 // Response types

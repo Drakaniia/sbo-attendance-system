@@ -2,7 +2,7 @@ use rusqlite::{params, Connection, Result};
 use std::path::Path;
 use uuid::Uuid;
 
-use super::models::{populate_sql, row_to_attendance, AttendancePopulated};
+use super::attendance_models::{populate_sql, row_to_attendance, AttendancePopulated};
 use crate::db::queries::students::{self, Student};
 
 // --------------------------------------------------------------------------
