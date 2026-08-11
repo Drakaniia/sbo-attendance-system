@@ -4,7 +4,6 @@ import AppleModal from '../ui/AppleModal';
 import { useNotification } from '../../hooks/useNotification';
 import type { Attendance } from '../../types/attendance';
 import { updateAttendanceStudentID } from '../../api/attendance';
-import type { AxiosError } from 'axios';
 
 const STUDENT_ID_LENGTH = 10;
 
@@ -55,9 +54,7 @@ export default function EditAttendanceModal({ attendance, onSuccess }: EditAtten
 			onSuccess(updated);
 			setOpened(false);
 		} catch (err) {
-			const message =
-				(err as AxiosError<{ message?: string }>)?.response?.data?.message ??
-				'Failed to update attendance';
+			const message = (err as { message?: string })?.message ?? 'Failed to update attendance';
 			notification({
 				title: 'Update failed',
 				message: message,

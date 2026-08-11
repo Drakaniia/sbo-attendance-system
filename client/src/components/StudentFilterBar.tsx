@@ -133,7 +133,7 @@ export default function StudentFilterBar() {
 
 	const { data: courses } = useQuery({
 		queryKey: [QUERY_KEYS.STUDENT_COURSES],
-		queryFn: fetchAvailableCourses,
+		queryFn: ({ signal }) => fetchAvailableCourses(signal),
 	});
 
 	const prefetch = (filters: StudentFilterValues) => {

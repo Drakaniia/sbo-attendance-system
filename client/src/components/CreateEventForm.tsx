@@ -6,7 +6,7 @@ import InputField from './InputField';
 import { DatePickerInput } from '@mantine/dates';
 import '@mantine/dates/styles.css';
 import { useEffect, useState } from 'react';
-import axiosInstance from '../api/axios-instance';
+import { createEvent, updateEvent, type EventPayload } from '../api/event';
 import { useNotification } from '../hooks/useNotification';
 import { queryClient } from '../main';
 import { QUERY_KEYS } from '../constants';
@@ -75,18 +75,20 @@ export default function CreateEventForm({ event, onSuccess }: CreateEventFormPro
 				return;
 			}
 
-			const body = {
+			const body: EventPayload = {
 				...formData,
 				startTime: startTime.toISOString(),
 				endTime: endTime.toISOString(),
 			};
 
-			const { data } = event
-				? await axiosInstance.put(`/event/${event._id}`, body)
-				: await axiosInstance.post('/event', body);
+			if (event) {
+				await updateEvent(event._id, body);
+			} else {
+				await createEvent(body);
+			}
 
 			notification({
-				title: data.message,
+				title: event ? 'Event updated successfully' : 'Event created successfully',
 				message: '',
 			});
 

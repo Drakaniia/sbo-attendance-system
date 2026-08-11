@@ -3,7 +3,7 @@ import type { Event } from '../types/event';
 import { Link } from 'react-router-dom';
 import { cn, getEventStatusInfo, EVENT_STATUS_META } from '../lib/utils';
 import { queryClient } from '../main';
-import axiosInstance from '../api/axios-instance';
+import { archiveEvent } from '../api/event';
 import { useNotification } from '../hooks/useNotification';
 import { QUERY_KEYS } from '../constants';
 import { useState } from 'react';
@@ -29,11 +29,11 @@ export default function EventCard({ event }: EventCardProps) {
 			return;
 		}
 		try {
-			const { data } = await axiosInstance.patch(`/event/${eventID}/archive`);
+			await archiveEvent(eventID);
 
 			notification({
 				title: 'Event archived',
-				message: data.message ?? '',
+				message: '',
 			});
 			await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EVENTS] });
 		} catch (error) {

@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { FadersHorizontal, CaretDown, Printer, DownloadSimple } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import DateRangePicker, { type DateRange } from './DateRangePicker';
-import { downloadReportsCsv } from '../../api/reports';
+import { downloadReportsExcel } from '../../api/reports';
 import { useNotification } from '../../hooks/useNotification';
 import { cn } from '../../lib/utils';
 
@@ -26,7 +26,7 @@ export default function ReportToolbar({
 }: ReportToolbarProps) {
 	const reduceMotion = useReducedMotion();
 	const notification = useNotification();
-	const [csvMenuOpen, setCsvMenuOpen] = useState(false);
+	const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
 	// ── Subtitle: human-readable date range ──────────
 	const subtitle = (() => {
@@ -40,10 +40,10 @@ export default function ReportToolbar({
 		return '';
 	})();
 
-	// ── CSV export ───────────────────────────────────
-	const handleCsvExport = useCallback(
+	// ── Excel export ────────────────────────────────
+	const handleExcelExport = useCallback(
 		async (mode: 'all' | 'event') => {
-			setCsvMenuOpen(false);
+			setExportMenuOpen(false);
 			try {
 				const query: Record<string, string> = {};
 				if (dateRange.preset !== 'all' && 'startDate' in dateRange) {
@@ -53,7 +53,7 @@ export default function ReportToolbar({
 				if (mode === 'event' && selectedEventId) {
 					query.eventId = selectedEventId;
 				}
-				await downloadReportsCsv(query);
+				await downloadReportsExcel(query);
 			} catch (err) {
 				const msg = err instanceof Error ? err.message : String(err);
 				notification({
@@ -121,30 +121,30 @@ export default function ReportToolbar({
 					{/* Date Range Picker */}
 					<DateRangePicker value={dateRange} onChange={onDateRangeChange} />
 
-					{/* CSV Export dropdown */}
+					{/* Excel Export dropdown */}
 					<div className="relative">
 						<button
 							type="button"
-							onClick={() => setCsvMenuOpen((o) => !o)}
+								onClick={() => setExportMenuOpen((o) => !o)}
 							className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
 						>
 							<DownloadSimple className="w-4 h-4" />
-							<span className="hidden sm:inline">CSV</span>
+							<span className="hidden sm:inline">Excel</span>
 							<CaretDown
 								className={cn(
 									'w-3 h-3 text-white/40 transition-transform duration-200',
-									csvMenuOpen && 'rotate-180'
+									exportMenuOpen && 'rotate-180'
 								)}
 							/>
 						</button>
 
-						{csvMenuOpen && (
+						{exportMenuOpen && (
 							<>
-								<div className="fixed inset-0 z-20" onClick={() => setCsvMenuOpen(false)} />
+								<div className="fixed inset-0 z-20" onClick={() => setExportMenuOpen(false)} />
 								<div className="absolute right-0 top-[calc(100%+8px)] z-30 w-48 glass-modal rounded-2xl p-1.5 origin-top-right motion-safe:animate-[fadeIn_0.15s_ease-out_forwards]">
 									<button
 										type="button"
-										onClick={() => handleCsvExport('all')}
+										onClick={() => handleExcelExport('all')}
 										className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors"
 									>
 										Export all events
@@ -152,7 +152,7 @@ export default function ReportToolbar({
 									{selectedEventId && (
 										<button
 											type="button"
-											onClick={() => handleCsvExport('event')}
+											onClick={() => handleExcelExport('event')}
 											className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors"
 										>
 											Export this event only

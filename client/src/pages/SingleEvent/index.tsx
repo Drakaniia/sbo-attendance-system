@@ -2,12 +2,16 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '../../constants';
 import { fetchSingleEvent } from '../../api/event';
-import { Check, DownloadSimple, Scan } from '@phosphor-icons/react';
+import { Check, DownloadSimple, Scan, WarningCircle } from '@phosphor-icons/react';
 import LiveClock from '../../components/LiveClock';
 import { useEffect, useRef, useState } from 'react';
-import axiosInstance from '../../api/axios-instance';
 import { useNotification } from '../../hooks/useNotification';
-import { fetchRecentlyRecordedAttendances } from '../../api/attendance';
+import {
+	exportEventExcel,
+	fetchRecentlyRecordedAttendances,
+	recordTimeIn,
+	recordTimeOut,
+} from '../../api/attendance';
 import { queryClient } from '../../main';
 import AttendanceTable from '../../components/AttendanceTable';
 import Pagination from '../../components/ui/Pagination';
@@ -117,16 +121,18 @@ export default function SingleEvent() {
 		// Double-submit guard — the 10-digit onChange and the scanner's trailing
 		// Enter can both fire for the same scan.
 		if (isSubmittingRef.current) return;
-		if (id.length !== STUDENT_ID_LENGTH) return;
+		// Accept scans even when the ID is shorter than the full 10-digit
+		// length — the operator confirms with Enter. Only reject an empty field.
+		if (!id.trim()) return;
 
 		isSubmittingRef.current = true;
 		setIsSubmitting(true);
 
 		try {
 			if (timeType === 'Time In') {
-				await axiosInstance.post(`/attendance/record/time-in/event/${eventID}`, { studentID: id });
+				await recordTimeIn(eventID ?? '', id);
 			} else {
-				await axiosInstance.post(`/attendance/record/time-out/event/${eventID}`, { studentID: id });
+				await recordTimeOut(eventID ?? '', id);
 			}
 
 			notification({
@@ -145,8 +151,8 @@ export default function SingleEvent() {
 			});
 		} catch (error) {
 			console.error('Failed to record attendance', error);
-			// The axios interceptor rejects with a plain { status, message,
-			// errorCode } object, not an Error instance.
+			// The IPC helper rejects with an Error carrying the optional
+			// { status, message, errorCode } shape the interceptor used.
 			const err = error as {
 				status?: number;
 				message?: string;
@@ -186,10 +192,12 @@ export default function SingleEvent() {
 	};
 
 	const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		// Barcode scanners type the digits then send a trailing Enter.
+		// Barcode scanners type the digits then send a trailing Enter. Manual
+		// entry is confirmed the same way — submit whatever is in the field,
+		// even if it is shorter than the full 10-digit ID.
 		if (e.key === 'Enter') {
 			e.preventDefault();
-			if (studentID.length === STUDENT_ID_LENGTH) {
+			if (studentID.trim()) {
 				submitAttendance(studentID);
 			}
 		}
@@ -211,8 +219,48 @@ export default function SingleEvent() {
 	}
 
 	if (error || !event || errorAttendances || !attendancesData) {
-		return <div>Error fetching event</div>;
+		// Surface the real backend message — a bare "Error fetching event"
+		// gives no hint of what went wrong (e.g. a command rejection).
+		const messages = [error, errorAttendances]
+			.map((e) => (e instanceof Error ? e.message : e ? String(e) : ''))
+			.filter(Boolean)
+			.join(' · ');
+
+		return (
+			<div className="flex flex-col items-center justify-center gap-3 py-20 text-center" role="alert">
+				<div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
+					<WarningCircle className="w-6 h-6 text-red-400" />
+				</div>
+				<p className="text-white/70 font-medium">Error fetching event</p>
+				{messages && (
+					<p className="text-sm text-white/35 max-w-md break-words">{messages}</p>
+				)}
+				<button
+					type="button"
+					onClick={() => {
+						queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EVENTS, eventID] });
+						queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ATTENDANCES, eventID] });
+					}}
+					className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2.5 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
+				>
+					Try again
+				</button>
+			</div>
+		);
 	}
+
+	const handleExportExcel = async () => {
+		try {
+			await exportEventExcel(event._id);
+		} catch (error) {
+			console.error('Failed to export Excel', error);
+			notification({
+				title: 'Export failed',
+				message: error instanceof Error ? error.message : 'Failed to export Excel',
+				color: 'red',
+			});
+		}
+	};
 
 	return (
 		<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
@@ -314,15 +362,14 @@ export default function SingleEvent() {
 						<p className="text-[11px] font-semibold text-white/40 uppercase tracking-micro mb-4">
 							Export
 						</p>
-						<a
-							href={`http://127.0.0.1:8000/api/v1/attendance/event/${event._id}/download/csv`}
-							target="_blank"
-							rel="noreferrer"
+						<button
+							type="button"
+							onClick={handleExportExcel}
 							className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2.5 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
 						>
 							<DownloadSimple className="w-4 h-4" />
-							Download CSV
-						</a>
+							Export Excel
+						</button>
 					</div>
 
 					{/* Live clock */}
