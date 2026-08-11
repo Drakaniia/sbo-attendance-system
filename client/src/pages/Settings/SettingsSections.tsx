@@ -88,21 +88,43 @@ export function DatabaseSection({
 type DisplaySectionProps = {
 	kioskEnabled: boolean;
 	onKioskToggle: (enabled: boolean) => void;
+	autoStartEnabled: boolean;
+	onAutoStartToggle: (enabled: boolean) => void;
 };
 
-export function DisplaySection({ kioskEnabled, onKioskToggle }: DisplaySectionProps) {
+export function DisplaySection({
+	kioskEnabled,
+	onKioskToggle,
+	autoStartEnabled,
+	onAutoStartToggle,
+}: DisplaySectionProps) {
 	return (
 		<Section delay={CARD_DELAYS[1]}>
-			<SectionLabel icon={Desktop} label="Display" />
+			<SectionLabel icon={Desktop} label="Display & Startup" />
 
-			<div className="flex items-center justify-between gap-4">
-				<div>
-					<p className="text-sm font-medium text-white/70">Kiosk mode</p>
-					<p className="mt-0.5 text-xs text-white/35">
-						Fullscreen the window for event-day use. Press Escape to exit.
-					</p>
+			<div className="space-y-5">
+				<div className="flex items-center justify-between gap-4">
+					<div>
+						<p className="text-sm font-medium text-white/70">Kiosk mode</p>
+						<p className="mt-0.5 text-xs text-white/35">
+							Start the app fullscreen for event-day use. Press Escape to exit.
+						</p>
+					</div>
+					<ToggleSwitch checked={kioskEnabled} onChange={onKioskToggle} />
 				</div>
-				<ToggleSwitch checked={kioskEnabled} onChange={onKioskToggle} />
+
+				<div className="border-t border-white/[0.06] pt-5">
+					<div className="flex items-center justify-between gap-4">
+						<div>
+							<p className="text-sm font-medium text-white/70">Start with Windows</p>
+							<p className="mt-0.5 text-xs text-white/35">
+								Open SEATS automatically when Windows starts — no admin rights needed. Leave off on
+								shared lab machines.
+							</p>
+						</div>
+						<ToggleSwitch checked={autoStartEnabled} onChange={onAutoStartToggle} />
+					</div>
+				</div>
 			</div>
 		</Section>
 	);

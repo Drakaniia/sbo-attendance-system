@@ -10,6 +10,7 @@ export default function Settings() {
 		backingUp,
 		restoring,
 		kioskEnabled,
+		autoStartEnabled,
 		version,
 		resetOpen,
 		setResetOpen,
@@ -17,6 +18,7 @@ export default function Settings() {
 		handleBackup,
 		handleRestore,
 		handleKioskToggle,
+		handleAutoStartToggle,
 		handleResetAll,
 		handleCopyPath,
 	} = useSettingsActions();
@@ -51,7 +53,12 @@ export default function Settings() {
 				onRestore={handleRestore}
 				onDeleteClick={() => setResetOpen(true)}
 			/>
-			<DisplaySection kioskEnabled={kioskEnabled} onKioskToggle={handleKioskToggle} />
+			<DisplaySection
+				kioskEnabled={kioskEnabled}
+				onKioskToggle={handleKioskToggle}
+				autoStartEnabled={autoStartEnabled}
+				onAutoStartToggle={handleAutoStartToggle}
+			/>
 			<AboutSection dbPath={dbPath} version={version} />
 			<ResetDataModal
 				open={resetOpen}

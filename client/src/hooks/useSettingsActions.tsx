@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 import { ArrowsOut, Check, Desktop } from '@phosphor-icons/react';
 import { open, save } from '@tauri-apps/plugin-dialog';
-import { backupDb, getDbPath, restoreDb, setKiosk } from '../lib/tauri';
+import {
+	backupDb,
+	getAppSettings,
+	getDbPath,
+	restoreDb,
+	setAutoStart,
+	setKiosk,
+} from '../lib/tauri';
 import { useNotification } from './useNotification';
 import { deleteAllData } from '../api/settings';
 
@@ -10,6 +17,7 @@ export type SettingsActions = {
 	backingUp: boolean;
 	restoring: boolean;
 	kioskEnabled: boolean;
+	autoStartEnabled: boolean;
 	version: string;
 	resetOpen: boolean;
 	setResetOpen: (open: boolean) => void;
@@ -17,6 +25,7 @@ export type SettingsActions = {
 	handleBackup: () => Promise<void>;
 	handleRestore: () => Promise<void>;
 	handleKioskToggle: (enabled: boolean) => Promise<void>;
+	handleAutoStartToggle: (enabled: boolean) => Promise<void>;
 	handleResetAll: () => Promise<void>;
 	handleCopyPath: () => Promise<void>;
 };
@@ -27,6 +36,7 @@ export function useSettingsActions(): SettingsActions {
 	const [backingUp, setBackingUp] = useState(false);
 	const [restoring, setRestoring] = useState(false);
 	const [kioskEnabled, setKioskEnabled] = useState(false);
+	const [autoStartEnabled, setAutoStartEnabled] = useState(false);
 	const [version, setVersion] = useState<string>('...');
 	const [resetOpen, setResetOpen] = useState(false);
 	const [resetting, setResetting] = useState(false);
@@ -36,6 +46,14 @@ export function useSettingsActions(): SettingsActions {
 		getDbPath()
 			.then(setDbPath)
 			.catch(() => setDbPath('Unknown'));
+
+		// Persisted display & startup preferences.
+		getAppSettings()
+			.then((s) => {
+				setKioskEnabled(s.kiosk);
+				setAutoStartEnabled(s.autoStart);
+			})
+			.catch(() => {});
 
 		// Attempt to read package version from the Tauri app
 		const appVer = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : null;
@@ -106,18 +124,6 @@ export function useSettingsActions(): SettingsActions {
 		}
 	};
 
-	// ── Detect current fullscreen state on mount ────────
-	useEffect(() => {
-		import('@tauri-apps/api/window')
-			.then(({ getCurrentWindow }) => {
-				getCurrentWindow()
-					.isFullscreen()
-					.then(setKioskEnabled)
-					.catch(() => {});
-			})
-			.catch(() => {});
-	}, []);
-
 	// ── Kiosk ─────────────────────────────────────────
 	const handleKioskToggle = async (enabled: boolean) => {
 		try {
@@ -133,6 +139,28 @@ export function useSettingsActions(): SettingsActions {
 			const msg = err instanceof Error ? err.message : String(err);
 			notification({
 				title: 'Kiosk toggle failed',
+				message: msg,
+			});
+		}
+	};
+
+	// ── Auto-start with Windows ──────────────────────
+	const handleAutoStartToggle = async (enabled: boolean) => {
+		try {
+			await setAutoStart(enabled);
+			setAutoStartEnabled(enabled);
+			notification({
+				title: enabled ? 'Auto-start enabled' : 'Auto-start disabled',
+				message: enabled
+					? 'SEATS will open automatically when Windows starts'
+					: 'SEATS will no longer start with Windows',
+				icon: <Check />,
+				color: 'teal',
+			});
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			notification({
+				title: 'Auto-start toggle failed',
 				message: msg,
 			});
 		}
@@ -187,6 +215,7 @@ export function useSettingsActions(): SettingsActions {
 		backingUp,
 		restoring,
 		kioskEnabled,
+		autoStartEnabled,
 		version,
 		resetOpen,
 		setResetOpen,
@@ -194,6 +223,7 @@ export function useSettingsActions(): SettingsActions {
 		handleBackup,
 		handleRestore,
 		handleKioskToggle,
+		handleAutoStartToggle,
 		handleResetAll,
 		handleCopyPath,
 	};
