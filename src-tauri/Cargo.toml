@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "SEATS — SBO Attendance System (desktop)"
 authors = []
 edition = "2021"
-rust-version = "1.80"
+rust-version = "1.88"
 
 [lib]
 name = "seats_lib"
@@ -15,24 +15,27 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
+tauri-plugin-autostart = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
+tauri-plugin-single-instance = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-axum = { version = "0.8", features = ["multipart"] }
-tokio = { version = "1", features = ["full"] }
-tower-http = { version = "0.6", features = ["cors", "trace"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
 calamine = { version = "0.26", features = ["dates"] }
 csv = "1"
+rust_xlsxwriter = "0.97"
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1", features = ["v4"] }
-reqwest = { version = "0.12", features = ["json"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
 
+[dev-dependencies]
+# Used by the export tests to inspect generated .xlsx internals (e.g. assert
+# no formula elements in user-data cells).
+zip = "8"
+
 [profile.release]
-panic = "abort"
 codegen-units = 1
 lto = true
 opt-level = "s"
