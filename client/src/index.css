@@ -22,6 +22,19 @@ body,
 		Roboto,
 		sans-serif;
 	font-optical-sizing: auto;
+
+	/* Desktop app — disable text selection/highlight/copy across the board.
+	   Re-enabled only for actual input controls where the user needs to edit text. */
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* Restore text selection on interactive text controls */
+input,
+textarea,
+[contenteditable] {
+	-webkit-user-select: text;
+	user-select: text;
 }
 
 @media (prefers-reduced-motion: reduce) {
