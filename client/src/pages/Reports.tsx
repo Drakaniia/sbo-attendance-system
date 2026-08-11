@@ -7,7 +7,7 @@ import { StatCard } from '../components/charts/StatCard';
 import { DashboardAreaChart } from '../components/charts/DashboardAreaChart';
 import { DashboardBarChart } from '../components/charts/DashboardBarChart';
 import { DashboardPieChart } from '../components/charts/DashboardPieChart';
-import HeatmapChart from '../components/charts/heatmap/HeatmapChart';
+import HeatmapChart from '../components/charts/HeatmapChart';
 import type { HeatmapDailyEntry, HeatmapHourlyEntry } from '../api/reports';
 import { useReportsData, DONUT_COLORS, TREND_COLORS, YEAR_COLORS } from '../hooks/useReportsData';
 

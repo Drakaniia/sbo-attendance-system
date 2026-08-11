@@ -1,12 +1,12 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
-import type { HeatmapDailyEntry, HeatmapHourlyEntry } from '../../../api/reports';
+import type { HeatmapDailyEntry, HeatmapHourlyEntry } from '../../api/reports';
 import { HeatmapHeader } from './HeatmapHeader';
-import { HourlyGrid } from './HourlyGrid';
-import { DailyGrid } from './DailyGrid';
-import { LegendBar } from './LegendBar';
-import { SkeletonGrid } from './SkeletonGrid';
-import { getTooltipLabel } from './color';
+import { HourlyGrid } from './HeatmapHourlyGrid';
+import { DailyGrid } from './HeatmapDailyGrid';
+import { LegendBar } from './HeatmapLegendBar';
+import { SkeletonGrid } from './HeatmapSkeletonGrid';
+import { getTooltipLabel } from './heatmap-color';
 
 type HeatmapChartProps = {
 	hourlyData: HeatmapHourlyEntry[];

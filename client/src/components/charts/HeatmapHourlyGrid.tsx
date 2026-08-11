@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CELL_GAP, CELL_SIZE, HOUR_LABELS, heatmapColor, getTooltipLabel } from './color';
+import { CELL_GAP, CELL_SIZE, HOUR_LABELS, heatmapColor, getTooltipLabel } from './heatmap-color';
 
 export function HourlyGrid({
 	hourlyMap,

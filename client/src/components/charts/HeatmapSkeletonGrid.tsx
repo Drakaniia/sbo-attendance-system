@@ -1,4 +1,4 @@
-import { CELL_SIZE } from './color';
+import { CELL_SIZE } from './heatmap-color';
 
 export function SkeletonGrid({ rows }: { rows: number }) {
 	return (
@@ -9,10 +9,7 @@ export function SkeletonGrid({ rows }: { rows: number }) {
 						<div className="w-10 shrink-0 flex justify-end pr-2">
 							<div
 								className="bg-white/[0.03] rounded-sm animate-pulse"
-								style={{
-									width: 20,
-									height: 8,
-								}}
+								style={{ width: 20, height: 8 }}
 							/>
 						</div>
 					)}

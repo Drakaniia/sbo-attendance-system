@@ -1,4 +1,4 @@
-import { CELL_GAP, CELL_SIZE } from './color';
+import { CELL_GAP, CELL_SIZE } from './heatmap-color';
 
 export function LegendBar() {
 	return (
