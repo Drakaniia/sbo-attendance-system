@@ -1,5 +1,4 @@
-import axiosInstance from './axios-instance';
-import type { APIResponse } from '../types/api-response';
+import { ipc } from '../lib/ipc';
 
 export type ResetSummary = {
 	students: number;
@@ -9,6 +8,5 @@ export type ResetSummary = {
 
 /** Delete all students, events, and attendance records. */
 export const deleteAllData = async (): Promise<ResetSummary> => {
-	const { data } = await axiosInstance.delete<APIResponse<ResetSummary>>('/settings/data');
-	return data.data;
+	return ipc<ResetSummary>('reset_all_data');
 };

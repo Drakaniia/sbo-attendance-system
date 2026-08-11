@@ -1,33 +1,34 @@
 import type { StudentFilterValues } from '../store/students-filter';
-import type { APIPaginatedResponse } from '../types/api-response';
+import type { PaginatedResult } from '../types/api-response';
 import type { Student } from '../types/student';
-import axiosInstance from './axios-instance';
+import { ipc } from '../lib/ipc';
 
 export const fetchStudents = async (
 	filters: StudentFilterValues,
 	page: number = 1,
-	pageSize: number = 50
-): Promise<APIPaginatedResponse<Student[]> | undefined> => {
+	pageSize: number = 50,
+	signal?: AbortSignal
+): Promise<PaginatedResult<Student[]>> => {
 	const defaultFilterValue = 'All';
 
-	filters.course = filters.course === defaultFilterValue ? undefined : filters.course;
-	filters.year = filters.year === defaultFilterValue ? undefined : filters.year;
-	filters.gender = filters.gender === defaultFilterValue ? undefined : filters.gender;
+	const course = filters.course === defaultFilterValue ? undefined : filters.course;
+	// The filter store keeps year as a UI string ('1'–'4'); the IPC command
+	// expects a real number (i64), so convert before sending — a string would
+	// fail serde deserialization and error the whole student list.
+	const year =
+		filters.year && filters.year !== defaultFilterValue ? Number(filters.year) : undefined;
+	const gender = filters.gender === defaultFilterValue ? undefined : filters.gender;
 
-	let url = `/student?page=${page}&pageSize=${pageSize}`;
-	if (filters.search) url = url + `&search=${filters.search}`;
-	if (filters.course) url = url + `&course=${filters.course}`;
-	if (filters.year) url = url + `&year=${filters.year}`;
-	if (filters.gender) url = url + `&gender=${filters.gender}`;
-	if (filters.sortBy) url = url + `&sortBy=${filters.sortBy}`;
+	const args: Record<string, unknown> = { page, pageSize };
+	if (filters.search) args.search = filters.search;
+	if (course) args.course = course;
+	if (year !== undefined) args.year = year;
+	if (gender) args.gender = gender;
+	if (filters.sortBy) args.sortBy = filters.sortBy;
 
-	const { data } = await axiosInstance.get<APIPaginatedResponse<Student[]>>(url);
-
-	return data;
+	return ipc<PaginatedResult<Student[]>>('list_students', { args }, { signal });
 };
 
-export const fetchAvailableCourses = async (): Promise<string[] | undefined> => {
-	const { data } = await axiosInstance.get(`/student/courses`);
-
-	return data.data;
+export const fetchAvailableCourses = async (signal?: AbortSignal): Promise<string[]> => {
+	return ipc<string[]>('list_student_courses', undefined, { signal });
 };

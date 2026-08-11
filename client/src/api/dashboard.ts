@@ -1,5 +1,4 @@
-import axiosInstance from './axios-instance';
-import type { APIResponse } from '../types/api-response';
+import { ipc } from '../lib/ipc';
 
 export type DashboardStats = {
 	totalEvents: number;
@@ -54,34 +53,21 @@ export type AttendanceTrendData = {
 };
 
 export const fetchDashboardStats = async (): Promise<DashboardStats | null> => {
-	const { data } = await axiosInstance.get<APIResponse<DashboardStats>>('/dashboard/stats');
-	return data.data;
+	return ipc<DashboardStats>('dashboard_stats');
 };
 
 export const fetchEventAttendanceData = async (): Promise<EventAttendanceData[]> => {
-	const { data } = await axiosInstance.get<APIResponse<EventAttendanceData[]>>(
-		'/dashboard/event-attendance'
-	);
-	return data.data;
+	return ipc<EventAttendanceData[]>('dashboard_event_attendance');
 };
 
 export const fetchCourseDistribution = async (): Promise<CourseDistributionData[]> => {
-	const { data } = await axiosInstance.get<APIResponse<CourseDistributionData[]>>(
-		'/dashboard/course-distribution'
-	);
-	return data.data;
+	return ipc<CourseDistributionData[]>('dashboard_course_distribution');
 };
 
 export const fetchRecentActivity = async (limit?: number): Promise<RecentActivityData[]> => {
-	const { data } = await axiosInstance.get<APIResponse<RecentActivityData[]>>(
-		`/dashboard/recent-activity?limit=${limit ?? 8}`
-	);
-	return data.data;
+	return ipc<RecentActivityData[]>('dashboard_recent_activity', { limit });
 };
 
 export const fetchAttendanceTrend = async (days?: number): Promise<AttendanceTrendData[]> => {
-	const { data } = await axiosInstance.get<APIResponse<AttendanceTrendData[]>>(
-		`/dashboard/attendance-trend?days=${days ?? 14}`
-	);
-	return data.data;
+	return ipc<AttendanceTrendData[]>('dashboard_attendance_trend', { days });
 };
