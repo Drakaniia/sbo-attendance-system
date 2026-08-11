@@ -1,92 +1,147 @@
-# SEATS — SBO Attendance System
+# SEATS
 
-A desktop attendance-tracking application for student organizations (SBOs), built with
-[Tauri v2](https://tauri.app). **SEATS** = **S**BO **E**vent **A**ttendance **T**racking **S**ystem.
+<p align="center">
+  <img src="client/public/images/SBO_LOGO.jpg" alt="SBO logo" width="144" height="144" />
+</p>
 
-## Features
+<p align="center">
+  <a href="package.json"><img src="https://img.shields.io/badge/license-ISC-4f46e5.svg" alt="ISC license" /></a>
+  <a href="https://tauri.app/"><img src="https://img.shields.io/badge/Tauri-v2-24C8DB.svg" alt="Tauri v2" /></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61DAFB.svg" alt="React 19" /></a>
+  <a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/Rust-1.88%2B-dea584.svg" alt="Rust 1.88 or newer" /></a>
+</p>
 
-- **Events** — create, edit, and manage events with time-in/time-out attendance scanning
-- **Attendance** — real-time check-in/check-out per event, with student search and filtering
-- **Students** — manage the student roster, including bulk import from Excel (`.xlsx`) files
-- **Reports** — attendance stats, trends, course/year distributions, leaderboards, hourly/daily
-  heatmaps, and CSV export
-- **Dashboard** — overview stats, recent activity, and attendance trends
-- **Settings** — kiosk mode, database backup/restore, and reset-all
+### SBO Event Attendance Tracking System
+
+A focused desktop app for student organizations to manage events, record attendance, and turn check-in data into clear, actionable reports.
+
+Built with **React**, **TypeScript**, **Rust**, **SQLite**, and **Tauri v2**.
+
+<p align="center">
+  <strong>Fast, private, and built for the event desk.</strong><br />
+  Attendance data stays on the device while the interface keeps scanning and reporting simple.
+</p>
+
+## Preview
+
+<table>
+  <tr>
+    <td width="50%">
+      <p align="center"><strong>Dashboard</strong></p>
+      <img src="docs/assets/dashboard-preview.png" alt="SEATS dashboard preview" width="100%" />
+    </td>
+    <td width="50%">
+      <p align="center"><strong>Reports</strong></p>
+      <img src="docs/assets/reports-preview.png" alt="SEATS reports preview" width="100%" />
+    </td>
+  </tr>
+</table>
+
+## What it does
+
+- **Manage events** — create, edit, archive, and restore events with venue, schedule, and status tracking.
+- **Track attendance** — record time-in and time-out scans with duplicate-scan feedback and a live attendance feed.
+- **Maintain the student roster** — search, filter, sort, and bulk-import students from CSV or Excel files.
+- **Understand participation** — explore dashboard trends, event summaries, distributions, leaderboards, and attendance heatmaps.
+- **Export clean workbooks** — save event attendance or filtered reports as formatted `.xlsx` files through a native save dialog.
+- **Run securely on desktop** — use kiosk mode, database backup/restore, auto-start preferences, and local SQLite storage.
 
 ## Architecture
 
-The app has two workspaces:
+SEATS is a Tauri desktop application with a React webview and a Rust command layer. The frontend communicates with the backend through Tauri's in-process IPC bridge — there is no local HTTP server or exposed API port.
 
-```
-sbo-attendance-system/
-├── client/      # React 19 + TypeScript + Vite frontend (webview)
-└── src-tauri/   # Rust backend — Tauri shell + SQLite + local HTTP API
+```text
+┌──────────────────────────────┐       Tauri IPC        ┌──────────────────────────────┐
+│  client/                     │  ◄──────────────────►  │  src-tauri/                  │
+│  React + TypeScript + Vite   │                        │  Rust + Tauri v2             │
+│                              │                        │                              │
+│  pages → components          │                        │  commands → database queries │
+│  React Query → typed APIs    │                        │  SQLite → native operations  │
+└──────────────────────────────┘                        └──────────────────────────────┘
+                                                                  │
+                                                                  ▼
+                                                        Local app data directory
+                                                        └── seats.db
 ```
 
-At startup, the Rust side opens the SQLite database (`seats.db` in the app data directory),
-runs migrations, and spawns an in-process [axum](https://github.com/tokio-rs/axum) HTTP
-server on `127.0.0.1:8000`. The React frontend calls that API with axios
-(`http://127.0.0.1:8000/api/v1/*`) and uses Tauri commands for native operations
-(DB backup/restore, file dialogs, Excel import). A `server-ready` event lets the splash
-screen transition as soon as the API is listening.
+### Data flow
 
-```
-┌───────────────────────────┐         ┌────────────────────────────────┐
-│  client/ (React webview)  │  axios  │  src-tauri/ (Rust)             │
-│  ──────────────────────── │ ◄─────► │  ┌──────────────────────────┐  │
-│  pages → components       │  :8000  │  │ axum API (api/routes/)   │  │
-│  api/ (axios wrappers)    │         │  │ db/ (SQLite + queries)   │  │
-│  lib/tauri.ts (commands)  │  Tauri  │  └──────────────────────────┘  │
-└───────────────────────────┘   IPC   └────────────────────────────────┘
-```
+1. Tauri initializes the local SQLite database and applies migrations.
+2. The React shell mounts while the native splash screen remains visible.
+3. Frontend API modules invoke typed Rust commands through `@tauri-apps/api`.
+4. Rust query modules read and write the local database, returning serialized results.
+5. Native features such as file dialogs, imports, backups, and Excel exports stay in the Rust layer.
 
 ## Prerequisites
 
-- [Bun](https://bun.sh) (package manager + script runner)
-- [Rust](https://www.rust-lang.org/tools/install) stable (MSRV 1.80)
-- Tauri v2 system dependencies for your OS — see the
-  [Tauri prerequisites guide](https://v2.tauri.app/start/prerequisites/)
+- [Bun](https://bun.sh) — package manager and script runner
+- [Rust](https://www.rust-lang.org/tools/install) 1.88+ toolchain
+- Tauri v2 system dependencies for your operating system — see the [Tauri prerequisites guide](https://v2.tauri.app/start/prerequisites/)
 
 ## Getting started
 
+Install dependencies from the repository root, then launch the desktop app:
+
 ```bash
-bun install          # installs @tauri-apps/cli at the root
+bun install
 cd client && bun install
-cd .. && bun run dev # = client: bun run tauri dev
+cd ..
+bun run dev
 ```
 
-The first build compiles the Rust backend and may take several minutes.
+The first launch may take a few minutes while Rust dependencies and the SQLite-backed desktop shell compile.
 
-## Building for production
+## Build for production
 
 ```bash
-bun run build        # = client: bun run tauri build
+bun run build
 ```
 
-Artifacts are written to `src-tauri/target/release/`.
+Build artifacts are written to `src-tauri/target/release/`.
 
 ## Scripts
 
-| Script           | Description                                      |
-| ---------------- | ------------------------------------------------ |
-| `bun run dev`    | Run the app in development (Tauri + Vite + Rust) |
-| `bun run build`  | Build the production desktop bundle              |
-| `bun run test`   | Placeholder — no test suite wired up yet         |
+### Repository root
+
+| Command | Description |
+| --- | --- |
+| `bun run dev` | Start the Tauri desktop app in development mode |
+| `bun run build` | Build the production desktop bundle |
+
+### `client/`
+
+Run these from the `client/` directory:
+
+| Command | Description |
+| --- | --- |
+| `bun run dev` | Start the Vite frontend development server |
+| `bun run build` | Type-check and build the frontend |
+| `bun run typecheck` | Run the TypeScript project check |
+| `bun run lint` | Run ESLint |
+| `bun run format:check` | Verify Prettier formatting |
+| `bun run preview` | Preview the production frontend build |
 
 ## Repository layout
 
+```text
+.
+├── client/                 # React frontend, routes, components, API modules, and UI state
+├── docs/
+│   └── assets/             # README screenshots and documentation media
+├── src-tauri/
+│   ├── src/
+│   │   ├── commands/       # Tauri IPC commands grouped by domain
+│   │   └── db/             # SQLite connection, migrations, and query modules
+│   ├── capabilities/       # Tauri permissions and capability manifests
+│   └── tauri.conf.json     # Desktop window and bundle configuration
+├── package.json            # Root scripts and Tauri CLI dependency
+└── README.md
 ```
-client/            # React frontend (see client/README.md)
-src-tauri/
-├── src/
-│   ├── api/       # axum HTTP layer (routes/, server.rs, error.rs)
-│   ├── db/        # SQLite connection, migrations, query modules
-│   ├── commands.rs# Tauri commands (backup/restore/import/kiosk)
-│   └── main.rs / lib.rs / state.rs
-├── capabilities/  # Tauri v2 capability/permission manifests
-└── tauri.conf.json
-```
+
+## Privacy and storage
+
+SEATS is designed for local-first operation. Attendance records are stored in the app's local SQLite database, while backup and restore tools let operators control their own data files.
 
 ## License
 
-ISC (see root `package.json`).
+ISC — see [`package.json`](package.json).
