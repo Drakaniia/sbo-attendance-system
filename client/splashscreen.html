@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SEATS</title>
+		<style>
+			:root {
+				color-scheme: dark;
+				font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+				background: #080a0f;
+			}
+
+			* {
+				box-sizing: border-box;
+
+				/* Desktop app — no text selection */
+				-webkit-user-select: none;
+				user-select: none;
+			}
+
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				overflow: hidden;
+				background: #080a0f;
+			}
+
+			body {
+				position: relative;
+				display: grid;
+				place-items: center;
+				isolation: isolate;
+			}
+
+			body::before,
+			body::after {
+				position: absolute;
+				inset: -30%;
+				z-index: -1;
+				content: '';
+				pointer-events: none;
+			}
+
+			body::before {
+				background:
+					radial-gradient(circle at 50% 38%, rgba(61, 126, 255, 0.18), transparent 29%),
+					radial-gradient(circle at 18% 92%, rgba(117, 74, 255, 0.1), transparent 30%);
+				filter: blur(18px);
+				animation: ambient-drift 8s ease-in-out infinite alternate;
+			}
+
+			body::after {
+				background: linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 42%);
+		}
+
+			.splash {
+				display: flex;
+				width: 100%;
+				height: 100%;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 32px;
+				text-align: center;
+			}
+
+			.brand-mark {
+				position: relative;
+				display: grid;
+				width: 92px;
+				height: 92px;
+				place-items: center;
+				margin-bottom: 24px;
+			}
+
+			.brand-mark::before {
+				position: absolute;
+				inset: -13px;
+				border: 1px solid rgba(115, 164, 255, 0.12);
+				border-radius: 32px;
+				content: '';
+				transform: rotate(45deg);
+				animation: orbit 4.5s linear infinite;
+			}
+
+			.brand-mark::after {
+				position: absolute;
+				inset: -2px;
+				border: 1px solid rgba(115, 164, 255, 0.22);
+				border-radius: 28px;
+				box-shadow: 0 0 34px rgba(69, 127, 255, 0.14);
+				content: '';
+			}
+
+			.brand-mark img {
+				position: relative;
+				z-index: 1;
+				width: 72px;
+				height: 72px;
+				border: 1px solid rgba(255, 255, 255, 0.16);
+				border-radius: 24px;
+				object-fit: cover;
+				box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
+			}
+
+			.wordmark {
+				margin: 0;
+				color: rgba(255, 255, 255, 0.94);
+				font-size: 25px;
+				font-weight: 600;
+				letter-spacing: 0.2em;
+				line-height: 1;
+				text-indent: 0.2em;
+			}
+
+			.subtitle {
+				margin: 10px 0 0;
+				color: rgba(215, 225, 244, 0.42);
+				font-size: 10px;
+				font-weight: 500;
+				letter-spacing: 0.16em;
+				line-height: 1;
+				text-transform: uppercase;
+			}
+
+			.status {
+				margin-top: 36px;
+				color: rgba(215, 225, 244, 0.5);
+				font-size: 11px;
+				letter-spacing: 0.03em;
+				transition: color 180ms ease;
+			}
+
+			.status.error {
+				color: rgba(255, 167, 167, 0.82);
+			}
+
+			.progress {
+				position: relative;
+				width: 132px;
+				height: 2px;
+				margin-top: 18px;
+				overflow: hidden;
+				border-radius: 999px;
+				background: rgba(255, 255, 255, 0.08);
+			}
+
+			.progress::after {
+				position: absolute;
+				top: 0;
+				left: -42px;
+				width: 42px;
+				height: 100%;
+				border-radius: inherit;
+				background: linear-gradient(90deg, transparent, #78a9ff, transparent);
+				content: '';
+				animation: progress-sweep 1.5s ease-in-out infinite;
+			}
+
+			@keyframes ambient-drift {
+				from { transform: translate3d(-2%, -1%, 0) scale(1); }
+				to { transform: translate3d(2%, 1%, 0) scale(1.04); }
+			}
+
+			@keyframes orbit {
+				to { transform: rotate(405deg); }
+			}
+
+			@keyframes progress-sweep {
+				from { transform: translateX(0); }
+				to { transform: translateX(216px); }
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				body::before,
+				.brand-mark::before,
+				.progress::after {
+					animation: none;
+				}
+			}
+
+			.error-state .progress::after {
+				animation: none;
+				background: rgba(255, 122, 122, 0.62);
+				transform: translateX(42px);
+			}
+
+			.fade-out {
+				opacity: 0;
+				transform: scale(1.015);
+				filter: blur(2px);
+				transition:
+					opacity 260ms cubic-bezier(0.23, 1, 0.32, 1),
+					transform 260ms cubic-bezier(0.23, 1, 0.32, 1),
+					filter 260ms cubic-bezier(0.23, 1, 0.32, 1);
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.fade-out {
+					transition: opacity 1ms linear;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main class="splash" aria-label="SEATS is starting">
+			<div class="brand-mark" aria-hidden="true">
+				<img src="/images/SBO_LOGO.jpg" alt="" />
+			</div>
+			<h1 class="wordmark">SEATS</h1>
+			<p class="subtitle">SBO Attendance System</p>
+			<div class="status" role="status" aria-live="polite">Preparing your workspace</div>
+			<div class="progress" aria-hidden="true"></div>
+		</main>
+		<script type="module">
+			import { emit, listen } from '@tauri-apps/api/event';
+
+			const splash = document.querySelector('.splash');
+			if (splash) {
+				listen('splash-dismiss', () => {
+					splash.classList.add('fade-out');
+					window.setTimeout(() => emit('splash-faded'), 280);
+				})
+					.then(() => emit('splash-ready'))
+					.catch(() => {
+						// The native error state below still prevents a stuck splash.
+					});
+				listen('splash-error', () => {
+					splash.classList.add('error-state');
+					const status = splash.querySelector('.status');
+					if (status) {
+						status.classList.add('error');
+						status.textContent = 'Unable to start — close and try again';
+					}
+				}).catch(() => {
+					// Keep the static splash visible if the error event bridge fails.
+				});
+			}
+		</script>
+	</body>
+</html>

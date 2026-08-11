@@ -12,14 +12,31 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "SEATS",
         "width": 1280,
         "height": 800,
+        "visible": false,
         "resizable": true,
         "decorations": true,
         "fullscreen": false,
         "center": true,
         "backgroundColor": "#0A0A0A"
+      },
+      {
+        "label": "splashscreen",
+        "title": "SEATS",
+        "url": "splashscreen.html",
+        "width": 440,
+        "height": 360,
+        "visible": true,
+        "resizable": false,
+        "decorations": false,
+        "center": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": true,
+        "backgroundColor": "#080A0F"
       }
     ],
     "security": {
