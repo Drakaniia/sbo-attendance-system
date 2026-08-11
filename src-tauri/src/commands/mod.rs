@@ -1,9 +1,24 @@
+//! Tauri command layer — replaces the old axum HTTP API.
+//!
+//! Every frontend data access goes through these commands (in-process IPC),
+//! so the app never opens a port. The `db::queries` layer is reused unchanged.
+
+pub mod attendance;
+pub mod dashboard;
+pub mod error;
+pub mod events;
+pub mod reports;
+pub mod settings;
+pub mod students;
+
 use std::fs;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use tauri::{Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
+use crate::app_config;
+use crate::commands::error::IpcError;
 use crate::state::AppState;
 
 /// Backup: checkpoint WAL → copy the database file to a user-chosen path.
@@ -73,12 +88,24 @@ pub async fn get_db_path(state: tauri::State<'_, Arc<Mutex<AppState>>>) -> Resul
     Ok(app_state.db_path.to_string_lossy().to_string())
 }
 
-/// Toggle fullscreen / kiosk mode on the main window.
+/// Toggle fullscreen / kiosk mode on the main window and persist the
+/// preference so the next launch starts fullscreen too.
 #[tauri::command]
-pub async fn set_kiosk(app_handle: tauri::AppHandle, enabled: bool) -> Result<(), String> {
+pub async fn set_kiosk(
+    app_handle: tauri::AppHandle,
+    state: tauri::State<'_, Arc<Mutex<AppState>>>,
+    enabled: bool,
+) -> Result<(), IpcError> {
     if let Some(window) = app_handle.get_webview_window("main") {
-        window.set_fullscreen(enabled).map_err(|e| e.to_string())?;
+        window
+            .set_fullscreen(enabled)
+            .map_err(|e| IpcError::new(e.to_string()))?;
     }
+
+    let data_dir = state.lock().unwrap().data_dir.clone();
+    let mut settings = app_config::load(&data_dir);
+    settings.kiosk = enabled;
+    app_config::save(&data_dir, &settings)?;
     Ok(())
 }
 
@@ -122,5 +149,5 @@ pub async fn import_students_file(
 fn checkpoint_wal(db_path: &PathBuf) -> Result<(), String> {
     let conn = rusqlite::Connection::open(db_path).map_err(|e| e.to_string())?;
     conn.execute_batch("PRAGMA wal_checkpoint(TRUNCATE)")
-        .map_err(|e| format!("WAL checkpoint failed: {}", e))
+        .map_err(|e| format!("WAL checkpoint failed: {e}"))
 }
