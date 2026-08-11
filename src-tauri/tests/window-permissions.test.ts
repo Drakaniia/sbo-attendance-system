@@ -9,7 +9,7 @@ import { describe, expect, test } from 'bun:test';
 function readCapabilities(): string[] | null {
 	try {
 		const raw = require('fs').readFileSync(
-			require('path').resolve(__dirname, 'default.json'),
+			require('path').resolve(__dirname, '../capabilities/default.json'),
 			'utf-8',
 		);
 		const caps = JSON.parse(raw);
