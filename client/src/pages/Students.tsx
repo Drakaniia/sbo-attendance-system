@@ -18,8 +18,7 @@ export default function Students() {
 	const currentPageSize = pageSize ?? 10;
 	const { data, isLoading, error, refetch, isFetching } = useQuery({
 		queryKey: [QUERY_KEYS.STUDENTS, getFilterValues()],
-		queryFn: ({ signal }) =>
-			fetchStudents(getFilterValues(), currentPage, currentPageSize, signal),
+		queryFn: ({ signal }) => fetchStudents(getFilterValues(), currentPage, currentPageSize, signal),
 	});
 
 	const students = data?.data;

@@ -7,7 +7,15 @@ import EventCard from '../components/EventCard';
 import { useMemo, useState } from 'react';
 import { countEventsStats } from '../lib/utils';
 import { motion, type Variants } from 'framer-motion';
-import { MagnifyingGlass, Calendar, Pulse, Sun, Timer, CheckCircle, WarningCircle } from '@phosphor-icons/react';
+import {
+	MagnifyingGlass,
+	Calendar,
+	Pulse,
+	Sun,
+	Timer,
+	CheckCircle,
+	WarningCircle,
+} from '@phosphor-icons/react';
 import LiveClock from '../components/LiveClock';
 import { StatCard } from '../components/charts/StatCard';
 import { format } from 'date-fns';
@@ -66,7 +74,11 @@ const STAT_META = [
 
 export default function Events() {
 	const [search, setSearch] = useState('');
-	const { data: events, isLoading, error } = useQuery({
+	const {
+		data: events,
+		isLoading,
+		error,
+	} = useQuery({
 		queryFn: fetchEvents,
 		queryKey: [QUERY_KEYS.EVENTS],
 	});
@@ -156,31 +168,34 @@ export default function Events() {
 						</div>
 					))}
 				</div>
-		) : error && !events ? (
-			<div className="glass rounded-2xl py-16 flex flex-col items-center justify-center gap-3 text-center" role="alert">
-				<div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-					<WarningCircle className="w-6 h-6 text-red-400" />
+			) : error && !events ? (
+				<div
+					className="glass rounded-2xl py-16 flex flex-col items-center justify-center gap-3 text-center"
+					role="alert"
+				>
+					<div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
+						<WarningCircle className="w-6 h-6 text-red-400" />
+					</div>
+					<p className="text-white/60 font-medium">Failed to load events</p>
+					<p className="text-sm text-white/35 max-w-xs break-words">
+						{error instanceof Error ? error.message : 'Unknown error'}
+					</p>
 				</div>
-				<p className="text-white/60 font-medium">Failed to load events</p>
-				<p className="text-sm text-white/35 max-w-xs break-words">
-					{error instanceof Error ? error.message : 'Unknown error'}
-				</p>
-			</div>
-		) : filteredEvents.length === 0 ? (
-			<div className="glass rounded-2xl py-16 flex flex-col items-center justify-center gap-3 text-center">
-				<div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-					<Calendar className="w-6 h-6 text-white/30" />
+			) : filteredEvents.length === 0 ? (
+				<div className="glass rounded-2xl py-16 flex flex-col items-center justify-center gap-3 text-center">
+					<div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
+						<Calendar className="w-6 h-6 text-white/30" />
+					</div>
+					<p className="text-white/60 font-medium">
+						{search ? 'No events match your search' : 'No events yet'}
+					</p>
+					<p className="text-sm text-white/35 max-w-xs">
+						{search
+							? 'Try a different keyword or clear the search.'
+							: 'Create your first event to start tracking attendance.'}
+					</p>
 				</div>
-				<p className="text-white/60 font-medium">
-					{search ? 'No events match your search' : 'No events yet'}
-				</p>
-				<p className="text-sm text-white/35 max-w-xs">
-					{search
-						? 'Try a different keyword or clear the search.'
-						: 'Create your first event to start tracking attendance.'}
-				</p>
-			</div>
-		) : (
+			) : (
 				<section className="flex flex-col gap-3">
 					{filteredEvents.map((event, i) => (
 						<motion.div

@@ -63,7 +63,9 @@ export function handleCommand(cmd: string, args: Record<string, unknown> = {}): 
 			return listStudentsHandler((args.args ?? {}) as Record<string, unknown>);
 
 		case 'list_student_courses':
-			return [...new Set(db.students.filter((s) => !s.isPlaceholder && s.course).map((s) => s.course))].sort();
+			return [
+				...new Set(db.students.filter((s) => !s.isPlaceholder && s.course).map((s) => s.course)),
+			].sort();
 
 		// ── events ─────────────────────────────────────────────────
 		case 'list_events':
@@ -178,7 +180,11 @@ export function handleCommand(cmd: string, args: Record<string, unknown> = {}): 
 			const existing = db.attendance.find(
 				(a) => a.eventId === event._id && a.studentIDNumber === studentIDNumber && a.timeIn !== null
 			);
-			if (existing) throw { message: 'Student is already checked in for this event', errorCode: 'AlreadyCheckedIn' };
+			if (existing)
+				throw {
+					message: 'Student is already checked in for this event',
+					errorCode: 'AlreadyCheckedIn',
+				};
 			let student = studentById(studentIDNumber);
 			if (!student) {
 				student = {
@@ -220,7 +226,11 @@ export function handleCommand(cmd: string, args: Record<string, unknown> = {}): 
 				(a) => a.eventId === event._id && a.studentIDNumber === studentIDNumber && a.timeIn !== null
 			);
 			if (!existing) throw { message: 'Student is not checked in for this event' };
-			if (existing.timeOut !== null) throw { message: 'Student is already checked out for this event', errorCode: 'AlreadyCheckedOut' };
+			if (existing.timeOut !== null)
+				throw {
+					message: 'Student is already checked out for this event',
+					errorCode: 'AlreadyCheckedOut',
+				};
 			const now = new Date().toISOString();
 			existing.timeOut = now;
 			existing.updatedAt = now;
@@ -252,8 +262,13 @@ export function handleCommand(cmd: string, args: Record<string, unknown> = {}): 
 			const totalCheckIns = db.attendance.filter((a) => a.timeIn !== null).length;
 			const totalCheckOuts = db.attendance.filter((a) => a.timeOut !== null).length;
 			return {
-				totalEvents, activeEvents, archivedEvents, totalStudents, totalAttendances,
-				totalCheckIns, totalCheckOuts,
+				totalEvents,
+				activeEvents,
+				archivedEvents,
+				totalStudents,
+				totalAttendances,
+				totalCheckIns,
+				totalCheckOuts,
 				attendanceRate: totalCheckIns > 0 ? Math.round((totalCheckOuts / totalCheckIns) * 100) : 0,
 			};
 		}
@@ -264,10 +279,15 @@ export function handleCommand(cmd: string, args: Record<string, unknown> = {}): 
 				.map((e) => {
 					const records = db.attendance.filter((a) => a.eventId === e._id);
 					return {
-						eventId: e._id, title: e.title, type: e.type, startTime: e.startTime,
+						eventId: e._id,
+						title: e.title,
+						type: e.type,
+						startTime: e.startTime,
 						checkIns: records.filter((a) => a.timeIn !== null).length,
 						checkOuts: records.filter((a) => a.timeOut !== null).length,
-						total: records.filter((a) => a.timeIn !== null).length + records.filter((a) => a.timeOut !== null).length,
+						total:
+							records.filter((a) => a.timeIn !== null).length +
+							records.filter((a) => a.timeOut !== null).length,
 					};
 				})
 				.sort((a, b) => b.startTime.localeCompare(a.startTime))
@@ -280,7 +300,10 @@ export function handleCommand(cmd: string, args: Record<string, unknown> = {}): 
 				if (s.isPlaceholder || !s.course) continue;
 				counts.set(s.course, (counts.get(s.course) ?? 0) + 1);
 			}
-			return [...counts.entries()].map(([course, students]) => ({ course, students })).sort((a, b) => b.students - a.students).slice(0, 8);
+			return [...counts.entries()]
+				.map(([course, students]) => ({ course, students }))
+				.sort((a, b) => b.students - a.students)
+				.slice(0, 8);
 		}
 
 		case 'dashboard_recent_activity': {
@@ -293,8 +316,21 @@ export function handleCommand(cmd: string, args: Record<string, unknown> = {}): 
 					const student = db.students.find((s) => s._id === a.studentId);
 					const event = eventById(a.eventId);
 					return {
-						_id: a._id, studentID: a.studentIDNumber, timeIn: a.timeIn, timeOut: a.timeOut, updatedAt: a.updatedAt,
-						student: student ? { _id: student._id, studentID: student.studentID, firstname: student.firstname, lastname: student.lastname, course: student.course, year: student.year } : null,
+						_id: a._id,
+						studentID: a.studentIDNumber,
+						timeIn: a.timeIn,
+						timeOut: a.timeOut,
+						updatedAt: a.updatedAt,
+						student: student
+							? {
+									_id: student._id,
+									studentID: student.studentID,
+									firstname: student.firstname,
+									lastname: student.lastname,
+									course: student.course,
+									year: student.year,
+								}
+							: null,
 						event: event ? { _id: event._id, title: event.title, type: event.type } : null,
 					};
 				});

@@ -6,7 +6,7 @@ use super::formats::ExportFormats;
 use super::sanitizers::{
     compute_remarks, format_datetime, sanitize_cell, sanitize_sheet_name, setup_print,
 };
-use super::types::{ExportRow, ExportSummary, EventHeader, FIRST_DATA_ROW, HEADER_ROW};
+use super::types::{EventHeader, ExportRow, ExportSummary, FIRST_DATA_ROW, HEADER_ROW};
 
 // ---------------------------------------------------------------------------
 // Builder entry points

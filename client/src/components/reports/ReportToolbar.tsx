@@ -125,7 +125,7 @@ export default function ReportToolbar({
 					<div className="relative">
 						<button
 							type="button"
-								onClick={() => setExportMenuOpen((o) => !o)}
+							onClick={() => setExportMenuOpen((o) => !o)}
 							className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
 						>
 							<DownloadSimple className="w-4 h-4" />

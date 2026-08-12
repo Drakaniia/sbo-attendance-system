@@ -54,7 +54,7 @@
 
 			body::after {
 				background: linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 42%);
-		}
+			}
 
 			.splash {
 				display: flex;
@@ -161,17 +161,27 @@
 			}
 
 			@keyframes ambient-drift {
-				from { transform: translate3d(-2%, -1%, 0) scale(1); }
-				to { transform: translate3d(2%, 1%, 0) scale(1.04); }
+				from {
+					transform: translate3d(-2%, -1%, 0) scale(1);
+				}
+				to {
+					transform: translate3d(2%, 1%, 0) scale(1.04);
+				}
 			}
 
 			@keyframes orbit {
-				to { transform: rotate(405deg); }
+				to {
+					transform: rotate(405deg);
+				}
 			}
 
 			@keyframes progress-sweep {
-				from { transform: translateX(0); }
-				to { transform: translateX(216px); }
+				from {
+					transform: translateX(0);
+				}
+				to {
+					transform: translateX(216px);
+				}
 			}
 
 			@media (prefers-reduced-motion: reduce) {

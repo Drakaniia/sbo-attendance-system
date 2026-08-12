@@ -47,7 +47,10 @@ export const updateAttendanceStudentID = async (
 	studentID: string
 ): Promise<Attendance> => {
 	try {
-		return await ipc<Attendance>('update_attendance', { attendanceId: attendanceID, studentId: studentID });
+		return await ipc<Attendance>('update_attendance', {
+			attendanceId: attendanceID,
+			studentId: studentID,
+		});
 	} catch (error) {
 		console.error('Failed to update attendance student ID', error);
 		throw error;

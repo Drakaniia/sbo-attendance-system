@@ -227,14 +227,15 @@ export default function SingleEvent() {
 			.join(' · ');
 
 		return (
-			<div className="flex flex-col items-center justify-center gap-3 py-20 text-center" role="alert">
+			<div
+				className="flex flex-col items-center justify-center gap-3 py-20 text-center"
+				role="alert"
+			>
 				<div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
 					<WarningCircle className="w-6 h-6 text-red-400" />
 				</div>
 				<p className="text-white/70 font-medium">Error fetching event</p>
-				{messages && (
-					<p className="text-sm text-white/35 max-w-md break-words">{messages}</p>
-				)}
+				{messages && <p className="text-sm text-white/35 max-w-md break-words">{messages}</p>}
 				<button
 					type="button"
 					onClick={() => {

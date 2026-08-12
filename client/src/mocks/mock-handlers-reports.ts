@@ -21,7 +21,10 @@ import {
  * Returns `undefined` for commands it doesn't handle so the caller can
  * fall through to the default error.
  */
-export function handleReportsAndSettings(cmd: string, args: Record<string, unknown>): unknown | undefined {
+export function handleReportsAndSettings(
+	cmd: string,
+	args: Record<string, unknown>
+): unknown | undefined {
 	switch (cmd) {
 		// ── reports ────────────────────────────────────────────────
 		case 'reports_stats': {
@@ -29,9 +32,23 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 			const records = attendanceInRange(q.startDate, q.endDate, q.eventId);
 			const totalCheckIns = records.filter((a) => a.timeIn !== null).length;
 			const totalCheckOuts = records.filter((a) => a.timeOut !== null).length;
-			const uniqueStudents = new Set(records.filter((a) => { const s = db.students.find((st) => st._id === a.studentId); return s && !s.isPlaceholder; }).map((a) => a.studentId)).size;
+			const uniqueStudents = new Set(
+				records
+					.filter((a) => {
+						const s = db.students.find((st) => st._id === a.studentId);
+						return s && !s.isPlaceholder;
+					})
+					.map((a) => a.studentId)
+			).size;
 			const activeEvents = new Set(records.map((a) => a.eventId)).size;
-			return { totalCheckIns, totalCheckOuts, attendanceRate: totalCheckIns > 0 ? Math.round((totalCheckOuts / totalCheckIns) * 100) : 0, uniqueStudents, activeEvents, totalRecords: records.length };
+			return {
+				totalCheckIns,
+				totalCheckOuts,
+				attendanceRate: totalCheckIns > 0 ? Math.round((totalCheckOuts / totalCheckIns) * 100) : 0,
+				uniqueStudents,
+				activeEvents,
+				totalRecords: records.length,
+			};
 		}
 
 		case 'reports_attendance_trend': {
@@ -46,7 +63,9 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 				entry.total += 1;
 				byDay.set(day, entry);
 			}
-			return [...byDay.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([date, v]) => ({ date, ...v }));
+			return [...byDay.entries()]
+				.sort(([a], [b]) => a.localeCompare(b))
+				.map(([date, v]) => ({ date, ...v }));
 		}
 
 		case 'reports_event_breakdown': {
@@ -54,10 +73,20 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 			return db.events
 				.filter((e) => !e.archived)
 				.map((e) => {
-					const records = attendanceInRange(q.startDate, q.endDate).filter((a) => a.eventId === e._id);
+					const records = attendanceInRange(q.startDate, q.endDate).filter(
+						(a) => a.eventId === e._id
+					);
 					const checkIns = records.filter((a) => a.timeIn !== null).length;
 					const checkOuts = records.filter((a) => a.timeOut !== null).length;
-					return { eventId: e._id, title: e.title, type: e.type, startTime: e.startTime, checkIns, checkOuts, total: checkIns + checkOuts };
+					return {
+						eventId: e._id,
+						title: e.title,
+						type: e.type,
+						startTime: e.startTime,
+						checkIns,
+						checkOuts,
+						total: checkIns + checkOuts,
+					};
 				})
 				.sort((a, b) => b.startTime.localeCompare(a.startTime))
 				.slice(0, 20);
@@ -72,7 +101,10 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 				if (!s || s.isPlaceholder || !s.course) continue;
 				counts.set(s.course, (counts.get(s.course) ?? 0) + 1);
 			}
-			return [...counts.entries()].map(([course, students]) => ({ course, students })).sort((a, b) => b.students - a.students).slice(0, 10);
+			return [...counts.entries()]
+				.map(([course, students]) => ({ course, students }))
+				.sort((a, b) => b.students - a.students)
+				.slice(0, 10);
 		}
 
 		case 'reports_year_distribution': {
@@ -84,33 +116,65 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 				if (!s || s.isPlaceholder) continue;
 				counts.set(s.year, (counts.get(s.year) ?? 0) + 1);
 			}
-			return [...counts.entries()].sort(([a], [b]) => a - b).map(([year, students]) => ({ year, students }));
+			return [...counts.entries()]
+				.sort(([a], [b]) => a - b)
+				.map(([year, students]) => ({ year, students }));
 		}
 
 		case 'reports_leaderboard': {
 			const q = (args.query ?? {}) as Record<string, string>;
 			const limit = Math.min(200, Math.max(1, Number(q.limit ?? 50)));
 			const records = attendanceInRange(q.startDate, q.endDate, q.eventId);
-			const byStudent = new Map<string, { name: string; course: string; year: number; total: number; checkIns: number; checkOuts: number }>();
+			const byStudent = new Map<
+				string,
+				{
+					name: string;
+					course: string;
+					year: number;
+					total: number;
+					checkIns: number;
+					checkOuts: number;
+				}
+			>();
 			for (const a of records) {
 				const s = db.students.find((st) => st._id === a.studentId);
 				if (!s || s.isPlaceholder) continue;
-				const entry = byStudent.get(a.studentIDNumber) ?? { name: `${s.firstname} ${s.lastname}`, course: s.course, year: s.year, total: 0, checkIns: 0, checkOuts: 0 };
+				const entry = byStudent.get(a.studentIDNumber) ?? {
+					name: `${s.firstname} ${s.lastname}`,
+					course: s.course,
+					year: s.year,
+					total: 0,
+					checkIns: 0,
+					checkOuts: 0,
+				};
 				entry.total += 1;
 				if (a.timeIn !== null) entry.checkIns += 1;
 				if (a.timeOut !== null) entry.checkOuts += 1;
 				byStudent.set(a.studentIDNumber, entry);
 			}
-			const rows = [...byStudent.entries()].map(([studentId, v]) => ({ studentId, name: v.name, course: v.course, year: v.year, totalAttendances: v.total, checkInRate: v.checkIns > 0 ? Math.round((v.checkOuts / v.checkIns) * 100) : 0 }));
+			const rows = [...byStudent.entries()].map(([studentId, v]) => ({
+				studentId,
+				name: v.name,
+				course: v.course,
+				year: v.year,
+				totalAttendances: v.total,
+				checkInRate: v.checkIns > 0 ? Math.round((v.checkOuts / v.checkIns) * 100) : 0,
+			}));
 			const byRate = q.sortBy === 'rate';
-			rows.sort((a, b) => byRate ? b.checkInRate - a.checkInRate || b.totalAttendances - a.totalAttendances : b.totalAttendances - a.totalAttendances || b.checkInRate - a.checkInRate);
+			rows.sort((a, b) =>
+				byRate
+					? b.checkInRate - a.checkInRate || b.totalAttendances - a.totalAttendances
+					: b.totalAttendances - a.totalAttendances || b.checkInRate - a.checkInRate
+			);
 			return rows.slice(0, limit);
 		}
 
 		case 'reports_heatmap': {
 			const q = (args.query ?? {}) as Record<string, string>;
 			const mode = q.mode ?? 'hourly';
-			const records = attendanceInRange(q.startDate, q.endDate, q.eventId).filter((a) => a.timeIn !== null);
+			const records = attendanceInRange(q.startDate, q.endDate, q.eventId).filter(
+				(a) => a.timeIn !== null
+			);
 			if (mode === 'daily') {
 				const byCell = new Map<string, { dayOfWeek: number; hour: number; count: number }>();
 				for (const a of records) {
@@ -129,7 +193,9 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 				const hour = new Date(a.timeIn!).getHours();
 				byHour.set(hour, (byHour.get(hour) ?? 0) + 1);
 			}
-			return [...byHour.entries()].sort(([a], [b]) => a - b).map(([hour, count]) => ({ hour, count }));
+			return [...byHour.entries()]
+				.sort(([a], [b]) => a - b)
+				.map(([hour, count]) => ({ hour, count }));
 		}
 
 		case 'export_reports_excel':
@@ -137,7 +203,11 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 
 		// ── settings / app-level ────────────────────────────────────
 		case 'reset_all_data': {
-			const summary = { students: db.students.length, events: db.events.length, attendance: db.attendance.length };
+			const summary = {
+				students: db.students.length,
+				events: db.events.length,
+				attendance: db.attendance.length,
+			};
 			db.students = [];
 			db.events = [];
 			db.attendance = [];
@@ -168,9 +238,16 @@ export function handleReportsAndSettings(cmd: string, args: Record<string, unkno
 				imported.push({
 					_id: `stu-import-${db.students.length + imported.length + 1}`,
 					studentID: String(2000000000 + Math.floor(rand() * 900000000)),
-					firstname, lastname, middlename: '', gender, course: pick(COURSES),
-					year: 1 + Math.floor(rand() * 4), email: '', isPlaceholder: false,
-					createdAt: now, updatedAt: now,
+					firstname,
+					lastname,
+					middlename: '',
+					gender,
+					course: pick(COURSES),
+					year: 1 + Math.floor(rand() * 4),
+					email: '',
+					isPlaceholder: false,
+					createdAt: now,
+					updatedAt: now,
 				});
 			}
 			db.students.push(...imported);

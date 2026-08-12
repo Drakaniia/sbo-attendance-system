@@ -65,7 +65,10 @@ mod boundary_repro {
                 let out = serde_json::to_value(&p).expect("serialize");
                 eprintln!(
                     "OK total={} totalPages={} rows={} first={:?}",
-                    p.total, p.total_pages, p.data.len(), out["data"][0]["firstname"]
+                    p.total,
+                    p.total_pages,
+                    p.data.len(),
+                    out["data"][0]["firstname"]
                 );
             }
             Err(e) => eprintln!("ERROR: {e}"),

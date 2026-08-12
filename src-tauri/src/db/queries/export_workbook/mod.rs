@@ -394,8 +394,7 @@ mod tests {
 
     #[test]
     fn sheet_name_truncates_to_31_characters() {
-        let long =
-            "A very long event title that definitely exceeds thirty one characters for sure";
+        let long = "A very long event title that definitely exceeds thirty one characters for sure";
         let name = sanitize_sheet_name(long);
         assert!(name.len() <= 31, "sheet name too long: {name}");
         for c in ['[', ']', ':', '*', '?', '/', '\\'] {
@@ -465,8 +464,7 @@ mod tests {
                 None,
             ),
         ];
-        let bytes =
-            build_reports_workbook(&summary(2, 50), &rows).expect("build should succeed");
+        let bytes = build_reports_workbook(&summary(2, 50), &rows).expect("build should succeed");
 
         let (_, range) = open_workbook(&bytes);
         assert_eq!(cell_str(&range, HEADER_ROW, R_COL_EVENT), "Event");

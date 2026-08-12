@@ -71,7 +71,10 @@ mod tests {
             "page": 1,
             "pageSize": 10,
         }));
-        assert!(flat.is_err(), "a flat payload must not satisfy the `args` parameter");
+        assert!(
+            flat.is_err(),
+            "a flat payload must not satisfy the `args` parameter"
+        );
 
         let named = serde_json::from_value::<CommandPayload>(json!({
             "args": {

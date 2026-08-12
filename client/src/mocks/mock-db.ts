@@ -58,29 +58,115 @@ export type MockAttendance = {
 };
 
 export const MALE_FIRST = [
-	'Juan', 'Jose', 'Miguel', 'Gabriel', 'Rafael', 'Paolo', 'Marco', 'Adrian',
-	'Joshua', 'Nathaniel', 'Christian', 'Emmanuel', 'Daniel', 'Franco', 'Ivan',
-	'Kyle', 'Luis', 'Marcus', 'Noah', 'Renz', 'Seth', 'Tristan', 'Vincent',
-	'Xavier', 'Zion', 'Angelo', 'Bryce', 'Carlo', 'Derrick', 'Elijah',
+	'Juan',
+	'Jose',
+	'Miguel',
+	'Gabriel',
+	'Rafael',
+	'Paolo',
+	'Marco',
+	'Adrian',
+	'Joshua',
+	'Nathaniel',
+	'Christian',
+	'Emmanuel',
+	'Daniel',
+	'Franco',
+	'Ivan',
+	'Kyle',
+	'Luis',
+	'Marcus',
+	'Noah',
+	'Renz',
+	'Seth',
+	'Tristan',
+	'Vincent',
+	'Xavier',
+	'Zion',
+	'Angelo',
+	'Bryce',
+	'Carlo',
+	'Derrick',
+	'Elijah',
 ];
 export const FEMALE_FIRST = [
-	'Maria', 'Ana', 'Bianca', 'Camille', 'Danica', 'Erika', 'Faith', 'Gianna',
-	'Hannah', 'Isabella', 'Jasmine', 'Katrina', 'Lianne', 'Mikaela', 'Nathalie',
-	'Odessa', 'Patricia', 'Queenie', 'Roxanne', 'Samantha', 'Tiffany', 'Vanessa',
-	'Wendy', 'Yzabella', 'Zoe', 'Angelica', 'Bea', 'Cristina', 'Diana', 'Elena',
+	'Maria',
+	'Ana',
+	'Bianca',
+	'Camille',
+	'Danica',
+	'Erika',
+	'Faith',
+	'Gianna',
+	'Hannah',
+	'Isabella',
+	'Jasmine',
+	'Katrina',
+	'Lianne',
+	'Mikaela',
+	'Nathalie',
+	'Odessa',
+	'Patricia',
+	'Queenie',
+	'Roxanne',
+	'Samantha',
+	'Tiffany',
+	'Vanessa',
+	'Wendy',
+	'Yzabella',
+	'Zoe',
+	'Angelica',
+	'Bea',
+	'Cristina',
+	'Diana',
+	'Elena',
 ];
 export const SURNAMES = [
-	'Santos', 'Reyes', 'Cruz', 'Bautista', 'Ocampo', 'Garcia', 'Mendoza',
-	'Torres', 'Flores', 'Ramos', 'Aquino', 'Dela Cruz', 'Navarro', 'Salazar',
-	'Villanueva', 'Domingo', 'Castillo', 'Fernandez', 'Gonzales', 'Pascual',
-	'Rivera', 'Soriano', 'Valdez', 'Manalo', 'Buenaventura', 'Cabrera', 'Estrada',
-	'Ferrer', 'Guerrero', 'Herrera', 'Lopez', 'Marquez', 'Nunez', 'Padilla',
-	'Quintana', 'Rosario', 'Santiago', 'Tolentino', 'Uy', 'Velasco',
+	'Santos',
+	'Reyes',
+	'Cruz',
+	'Bautista',
+	'Ocampo',
+	'Garcia',
+	'Mendoza',
+	'Torres',
+	'Flores',
+	'Ramos',
+	'Aquino',
+	'Dela Cruz',
+	'Navarro',
+	'Salazar',
+	'Villanueva',
+	'Domingo',
+	'Castillo',
+	'Fernandez',
+	'Gonzales',
+	'Pascual',
+	'Rivera',
+	'Soriano',
+	'Valdez',
+	'Manalo',
+	'Buenaventura',
+	'Cabrera',
+	'Estrada',
+	'Ferrer',
+	'Guerrero',
+	'Herrera',
+	'Lopez',
+	'Marquez',
+	'Nunez',
+	'Padilla',
+	'Quintana',
+	'Rosario',
+	'Santiago',
+	'Tolentino',
+	'Uy',
+	'Velasco',
 ];
 export const COURSES = ['BSIT', 'BSCS', 'BSCE', 'BSBA', 'BSN', 'BSEd', 'BSPSY'];
 
 export const rand = mulberry32(20260811);
-export const pick = <T,>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
+export const pick = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
 export function isoDaysAgo(days: number, hour = 8, minute = 0): string {
 	const d = new Date();
@@ -134,14 +220,89 @@ function buildEvents(): MockEvent[] {
 			archived?: boolean;
 		}
 	> = [
-		{ title: 'CO General Assembly', description: 'General assembly of the College of Technology student body to plan the semester.', type: 'General Assembly', venue: 'COT Auditorium', daysAgo: 3, startHour: 8, startMin: 0, durationHours: 4 },
-		{ title: 'Blood Donation Drive', description: 'Bloodletting activity in partnership with the local Red Cross chapter.', type: 'Outreach', venue: 'COB Function Hall', daysAgo: 6, startHour: 8, startMin: 30, durationHours: 5 },
-		{ title: 'Leadership Summit 2026', description: 'Leadership training and workshops for all student organization officers.', type: 'Seminar', venue: 'University Gymnasium', daysAgo: 9, startHour: 9, startMin: 0, durationHours: 6 },
-		{ title: 'Intramurals Opening Ceremony', description: 'Parade and opening program for the annual intramural sports.', type: 'Sports', venue: 'Athletic Field', daysAgo: 12, startHour: 7, startMin: 0, durationHours: 3 },
-		{ title: 'Book Donation for Literacy Week', description: 'Book drive supporting public school libraries in the community.', type: 'Fundraiser', venue: 'Student Center Lobby', daysAgo: 16, startHour: 8, startMin: 0, durationHours: 4 },
-		{ title: 'Career Fair 2026', description: 'Job fair featuring partner companies and on-the-spot interviews.', type: 'Career Fair', venue: 'COB Function Hall', daysAgo: 20, startHour: 9, startMin: 0, durationHours: 8 },
-		{ title: 'Freshmen Orientation', description: 'Welcome orientation for incoming first-year students.', type: 'Orientation', venue: 'University Gymnasium', daysAgo: 26, startHour: 8, startMin: 0, durationHours: 5, archived: true },
-		{ title: 'Christmas Party 2025', description: 'Year-end celebration for members, staff, and faculty.', type: 'Social', venue: 'COB Function Hall', daysAgo: 40, startHour: 17, startMin: 0, durationHours: 4, archived: true },
+		{
+			title: 'CO General Assembly',
+			description:
+				'General assembly of the College of Technology student body to plan the semester.',
+			type: 'General Assembly',
+			venue: 'COT Auditorium',
+			daysAgo: 3,
+			startHour: 8,
+			startMin: 0,
+			durationHours: 4,
+		},
+		{
+			title: 'Blood Donation Drive',
+			description: 'Bloodletting activity in partnership with the local Red Cross chapter.',
+			type: 'Outreach',
+			venue: 'COB Function Hall',
+			daysAgo: 6,
+			startHour: 8,
+			startMin: 30,
+			durationHours: 5,
+		},
+		{
+			title: 'Leadership Summit 2026',
+			description: 'Leadership training and workshops for all student organization officers.',
+			type: 'Seminar',
+			venue: 'University Gymnasium',
+			daysAgo: 9,
+			startHour: 9,
+			startMin: 0,
+			durationHours: 6,
+		},
+		{
+			title: 'Intramurals Opening Ceremony',
+			description: 'Parade and opening program for the annual intramural sports.',
+			type: 'Sports',
+			venue: 'Athletic Field',
+			daysAgo: 12,
+			startHour: 7,
+			startMin: 0,
+			durationHours: 3,
+		},
+		{
+			title: 'Book Donation for Literacy Week',
+			description: 'Book drive supporting public school libraries in the community.',
+			type: 'Fundraiser',
+			venue: 'Student Center Lobby',
+			daysAgo: 16,
+			startHour: 8,
+			startMin: 0,
+			durationHours: 4,
+		},
+		{
+			title: 'Career Fair 2026',
+			description: 'Job fair featuring partner companies and on-the-spot interviews.',
+			type: 'Career Fair',
+			venue: 'COB Function Hall',
+			daysAgo: 20,
+			startHour: 9,
+			startMin: 0,
+			durationHours: 8,
+		},
+		{
+			title: 'Freshmen Orientation',
+			description: 'Welcome orientation for incoming first-year students.',
+			type: 'Orientation',
+			venue: 'University Gymnasium',
+			daysAgo: 26,
+			startHour: 8,
+			startMin: 0,
+			durationHours: 5,
+			archived: true,
+		},
+		{
+			title: 'Christmas Party 2025',
+			description: 'Year-end celebration for members, staff, and faculty.',
+			type: 'Social',
+			venue: 'COB Function Hall',
+			daysAgo: 40,
+			startHour: 17,
+			startMin: 0,
+			durationHours: 4,
+			archived: true,
+		},
 	];
 
 	return defs.map((d, i) => {
@@ -181,7 +342,12 @@ function buildAttendance(students: MockStudent[], events: MockEvent[]): MockAtte
 		for (let k = 0; k < Math.min(count, indices.length); k++) {
 			const student = students[indices[k]!]!;
 			const timeInDate = new Date(start);
-			timeInDate.setHours(start.getHours() + 1 + Math.floor(rand() * 6), Math.floor(rand() * 60), 0, 0);
+			timeInDate.setHours(
+				start.getHours() + 1 + Math.floor(rand() * 6),
+				Math.floor(rand() * 60),
+				0,
+				0
+			);
 			const timeIn = timeInDate.toISOString();
 			let timeOut: string | null = null;
 			if (rand() < 0.7) {
@@ -245,11 +411,26 @@ export function populated(a: MockAttendance) {
 	return {
 		_id: a._id,
 		event: event
-			? { _id: event._id, title: event.title, type: event.type, startTime: event.startTime, endTime: event.endTime }
+			? {
+					_id: event._id,
+					title: event.title,
+					type: event.type,
+					startTime: event.startTime,
+					endTime: event.endTime,
+				}
 			: null,
 		recordedBy: null,
 		student: student
-			? { _id: student._id, studentID: student.studentID, firstname: student.firstname, lastname: student.lastname, middlename: student.middlename, course: student.course, year: student.year, isPlaceholder: student.isPlaceholder }
+			? {
+					_id: student._id,
+					studentID: student.studentID,
+					firstname: student.firstname,
+					lastname: student.lastname,
+					middlename: student.middlename,
+					course: student.course,
+					year: student.year,
+					isPlaceholder: student.isPlaceholder,
+				}
 			: null,
 		studentID: a.studentIDNumber,
 		timeIn: a.timeIn,
@@ -264,7 +445,13 @@ export function paginate<T>(items: T[], page: number, pageSize: number) {
 	const totalPages = Math.max(1, Math.ceil(total / pageSize));
 	const offset = (page - 1) * pageSize;
 	const slice = items.slice(offset, offset + pageSize);
-	return { data: slice, total, totalPages, next: offset + pageSize < total ? page + 1 : -1, prev: page > 1 ? page - 1 : -1 };
+	return {
+		data: slice,
+		total,
+		totalPages,
+		next: offset + pageSize < total ? page + 1 : -1,
+		prev: page > 1 ? page - 1 : -1,
+	};
 }
 
 /** Filter attendance by reports date range (startDate/endDate are 'YYYY-MM-DD'). */
@@ -275,6 +462,12 @@ export function inRange(att: MockAttendance, startDate?: string, endDate?: strin
 	return true;
 }
 
-export function attendanceInRange(startDate?: string, endDate?: string, eventId?: string): MockAttendance[] {
-	return db.attendance.filter((a) => (!eventId || a.eventId === eventId) && inRange(a, startDate, endDate));
+export function attendanceInRange(
+	startDate?: string,
+	endDate?: string,
+	eventId?: string
+): MockAttendance[] {
+	return db.attendance.filter(
+		(a) => (!eventId || a.eventId === eventId) && inRange(a, startDate, endDate)
+	);
 }

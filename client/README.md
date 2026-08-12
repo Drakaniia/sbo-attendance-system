@@ -32,15 +32,15 @@ The browser preview is useful for inspecting the UI, but data features require t
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `bun run dev` | Start the Vite development server |
-| `bun run build` | Type-check and build the frontend |
-| `bun run typecheck` | Run the TypeScript project check |
-| `bun run lint` | Run ESLint |
-| `bun run format:check` | Verify Prettier formatting |
-| `bun run preview` | Preview the production build |
-| `bun run tauri` | Run a Tauri CLI command, such as `bun run tauri dev` |
+| Command                | Description                                          |
+| ---------------------- | ---------------------------------------------------- |
+| `bun run dev`          | Start the Vite development server                    |
+| `bun run build`        | Type-check and build the frontend                    |
+| `bun run typecheck`    | Run the TypeScript project check                     |
+| `bun run lint`         | Run ESLint                                           |
+| `bun run format:check` | Verify Prettier formatting                           |
+| `bun run preview`      | Preview the production build                         |
+| `bun run tauri`        | Run a Tauri CLI command, such as `bun run tauri dev` |
 
 ## Project layout
 

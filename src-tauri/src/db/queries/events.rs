@@ -307,7 +307,7 @@ fn validate_payload(payload: &EventPayload, require_all: bool) -> Result<(), Str
     ];
 
     for (name, val) in &required {
-        if require_all && val.map_or(true, |v| v.trim().is_empty()) {
+        if require_all && val.is_none_or(|v| v.trim().is_empty()) {
             return Err(format!("{name} is required"));
         }
         if !require_all && val.is_none() {

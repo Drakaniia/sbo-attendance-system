@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion';
 import {
-	CELL_GAP, CELL_SIZE, DAY_LABELS, HOUR_LABELS, heatmapColor, getTooltipLabel,
+	CELL_GAP,
+	CELL_SIZE,
+	DAY_LABELS,
+	HOUR_LABELS,
+	heatmapColor,
+	getTooltipLabel,
 } from './heatmap-color';
 
 export function DailyGrid({

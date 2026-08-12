@@ -38,4 +38,3 @@ root.render(
 		</QueryClientProvider>
 	</StrictMode>
 );
-

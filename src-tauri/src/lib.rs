@@ -91,8 +91,7 @@ pub fn run() {
             let revealed_flag = main_revealed.clone();
             let faded_handle = app.handle().clone();
             app.listen("splash-faded", move |_| {
-                if faded_flag.load(Ordering::SeqCst)
-                    && !revealed_flag.swap(true, Ordering::SeqCst)
+                if faded_flag.load(Ordering::SeqCst) && !revealed_flag.swap(true, Ordering::SeqCst)
                 {
                     reveal_main_window(&faded_handle);
                 }
