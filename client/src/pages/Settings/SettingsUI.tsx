@@ -21,7 +21,7 @@ export function Section({ children, delay = 0 }: SectionProps) {
 					? { duration: 0.15 }
 					: { type: 'spring', bounce: 0, duration: 0.4, delay: delay / 1000 }
 			}
-			className="glass glass-hover rounded-2xl p-5"
+			className="panel p-6"
 		>
 			{children}
 		</motion.section>
@@ -32,9 +32,9 @@ export function Section({ children, delay = 0 }: SectionProps) {
 
 export function SectionLabel({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
 	return (
-		<div className="flex items-center gap-2 mb-5">
-			<Icon className="w-4 h-4 text-white/35" />
-			<p className="text-[11px] font-semibold text-white/40 uppercase tracking-micro">{label}</p>
+		<div className="mb-5 flex items-center gap-2">
+			<Icon className="h-3.5 w-3.5 text-white/28" />
+			<p className="eyebrow">{label}</p>
 		</div>
 	);
 }
@@ -71,11 +71,11 @@ export function ActionButton({
 			onClick={onClick}
 			disabled={loading}
 			className={cn(
-				'group flex w-full items-center gap-4 rounded-xl bg-white/[0.03] border border-white/[0.06] px-4 py-3.5 text-left transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed',
+				'group flex w-full items-center gap-3.5 rounded-xl border border-white/[0.055] bg-white/[0.022] px-3.5 py-3 text-left transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50',
 				hoverBg
 			)}
 		>
-			<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] transition-colors duration-150 group-hover:bg-white/[0.1]">
+			<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-white/[0.045] transition-colors duration-150 group-hover:bg-white/[0.08]">
 				{loading ? (
 					<ArrowCounterClockwise className="w-4 h-4 text-white/50 motion-safe:animate-spin" />
 				) : (
@@ -85,13 +85,13 @@ export function ActionButton({
 			<div className="min-w-0 flex-1">
 				<p
 					className={cn(
-						'text-sm font-medium text-white/70 transition-colors duration-150',
+						'text-[12.5px] font-medium text-white/68 transition-colors duration-150',
 						hoverText
 					)}
 				>
 					{label}
 				</p>
-				{subtitle && <p className="mt-0.5 text-xs text-white/30 truncate">{subtitle}</p>}
+				{subtitle && <p className="mt-0.5 truncate text-[11px] text-white/28">{subtitle}</p>}
 			</div>
 		</button>
 	);
@@ -116,8 +116,8 @@ export function ToggleSwitch({
 			onClick={() => onChange(!checked)}
 			disabled={disabled}
 			className={cn(
-				'relative inline-flex h-7 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ease-apple-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 disabled:opacity-40',
-				checked ? 'bg-blue-500' : 'bg-white/[0.10]'
+				'relative inline-flex h-7 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ease-apple-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5b8def]/45 disabled:opacity-40',
+				checked ? 'bg-[#4f7fe0]' : 'bg-white/[0.10]'
 			)}
 		>
 			<span
@@ -150,8 +150,13 @@ export function InfoRow({
 			<div className="flex items-center gap-3 min-w-0">
 				<Icon className="w-4 h-4 text-white/30 shrink-0" />
 				<div className="min-w-0">
-					<p className="text-xs text-white/35">{label}</p>
-					<p className={cn('text-sm text-white/60 truncate', mono && 'font-mono text-xs')}>
+					<p className="text-[10.5px] text-white/28">{label}</p>
+					<p
+						className={cn(
+							'truncate text-[12px] text-white/58',
+							mono && 'font-mono text-[10.5px] text-white/45'
+						)}
+					>
 						{value}
 					</p>
 				</div>

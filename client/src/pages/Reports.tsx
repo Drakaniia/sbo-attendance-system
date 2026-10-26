@@ -1,15 +1,39 @@
-import { Users, ClipboardText, CheckCircle, TrendUp, Calendar } from '@phosphor-icons/react';
+import {
+	Calendar,
+	CheckCircle,
+	ClipboardText,
+	TrendUp,
+	Trophy,
+	Users,
+} from '@phosphor-icons/react';
 import ReportToolbar from '../components/reports/ReportToolbar';
 import ReportSidebar from '../components/reports/ReportSidebar';
 import EventPickerModal from '../components/reports/EventPickerModal';
 import CompletionRatesTable from '../components/reports/CompletionRatesTable';
-import { StatCard } from '../components/charts/StatCard';
-import { DashboardAreaChart } from '../components/charts/DashboardAreaChart';
-import { DashboardBarChart } from '../components/charts/DashboardBarChart';
-import { DashboardPieChart } from '../components/charts/DashboardPieChart';
+import MetricStrip from '../components/ui/MetricStrip';
+import PanelHeading from '../components/ui/PanelHeading';
+import AttendanceTrendChart from '../components/charts/AttendanceTrendChart';
+import EventAttendanceChart from '../components/charts/EventAttendanceChart';
+import CourseDonut from '../components/charts/CourseDonut';
 import HeatmapChart from '../components/charts/HeatmapChart';
 import type { HeatmapDailyEntry, HeatmapHourlyEntry } from '../api/reports';
-import { useReportsData, DONUT_COLORS, TREND_COLORS, YEAR_COLORS } from '../hooks/useReportsData';
+import { useReportsData } from '../hooks/useReportsData';
+
+const CHECK_IN_COLOR = '#6e9bff';
+const CHECK_OUT_COLOR = '#43d7b0';
+
+const LEADERBOARD_COLORS = ['#8fb4ff', '#9ff0e8', '#cdc2ff', '#ffd79a', '#b2ecc3', '#ffb8c8'];
+
+function rateColor(rate: number) {
+	if (rate >= 80) return '#43d7b0';
+	if (rate >= 50) return '#f5b85b';
+	return '#f07c9a';
+}
+
+function initials(name: string) {
+	const parts = name.trim().split(/\s+/);
+	return `${parts[0]?.[0] ?? ''}${parts[1]?.[0] ?? ''}`.toUpperCase() || '—';
+}
 
 export default function Reports() {
 	const {
@@ -29,30 +53,35 @@ export default function Reports() {
 		heatmapHourly,
 		heatmapDaily,
 		heatmapIsLoading,
-		trendChartData,
-		eventChartData,
-		courseChartData,
-		yearChartData,
+		attendanceTrend,
+		courseDistribution,
+		yearDistribution,
 		handleClearFilters,
 		handleEventSelect,
 		handleDateRangeChange,
 	} = useReportsData();
 
+	const leaders = (leaderboard ?? []).slice(0, 6);
+	const maxAttendances = leaders.reduce((max, entry) => Math.max(max, entry.totalAttendances), 0);
+
+	const yearData =
+		yearDistribution?.map((entry) => ({
+			course: `Year ${entry.year}`,
+			students: entry.students,
+		})) ?? [];
+
 	return (
-		<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
-			{/* ── Toolbar ───────────────────────────────── */}
+		<div className="flex flex-col gap-5 pb-4">
 			<ReportToolbar
 				dateRange={dateRange}
 				onDateRangeChange={handleDateRangeChange}
 				selectedEventId={selectedEventId}
 				selectedEventTitle={selectedEventTitle}
-				onToggleSidebar={() => setSidebarOpen((o) => !o)}
+				onToggleSidebar={() => setSidebarOpen((open) => !open)}
 				isRefreshing={isRefreshing}
 			/>
 
-			{/* ── Body: sidebar + content ────────────────── */}
-			<div className="flex gap-5">
-				{/* Sidebar */}
+			<div className="flex items-start gap-5">
 				<ReportSidebar
 					open={sidebarOpen}
 					onClose={() => setSidebarOpen(false)}
@@ -65,153 +94,116 @@ export default function Reports() {
 					onClearFilters={handleClearFilters}
 				/>
 
-				{/* Content area */}
-				<div className="flex-1 min-w-0 flex flex-col gap-5">
-					{/* Stat Cards Row */}
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-						<StatCard
-							title="Total Check-ins"
-							value={stats?.totalCheckIns ?? 0}
-							icon={ClipboardText}
-							color="#6366f1"
-							delay={0}
-						/>
-						<StatCard
-							title="Total Check-outs"
-							value={stats?.totalCheckOuts ?? 0}
-							icon={CheckCircle}
-							color="#818cf8"
-							delay={60}
-						/>
-						<StatCard
-							title="Attendance Rate"
-							value={`${stats?.attendanceRate ?? 0}%`}
-							icon={TrendUp}
-							color="#a78bfa"
-							trend={
-								stats && stats.attendanceRate >= 70
-									? 'up'
-									: stats && stats.attendanceRate >= 40
-										? 'neutral'
-										: 'down'
-							}
-							trendValue="check-out rate"
-							delay={120}
-						/>
-						<StatCard
-							title="Unique Students"
-							value={stats?.uniqueStudents ?? 0}
-							icon={Users}
-							color="#c4b5fd"
-							delay={180}
-						/>
-						<StatCard
-							title="Active Events"
-							value={stats?.activeEvents ?? 0}
-							icon={Calendar}
-							color="#6366f1"
-							delay={240}
-						/>
-					</div>
+				<div className="flex min-w-0 flex-1 flex-col gap-5">
+					<MetricStrip
+						className="lg:grid-cols-5"
+						items={[
+							{
+								label: 'Check-ins',
+								value: stats?.totalCheckIns ?? 0,
+								icon: ClipboardText,
+								accent: '#8fb4ff',
+								hint: 'Scans recorded in range',
+							},
+							{
+								label: 'Check-outs',
+								value: stats?.totalCheckOuts ?? 0,
+								icon: CheckCircle,
+								accent: '#9ff0e8',
+								hint: 'Loops closed',
+							},
+							{
+								label: 'Completion',
+								value: `${stats?.attendanceRate ?? 0}%`,
+								icon: TrendUp,
+								accent: '#b2ecc3',
+								hint: 'Check-outs over check-ins',
+							},
+							{
+								label: 'Students',
+								value: stats?.uniqueStudents ?? 0,
+								icon: Users,
+								accent: '#cdc2ff',
+								hint: 'Unique attendees',
+							},
+							{
+								label: 'Events',
+								value: stats?.activeEvents ?? 0,
+								icon: Calendar,
+								accent: '#ffd79a',
+								hint: 'Active in range',
+							},
+						]}
+					/>
 
-					{/* Charts Row 1 */}
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-						{/* Attendance Trend */}
-						<div className="glass glass-hover rounded-2xl p-5">
-							<div className="flex items-center justify-between mb-4">
-								<div>
-									<h3 className="text-base font-semibold text-white tracking-tight">
-										Attendance Trend
-									</h3>
-									<p className="text-xs text-white/30 mt-0.5">Daily check-ins &amp; check-outs</p>
-								</div>
-								<div className="flex items-center gap-3 text-xs">
-									<div className="flex items-center gap-1.5">
-										<div
-											className="w-2.5 h-2.5 rounded-sm"
-											style={{ background: TREND_COLORS.checkIns }}
-										/>
-										<span className="text-white/50">In</span>
-									</div>
-									<div className="flex items-center gap-1.5">
-										<div
-											className="w-2.5 h-2.5 rounded-sm"
-											style={{ background: TREND_COLORS.checkOuts }}
-										/>
-										<span className="text-white/50">Out</span>
-									</div>
+					{/* Trend + course mix */}
+					<div className="grid gap-5 2xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+						<section className="panel flex min-w-0 flex-col p-6">
+							<PanelHeading eyebrow="Trend" title="Attendance over time" />
+							<div className="mt-3 flex items-center gap-4">
+								<span className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-white/35">
+									<span
+										className="h-[5px] w-[5px] rounded-full"
+										style={{ background: CHECK_IN_COLOR }}
+									/>
+									Check-ins
+								</span>
+								<span className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-white/35">
+									<span
+										className="h-[5px] w-[5px] rounded-full"
+										style={{ background: CHECK_OUT_COLOR }}
+									/>
+									Check-outs
+								</span>
+							</div>
+							<div className="mt-3">
+								<AttendanceTrendChart data={attendanceTrend ?? []} className="h-[280px]" />
+							</div>
+						</section>
+
+						<section className="panel flex min-w-0 flex-col p-6">
+							<PanelHeading eyebrow="Roster" title="Course mix" />
+							<div className="mt-5 flex flex-1 items-center">
+								<div className="w-full">
+									<CourseDonut data={courseDistribution ?? []} />
 								</div>
 							</div>
-							<DashboardAreaChart
-								data={trendChartData}
-								dataKeys={[
-									{ key: 'CheckIns', color: TREND_COLORS.checkIns, name: 'Check-ins' },
-									{ key: 'CheckOuts', color: TREND_COLORS.checkOuts, name: 'Check-outs' },
-								]}
-								xKey="date"
-								height={280}
-								curveType="monotone"
-								gradientFrom={TREND_COLORS.checkIns}
-								gradientTo={TREND_COLORS.checkOuts}
-							/>
-						</div>
-
-						{/* Event Breakdown */}
-						<div className="glass glass-hover rounded-2xl p-5">
-							<div className="mb-4">
-								<h3 className="text-base font-semibold text-white tracking-tight">
-									Event Breakdown
-								</h3>
-								<p className="text-xs text-white/30 mt-0.5">Check-ins &amp; check-outs per event</p>
-							</div>
-							<DashboardBarChart
-								data={eventChartData}
-								dataKeys={[
-									{ key: 'CheckIns', color: '#6366f1', name: 'Check-ins' },
-									{ key: 'CheckOuts', color: '#a78bfa', name: 'Check-outs' },
-								]}
-								xKey="name"
-								height={280}
-								layout="horizontal"
-							/>
-						</div>
+						</section>
 					</div>
 
-					{/* Charts Row 2 */}
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-						{/* Course Distribution */}
-						<div className="glass glass-hover rounded-2xl p-5">
-							<div className="mb-2">
-								<h3 className="text-base font-semibold text-white tracking-tight">
-									Course Distribution
-								</h3>
-								<p className="text-xs text-white/30 mt-0.5">Students per course</p>
+					{/* Event breakdown + year mix */}
+					<div className="grid gap-5 2xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+						<section className="panel flex min-w-0 flex-col p-6">
+							<PanelHeading eyebrow="Turnout" title="Event breakdown" />
+							<div className="mt-3 flex items-center gap-4">
+								<span className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-white/35">
+									<span
+										className="h-[5px] w-[5px] rounded-full"
+										style={{ background: CHECK_IN_COLOR }}
+									/>
+									Checked in
+								</span>
+								<span className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-white/35">
+									<span
+										className="h-[5px] w-[5px] rounded-full"
+										style={{ background: CHECK_OUT_COLOR }}
+									/>
+									Checked out
+								</span>
 							</div>
-							<DashboardPieChart
-								data={courseChartData}
-								colors={DONUT_COLORS}
-								height={260}
-								innerRadius={55}
-								outerRadius={95}
-							/>
-						</div>
+							<div className="mt-3 h-[300px]">
+								<EventAttendanceChart events={eventBreakdown ?? []} className="h-full" />
+							</div>
+						</section>
 
-						{/* Year Distribution */}
-						<div className="glass glass-hover rounded-2xl p-5">
-							<div className="mb-2">
-								<h3 className="text-base font-semibold text-white tracking-tight">
-									Year Distribution
-								</h3>
-								<p className="text-xs text-white/30 mt-0.5">Students per year level</p>
+						<section className="panel flex min-w-0 flex-col p-6">
+							<PanelHeading eyebrow="Year level" title="Who attends" />
+							<div className="mt-5 flex flex-1 items-center">
+								<div className="w-full">
+									<CourseDonut data={yearData} />
+								</div>
 							</div>
-							<DashboardPieChart
-								data={yearChartData}
-								colors={YEAR_COLORS}
-								height={260}
-								innerRadius={55}
-								outerRadius={95}
-							/>
-						</div>
+						</section>
 					</div>
 
 					{/* Heatmap */}
@@ -222,119 +214,97 @@ export default function Reports() {
 					/>
 
 					{/* Leaderboard */}
-					<div className="glass glass-hover rounded-2xl p-5">
-						<div className="mb-4">
-							<h3 className="text-base font-semibold text-white tracking-tight">Leaderboard</h3>
-							<p className="text-xs text-white/30 mt-0.5">Top students by attendance</p>
-						</div>
+					<section className="panel flex min-w-0 flex-col p-6">
+						<PanelHeading
+							eyebrow="Students"
+							title="Leaderboard"
+							action={
+								<span className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-micro text-white/25">
+									<Trophy className="h-3 w-3" />
+									Top {leaders.length}
+								</span>
+							}
+						/>
+
 						{leaderboardLoading ? (
-							<div className="overflow-x-auto">
-								<table className="w-full text-sm">
-									<thead>
-										<tr className="border-b border-white/[0.06]">
-											{['#', 'Student ID', 'Name', 'Course/Year', 'Attendances', 'Rate'].map(
-												(h) => (
-													<th
-														key={h}
-														className="text-left py-3 px-3 text-xs font-medium text-white/20 uppercase tracking-wider"
-													>
-														{h}
-													</th>
-												)
-											)}
-										</tr>
-									</thead>
-									<tbody>
-										{Array.from({ length: 5 }).map((_, i) => (
-											<tr key={`skel-${i}`} className="border-b border-white/[0.03]">
-												{Array.from({ length: 6 }).map((_, j) => (
-													<td key={j} className="py-3 px-3">
-														<div
-															className="h-4 rounded bg-white/[0.04] animate-pulse"
-															style={{ width: j < 3 ? '80%' : '50%' }}
-														/>
-													</td>
-												))}
-											</tr>
-										))}
-									</tbody>
-								</table>
+							<div className="mt-4 space-y-2">
+								{Array.from({ length: 5 }).map((_, index) => (
+									<div
+										key={index}
+										className="h-12 animate-pulse rounded-xl bg-white/[0.025]"
+										style={{ animationDelay: `${index * 60}ms` }}
+									/>
+								))}
 							</div>
-						) : leaderboard && leaderboard.length > 0 ? (
-							<div className="overflow-x-auto">
-								<table className="w-full text-sm">
-									<thead>
-										<tr className="border-b border-white/[0.06]">
-											<th className="text-left py-3 px-3 text-xs font-medium text-white/30 uppercase tracking-wider">
-												#
-											</th>
-											<th className="text-left py-3 px-3 text-xs font-medium text-white/30 uppercase tracking-wider">
-												Student ID
-											</th>
-											<th className="text-left py-3 px-3 text-xs font-medium text-white/30 uppercase tracking-wider">
-												Name
-											</th>
-											<th className="text-left py-3 px-3 text-xs font-medium text-white/30 uppercase tracking-wider">
-												Course/Year
-											</th>
-											<th className="text-left py-3 px-3 text-xs font-medium text-white/30 uppercase tracking-wider">
-												Attendances
-											</th>
-											<th className="text-left py-3 px-3 text-xs font-medium text-white/30 uppercase tracking-wider">
-												Rate
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										{leaderboard.map((entry, i) => (
-											<tr
-												key={entry.studentId}
-												className="border-b border-white/[0.03] transition-colors hover:bg-white/[0.02] motion-safe:opacity-0 motion-safe:animate-[fadeIn_0.4s_ease-out_forwards]"
-												style={{ animationDelay: `${i * 40}ms` }}
+						) : leaders.length > 0 ? (
+							<ol className="mt-4 space-y-0.5">
+								{leaders.map((entry, index) => {
+									const color = LEADERBOARD_COLORS[index % LEADERBOARD_COLORS.length];
+									const relative = maxAttendances > 0 ? entry.totalAttendances / maxAttendances : 0;
+									return (
+										<li
+											key={entry.studentId}
+											className="group flex items-center gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-white/[0.028]"
+										>
+											<span className="numeric w-4 shrink-0 text-center text-[10.5px] font-medium text-white/22">
+												{index + 1}
+											</span>
+											<span
+												className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10.5px] font-semibold"
+												style={{ background: `${color}1f`, color }}
 											>
-												<td className="py-3 px-3 text-white/40 font-mono text-xs">{i + 1}</td>
-												<td className="py-3 px-3 text-white/70 font-mono text-xs">
-													{entry.studentId}
-												</td>
-												<td className="py-3 px-3 text-white/80 font-medium">{entry.name || '—'}</td>
-												<td className="py-3 px-3 text-white/50 text-xs">
-													{entry.course ? `${entry.course}/${entry.year}` : '—'}
-												</td>
-												<td className="py-3 px-3 text-white/60 tabular-nums">
-													{entry.totalAttendances}
-												</td>
-												<td className="py-3 px-3">
+												{initials(entry.name)}
+											</span>
+											<div className="min-w-0 flex-1">
+												<div className="flex items-baseline justify-between gap-3">
+													<p className="truncate text-[12.5px] font-medium text-white/78">
+														{entry.name || '—'}
+													</p>
+													<span className="numeric shrink-0 text-[11px] tabular-nums text-white/42">
+														{entry.totalAttendances}
+														<span className="ml-1 text-[9.5px] text-white/22">events</span>
+													</span>
+												</div>
+												<div className="mt-1.5 flex items-center gap-2.5">
+													<span className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/[0.055]">
+														<span
+															className="block h-full rounded-full transition-[width] duration-500 ease-apple-out"
+															style={{
+																width: `${Math.max(relative * 100, 2)}%`,
+																background: color,
+															}}
+														/>
+													</span>
 													<span
-														className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
-															entry.checkInRate >= 80
-																? 'text-emerald-400 bg-emerald-400/10'
-																: entry.checkInRate >= 50
-																	? 'text-amber-400 bg-amber-400/10'
-																	: 'text-red-400 bg-red-400/10'
-														}`}
+														className="numeric w-8 shrink-0 text-right text-[9.5px] tabular-nums"
+														style={{ color: rateColor(entry.checkInRate) }}
 													>
 														{entry.checkInRate}%
 													</span>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
+												</div>
+											</div>
+											<span className="hidden w-[86px] shrink-0 truncate text-right text-[10px] text-white/24 sm:block">
+												{entry.course ? `${entry.course}/${entry.year}` : '—'}
+											</span>
+										</li>
+									);
+								})}
+							</ol>
 						) : (
-							<div className="flex flex-col items-center justify-center py-12 text-white/20">
-								<Users className="w-10 h-10 mb-2" />
-								<p className="text-sm">No leaderboard data yet</p>
+							<div className="flex flex-col items-center justify-center py-12 text-center">
+								<p className="text-[13px] font-medium text-white/42">No leaderboard data yet</p>
+								<p className="mt-1 max-w-[32ch] text-[11.5px] text-white/25">
+									Attendance in this range will rank students here.
+								</p>
 							</div>
 						)}
-					</div>
+					</section>
 
-					{/* Completion Rates */}
+					{/* Completion rates */}
 					<CompletionRatesTable data={eventBreakdown ?? []} />
 				</div>
 			</div>
 
-			{/* Event Picker Modal */}
 			<EventPickerModal
 				opened={eventPickerOpen}
 				onClose={() => setEventPickerOpen(false)}
