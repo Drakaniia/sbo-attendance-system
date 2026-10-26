@@ -40,6 +40,7 @@ export type RecentActivityData = {
 		year: number;
 	};
 	event: {
+		_id?: string;
 		title: string;
 		type: string;
 	};
