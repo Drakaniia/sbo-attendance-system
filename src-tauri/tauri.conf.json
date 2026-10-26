@@ -16,12 +16,14 @@
         "title": "SEATS",
         "width": 1280,
         "height": 800,
+        "minWidth": 1024,
+        "minHeight": 700,
         "visible": false,
         "resizable": true,
         "decorations": true,
         "fullscreen": false,
         "center": true,
-        "backgroundColor": "#0A0A0A"
+        "backgroundColor": "#08090B"
       },
       {
         "label": "splashscreen",
@@ -36,7 +38,7 @@
         "alwaysOnTop": true,
         "skipTaskbar": true,
         "shadow": true,
-        "backgroundColor": "#080A0F"
+        "backgroundColor": "#08090B"
       }
     ],
     "security": {
