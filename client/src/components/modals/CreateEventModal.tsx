@@ -10,7 +10,7 @@ export default function CreateEventModal() {
 		<>
 			<button
 				onClick={() => setOpened(true)}
-				className="inline-flex items-center gap-2 rounded-full bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold px-4 py-2 shadow-lg shadow-blue-500/25 transition-[background-color,transform,box-shadow] duration-150 ease-apple-out active:scale-[0.97]"
+				className="inline-flex h-8 items-center gap-1.5 rounded-full bg-[#0a84ff] px-3.5 text-[12px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(10,132,255,0.7)] transition-[background-color,transform,box-shadow] duration-150 ease-apple-out hover:bg-[#3d9bff] active:scale-[0.97]"
 			>
 				<Plus className="w-4 h-4" />
 				New Event
