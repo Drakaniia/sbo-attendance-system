@@ -4,24 +4,51 @@
 
 /* ── Prevent overscroll / rubber-banding into void ───── */
 html,
-body,
+body {
+	overflow: hidden;
+	height: 100%;
+	overscroll-behavior: none;
+	background-color: #08090b;
+}
+
+/* Mantine's reset paints the body with its own surface token. The workspace
+   sits on our deeper neutral, so out-specify the reset rather than depending
+   on stylesheet order. #root stays transparent for the ambient gradient. */
+html body {
+	background-color: #08090b;
+}
+
 #root {
 	overflow: hidden;
 	height: 100%;
 	overscroll-behavior: none;
-	background-color: #0a0a0a;
+}
+
+body {
+	background-image:
+		radial-gradient(1100px 640px at 6% -14%, rgba(78, 116, 255, 0.11), transparent 62%),
+		radial-gradient(900px 620px at 102% -6%, rgba(51, 214, 166, 0.055), transparent 58%),
+		linear-gradient(180deg, #090a0d 0%, #08090b 46%, #07080a 100%);
+	background-attachment: fixed;
 }
 
 * {
 	font-family:
-		'Poppins',
-		system-ui,
+		'Inter Variable',
+		Inter,
 		-apple-system,
 		BlinkMacSystemFont,
+		'SF Pro Text',
 		'Segoe UI',
-		Roboto,
+		system-ui,
 		sans-serif;
 	font-optical-sizing: auto;
+	font-feature-settings:
+		'cv02' 1,
+		'cv03' 1,
+		'cv04' 1,
+		'cv11' 1;
+	letter-spacing: -0.011em;
 
 	/* Desktop app — disable text selection/highlight/copy across the board.
 	   Re-enabled only for actual input controls where the user needs to edit text. */
@@ -59,17 +86,28 @@ textarea,
 	}
 }
 
+@keyframes riseIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px) scale(0.995);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
 /* Green pulse on the scan input after a successful recording */
 @keyframes flash-success {
 	0% {
 		box-shadow:
-			0 0 0 3px rgba(16, 185, 129, 0.55),
-			0 0 20px 2px rgba(16, 185, 129, 0.35);
+			0 0 0 3px rgba(51, 214, 166, 0.55),
+			0 0 20px 2px rgba(51, 214, 166, 0.35);
 	}
 	100% {
 		box-shadow:
-			0 0 0 0 rgba(16, 185, 129, 0),
-			0 0 0 0 rgba(16, 185, 129, 0);
+			0 0 0 0 rgba(51, 214, 166, 0),
+			0 0 0 0 rgba(51, 214, 166, 0);
 	}
 }
 
@@ -77,13 +115,13 @@ textarea,
 @keyframes flash-warning {
 	0% {
 		box-shadow:
-			0 0 0 3px rgba(245, 158, 11, 0.55),
-			0 0 20px 2px rgba(245, 158, 11, 0.35);
+			0 0 0 3px rgba(255, 184, 77, 0.55),
+			0 0 20px 2px rgba(255, 184, 77, 0.35);
 	}
 	100% {
 		box-shadow:
-			0 0 0 0 rgba(245, 158, 11, 0),
-			0 0 0 0 rgba(245, 158, 11, 0);
+			0 0 0 0 rgba(255, 184, 77, 0),
+			0 0 0 0 rgba(255, 184, 77, 0);
 	}
 }
 
@@ -99,55 +137,185 @@ textarea,
 	}
 }
 
-/* ── Apple design tokens ─────────────────────────────── */
+/* Slow ambient drift for the hero luminescence */
+@keyframes ambient-drift {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0) scale(1);
+		opacity: 0.55;
+	}
+	50% {
+		transform: translate3d(2%, -3%, 0) scale(1.06);
+		opacity: 0.8;
+	}
+}
+
+/* ── Design tokens ───────────────────────────────────── */
 :root {
 	/* Motion — damping 1.0 (critically damped) springs feel, expressed as curves */
 	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
+	/* Labels */
+	--label-primary: #f5f5f7;
+	--label-secondary: rgba(235, 235, 245, 0.62);
+	--label-tertiary: rgba(235, 235, 245, 0.4);
+	--label-quaternary: rgba(235, 235, 245, 0.24);
+
 	/* Materials — translucent surfaces, light catches the top edge */
-	--surface: rgba(255, 255, 255, 0.04);
-	--surface-hover: rgba(255, 255, 255, 0.06);
-	--surface-border: rgba(255, 255, 255, 0.08);
+	--surface: rgba(255, 255, 255, 0.042);
+	--surface-hover: rgba(255, 255, 255, 0.062);
+	--surface-border: rgba(255, 255, 255, 0.078);
 	--surface-hairline: rgba(255, 255, 255, 0.06);
+	--border: rgba(255, 255, 255, 0.07);
+
+	/* Accents */
+	--accent-blue: #5b8def;
+	--accent-cyan: #4fd1c5;
+	--accent-mint: #33d6a6;
+	--accent-lavender: #9f8cf6;
+	--accent-amber: #f5b85b;
+	--accent-rose: #f07c9a;
+	--accent-green: #6fd08c;
+
+	/* Chart tokens — consumed by Bklit UI */
+	--chart-1: #5b8def;
+	--chart-2: #4fd1c5;
+	--chart-3: #9f8cf6;
+	--chart-4: #f5b85b;
+	--chart-5: #f07c9a;
+	--chart-6: #6fd08c;
+	--chart-positive: #33d6a6;
+	--chart-negative: #ff7a8a;
+	--chart-background: transparent;
+	--chart-foreground: var(--label-primary);
+	--chart-foreground-muted: var(--label-tertiary);
+	--chart-line-primary: #6e9bff;
+	--chart-line-secondary: #43d7b0;
+	--chart-crosshair: rgba(255, 255, 255, 0.24);
+	--chart-grid: rgba(255, 255, 255, 0.06);
+	--chart-brush-border: rgba(255, 255, 255, 0.12);
+	--chart-tooltip-background: rgba(20, 21, 25, 0.9);
+	--chart-tooltip-foreground: var(--label-primary);
+	--chart-tooltip-muted: var(--label-tertiary);
+	--chart-marker-background: #12141a;
+	--chart-marker-border: rgba(255, 255, 255, 0.18);
+	--chart-marker-foreground: var(--label-primary);
+	--chart-label: rgba(235, 235, 245, 0.38);
+	--chart-scale-mix: #12141a;
+	--chart-scale-01: rgba(255, 255, 255, 0.14);
+	--chart-scale-02: color-mix(in oklab, var(--chart-1) 32%, var(--chart-scale-mix));
+	--chart-scale-03: color-mix(in oklab, var(--chart-1) 52%, var(--chart-scale-mix));
+	--chart-scale-04: color-mix(in oklab, var(--chart-1) 76%, var(--chart-scale-mix));
+	--chart-scale-05: var(--chart-1);
+	--chart-scale-pattern-color: rgba(8, 9, 11, 0.6);
+	--foreground: var(--label-primary);
+	--muted-foreground: var(--label-tertiary);
+	--chart-indicator-color: var(--label-primary);
+	--chart-indicator-secondary-color: rgba(255, 255, 255, 0.2);
+	--chart-marker-badge-background: #f5f5f7;
+	--chart-marker-badge-foreground: #0b0c0f;
+	--chart-segment-background: rgba(255, 255, 255, 0.04);
+	--chart-segment-line: rgba(255, 255, 255, 0.18);
+}
+
+@layer base {
+	::selection {
+		background: rgba(91, 141, 239, 0.35);
+		color: #fff;
+	}
+
+	:focus-visible {
+		outline: none;
+	}
 }
 
 @layer components {
-	/* Translucent panel material */
+	/* ── Materials ─────────────────────────────────── */
+
+	/* Primary content panel — the workhorse surface */
+	.panel {
+		position: relative;
+		border-radius: 26px;
+		background: linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.052) 0%,
+			rgba(255, 255, 255, 0.022) 100%
+		);
+		border: 1px solid rgba(255, 255, 255, 0.075);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.07),
+			0 1px 2px rgba(0, 0, 0, 0.4),
+			0 28px 60px -40px rgba(0, 0, 0, 0.9);
+	}
+
+	/* Nested well inside a panel — lower contrast, inset light */
+	.well {
+		position: relative;
+		border-radius: 18px;
+		background: rgba(255, 255, 255, 0.028);
+		border: 1px solid rgba(255, 255, 255, 0.055);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+	}
+
+	/* Interactive panel — lifts a hair on precision pointers */
+	.panel-interactive {
+		transition:
+			border-color 320ms var(--ease-out),
+			background-color 320ms var(--ease-out),
+			box-shadow 320ms var(--ease-out);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.panel-interactive:hover {
+			border-color: rgba(255, 255, 255, 0.115);
+			box-shadow:
+				inset 0 1px 0 rgba(255, 255, 255, 0.08),
+				0 1px 2px rgba(0, 0, 0, 0.4),
+				0 36px 70px -42px rgba(0, 0, 0, 0.95);
+		}
+	}
+
+	/* Legacy material aliases (used across the app) */
 	.glass {
-		background: var(--surface);
-		-webkit-backdrop-filter: blur(20px) saturate(180%);
-		backdrop-filter: blur(20px) saturate(180%);
-		border: 1px solid var(--surface-border);
-		box-shadow: inset 0 1px 0 var(--surface-hairline);
+		background: linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.048) 0%,
+			rgba(255, 255, 255, 0.02) 100%
+		);
+		-webkit-backdrop-filter: blur(20px) saturate(160%);
+		backdrop-filter: blur(20px) saturate(160%);
+		border: 1px solid rgba(255, 255, 255, 0.075);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.06),
+			0 20px 44px -34px rgba(0, 0, 0, 0.85);
 	}
 
 	/* Heavier toolbar material — bigger surfaces read thicker */
 	.glass-heavy {
-		background: rgba(17, 17, 19, 0.55);
-		-webkit-backdrop-filter: blur(24px) saturate(180%);
-		backdrop-filter: blur(24px) saturate(180%);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+		background: rgba(10, 11, 14, 0.66);
+		-webkit-backdrop-filter: blur(28px) saturate(170%);
+		backdrop-filter: blur(28px) saturate(170%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
 	}
 
 	/* Modal / floating sheet surface — strongest blur, deepest shadow */
 	.glass-modal {
-		background: rgba(20, 20, 22, 0.78);
-		-webkit-backdrop-filter: blur(40px) saturate(200%);
-		backdrop-filter: blur(40px) saturate(200%);
+		background: rgba(19, 20, 24, 0.86);
+		-webkit-backdrop-filter: blur(44px) saturate(180%);
+		backdrop-filter: blur(44px) saturate(180%);
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.08),
-			0 32px 64px -16px rgba(0, 0, 0, 0.8);
+			0 40px 90px -20px rgba(0, 0, 0, 0.9);
 	}
 
-	/* Structural rail — heavier material for the sidebar, hairline left edge catches light */
+	/* Structural rail — heavier material for the sidebar, hairline edge catches light */
 	.sidebar-material {
-		background: rgba(16, 16, 18, 0.72);
-		-webkit-backdrop-filter: blur(24px) saturate(180%);
-		backdrop-filter: blur(24px) saturate(180%);
-		box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.04);
+		background: rgba(11, 12, 15, 0.74);
+		-webkit-backdrop-filter: blur(30px) saturate(160%);
+		backdrop-filter: blur(30px) saturate(160%);
+		box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.045);
 	}
 
 	/* Scroll edge effect — fade where content meets floating chrome, not a divider */
@@ -155,21 +323,21 @@ textarea,
 		content: '';
 		position: absolute;
 		inset: 100% 0 auto 0;
-		height: 16px;
-		background: linear-gradient(to bottom, rgba(10, 10, 10, 0.55), transparent);
+		height: 18px;
+		background: linear-gradient(to bottom, rgba(8, 9, 11, 0.6), transparent);
 		pointer-events: none;
 	}
 
 	/* Pointer-fine hover brightening for panels */
 	.glass-hover {
 		transition:
-			background-color 300ms ease,
-			border-color 300ms ease;
+			background-color 300ms var(--ease-out),
+			border-color 300ms var(--ease-out);
 	}
 	@media (hover: hover) and (pointer: fine) {
 		.glass-hover:hover {
-			background: var(--surface-hover);
-			border-color: rgba(255, 255, 255, 0.12);
+			background-color: rgba(255, 255, 255, 0.052);
+			border-color: rgba(255, 255, 255, 0.11);
 		}
 	}
 
@@ -182,19 +350,19 @@ textarea,
 			transform 400ms var(--ease-out),
 			opacity 400ms var(--ease-out),
 			box-shadow 400ms var(--ease-out),
-			background-color 300ms ease,
-			border-color 300ms ease,
-			filter 300ms ease;
+			background-color 300ms var(--ease-out),
+			border-color 300ms var(--ease-out),
+			filter 300ms var(--ease-out);
 		transition-delay: var(--stagger-delay, 0ms);
 	}
 	@media (hover: hover) and (pointer: fine) {
 		.lift:hover {
 			transform: translateY(-2px);
-			background: var(--surface-hover);
-			border-color: rgba(255, 255, 255, 0.12);
+			background-color: rgba(255, 255, 255, 0.052);
+			border-color: rgba(255, 255, 255, 0.115);
 			box-shadow:
-				inset 0 1px 0 var(--surface-hairline),
-				0 12px 32px -16px rgba(0, 0, 0, 0.6);
+				inset 0 1px 0 rgba(255, 255, 255, 0.07),
+				0 20px 44px -28px rgba(0, 0, 0, 0.8);
 			transition-delay: 0ms;
 			will-change: transform;
 		}
@@ -205,12 +373,82 @@ textarea,
 		transition-delay: 0ms;
 	}
 
+	/* ── Type helpers ─────────────────────────────── */
+
 	/* Size-specific tracking — tighten display text, loosen micro labels */
 	.tracking-display {
-		letter-spacing: -0.02em;
+		letter-spacing: -0.032em;
+	}
+	.tracking-title {
+		letter-spacing: -0.022em;
 	}
 	.tracking-micro {
-		letter-spacing: 0.04em;
+		letter-spacing: 0.075em;
+	}
+
+	.numeric {
+		font-variant-numeric: tabular-nums;
+		font-feature-settings:
+			'cv02' 1,
+			'cv03' 1,
+			'cv04' 1,
+			'cv11' 1,
+			'tnum' 1;
+	}
+
+	/* Small caps label used above sections and inside data panels */
+	.eyebrow {
+		font-size: 10px;
+		font-weight: 600;
+		line-height: 1;
+		letter-spacing: 0.09em;
+		text-transform: uppercase;
+		color: rgba(235, 235, 245, 0.4);
+	}
+
+	/* Hairline divider that fades at the edges */
+	.hairline {
+		height: 1px;
+		background: linear-gradient(
+			90deg,
+			transparent,
+			rgba(255, 255, 255, 0.09) 12%,
+			rgba(255, 255, 255, 0.09) 88%,
+			transparent
+		);
+	}
+
+	/* Apple-style inset control */
+	.control {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		border-radius: 9999px;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		background: rgba(255, 255, 255, 0.045);
+		color: rgba(235, 235, 245, 0.66);
+		font-size: 12.5px;
+		font-weight: 500;
+		padding: 7px 12px;
+		transition:
+			background-color 180ms var(--ease-out),
+			border-color 180ms var(--ease-out),
+			color 180ms var(--ease-out),
+			transform 180ms var(--ease-out);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.control:hover {
+			background: rgba(255, 255, 255, 0.075);
+			border-color: rgba(255, 255, 255, 0.13);
+			color: var(--label-primary);
+		}
+	}
+	.control:active {
+		transform: scale(0.97);
+	}
+	.control:focus-visible {
+		box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.32);
 	}
 }
 
@@ -218,8 +456,8 @@ textarea,
 /* Thin, translucent, overlays content, only visible on scroll */
 
 ::-webkit-scrollbar {
-	width: 6px;
-	height: 6px;
+	width: 8px;
+	height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -227,17 +465,21 @@ textarea,
 }
 
 ::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.16);
+	background: rgba(255, 255, 255, 0.11);
 	border-radius: 9999px;
+	border: 2px solid transparent;
+	background-clip: content-box;
 	transition: background-color 300ms ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: rgba(255, 255, 255, 0.28);
+	background: rgba(255, 255, 255, 0.24);
+	background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:active {
-	background: rgba(255, 255, 255, 0.38);
+	background: rgba(255, 255, 255, 0.34);
+	background-clip: content-box;
 }
 
 ::-webkit-scrollbar-corner {
@@ -247,13 +489,14 @@ textarea,
 /* Firefox thin scrollbar */
 * {
 	scrollbar-width: thin;
-	scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+	scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
 }
 
 /* ── Accessibility ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
 	.lift,
-	.glass-hover {
+	.glass-hover,
+	.panel-interactive {
 		transition: none;
 	}
 	.lift:hover {
@@ -265,7 +508,7 @@ textarea,
 	.glass-heavy,
 	.glass-modal,
 	.sidebar-material {
-		background: rgba(24, 24, 26, 0.92);
+		background: rgba(18, 19, 23, 0.96);
 		-webkit-backdrop-filter: none;
 		backdrop-filter: none;
 		box-shadow: none;

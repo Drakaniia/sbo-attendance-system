@@ -22,11 +22,13 @@ function App() {
 	}, []);
 
 	return (
-		<main className="flex h-screen">
+		<main className="relative flex h-screen overflow-hidden">
 			<Sidebar />
 
-			<section className="min-w-0 flex-1 overflow-y-scroll overscroll-none overflow-x-hidden bg-[#0A0A0A] p-5">
-				<Outlet />
+			<section className="relative min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-none">
+				<div className="mx-auto w-full max-w-[1520px] px-6 pb-16 pt-6 lg:px-10">
+					<Outlet />
+				</div>
 			</section>
 		</main>
 	);
