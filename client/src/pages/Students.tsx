@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import ImportStudentsButton from '../components/ImportStudentsButton';
 import StudentsTable from '../components/StudentsTable';
 import StudentFilterBar from '../components/StudentFilterBar';
-import Header from '../components/ui/Header';
-import LiveClock from '../components/LiveClock';
+import PageHeader from '../components/ui/PageHeader';
 import Pagination from '../components/ui/Pagination';
 import { QUERY_KEYS } from '../constants';
 import { useStudentFilterStore } from '../store/students-filter';
@@ -33,34 +32,19 @@ export default function Students() {
 		(filters.gender ?? 'All') !== 'All';
 
 	return (
-		<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
-			{/* Sticky toolbar — translucent chrome, content scrolls beneath */}
-			<header className="sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5">
-				<div className="flex items-center justify-between gap-4">
-					<div className="min-w-0">
-						<Header className="!text-2xl !tracking-tight truncate">Students</Header>
-						<p className="text-white/40 text-sm mt-1 truncate">
-							{format(new Date(), 'EEEE, MMMM d, yyyy')}
-							{data?.total != null && (
-								<>
-									{' '}
-									· <span className="text-white/60 tabular-nums">{data.total}</span> students
-								</>
-							)}
-						</p>
-					</div>
-					<div className="flex items-center gap-3">
-						<div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60">
-							<span className="relative flex w-2 h-2">
-								<span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping" />
-								<span className="relative inline-flex w-2 h-2 rounded-full bg-emerald-400" />
-							</span>
-							<LiveClock format="12" showSeconds className="tabular-nums text-white/60" />
-						</div>
-						<ImportStudentsButton />
-					</div>
-				</div>
-			</header>
+		<div className="flex flex-col gap-5 pb-4">
+			<PageHeader
+				eyebrow={
+					<>
+						<span>{format(new Date(), 'EEEE, MMMM d')}</span>
+						<span className="h-[3px] w-[3px] rounded-full bg-white/20" />
+						<span className="tabular-nums">{data?.total ?? 0} students</span>
+					</>
+				}
+				title="Students"
+				description="The masterlist behind every scan — search, filter, and keep it current."
+				actions={<ImportStudentsButton />}
+			/>
 
 			{/* Filter bar */}
 			<StudentFilterBar />
@@ -92,22 +76,22 @@ function ErrorState({ onRetry, isRetrying }: ErrorStateProps) {
 	return (
 		<div
 			role="alert"
-			className="glass rounded-2xl p-10 flex flex-col items-center gap-4 text-center border-red-500/20"
+			className="panel flex flex-col items-center gap-4 px-6 py-14 text-center border-[#f07c9a]/20"
 		>
-			<div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-500/15">
-				<Warning className="w-7 h-7 text-red-400" />
+			<div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f07c9a]/[0.08]">
+				<Warning className="h-5 w-5 text-[#ff9dae]" />
 			</div>
 			<div>
-				<p className="text-white font-semibold text-lg">Couldn't load the student list</p>
-				<p className="text-sm text-white/40 mt-1">
-					The server may be unreachable right now. Give it another try.
+				<p className="text-[13px] font-medium text-white/70">Couldn't load the student list</p>
+				<p className="mt-1 text-[11.5px] leading-relaxed text-white/32">
+					The local database may be busy right now. Give it another try.
 				</p>
 			</div>
 			<button
 				type="button"
 				onClick={onRetry}
 				disabled={isRetrying}
-				className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:opacity-50"
+				className="control disabled:opacity-50"
 			>
 				<ArrowsClockwise className={cn('w-4 h-4', isRetrying && 'motion-safe:animate-spin')} />
 				{isRetrying ? 'Retrying…' : 'Try again'}
@@ -131,19 +115,19 @@ function EmptyState({ filtered }: EmptyStateProps) {
 	};
 
 	return (
-		<div className="glass rounded-2xl p-10 flex flex-col items-center gap-4 text-center">
-			<div className="flex items-center justify-center w-14 h-14 rounded-full bg-white/[0.04]">
+		<div className="panel flex flex-col items-center gap-4 px-6 py-14 text-center">
+			<div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.03]">
 				{filtered ? (
-					<MagnifyingGlass className="w-7 h-7 text-white/40" />
+					<MagnifyingGlass className="h-5 w-5 text-white/25" />
 				) : (
-					<User className="w-7 h-7 text-white/40" />
+					<User className="h-5 w-5 text-white/25" />
 				)}
 			</div>
 			<div>
-				<p className="text-white font-semibold text-lg">
+				<p className="text-[13px] font-medium text-white/60">
 					{filtered ? 'No students match your filters' : 'No masterlist yet'}
 				</p>
-				<p className="text-sm text-white/40 max-w-md mt-1">
+				<p className="mx-auto mt-1 max-w-md text-[11.5px] leading-relaxed text-white/30">
 					{filtered
 						? 'Try clearing the filters to see more students.'
 						: 'Upload the masterlist CSV or Excel file with the Import button, or start scanning student IDs at an event — scanned students are added automatically.'}
@@ -153,7 +137,7 @@ function EmptyState({ filtered }: EmptyStateProps) {
 				<button
 					type="button"
 					onClick={clearFilters}
-					className="text-sm font-medium text-white/50 hover:text-white transition-colors"
+					className="text-[12px] font-medium text-[#9bbcff] transition-colors hover:text-white"
 				>
 					Clear filters
 				</button>

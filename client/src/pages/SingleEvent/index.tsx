@@ -1,8 +1,9 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { format, isSameDay } from 'date-fns';
 import { QUERY_KEYS } from '../../constants';
 import { fetchSingleEvent } from '../../api/event';
-import { Check, DownloadSimple, Scan, WarningCircle } from '@phosphor-icons/react';
+import { CaretLeft, Check, DownloadSimple, Scan, WarningCircle } from '@phosphor-icons/react';
 import LiveClock from '../../components/LiveClock';
 import { useEffect, useRef, useState } from 'react';
 import { useNotification } from '../../hooks/useNotification';
@@ -19,7 +20,7 @@ import EventAttendanceSummary from '../../components/EventAttendanceSummary';
 import { cn } from '../../lib/utils';
 import { useReducedMotion } from 'framer-motion';
 import EventStatusPill from '../../components/EventStatusPill';
-import EventHeader from './EventHeader';
+import PageHeader from '../../components/ui/PageHeader';
 import ScanFeedbackOverlay from './ScanFeedbackOverlay';
 import SegmentedControl from './SegmentedControl';
 import type { ScanFeedback, TimeType } from '../../types/event';
@@ -34,6 +35,7 @@ const DUPLICATE_OVERLAY_MS = 2000;
 const DUPLICATE_ERROR_CODES = new Set(['AlreadyCheckedIn', 'AlreadyCheckedOut']);
 
 export default function SingleEvent() {
+	const navigate = useNavigate();
 	const studentIDInputRef = useRef<HTMLInputElement>(null);
 	// Synchronous guard — state updates are async, this ref is not
 	const isSubmittingRef = useRef(false);
@@ -205,14 +207,14 @@ export default function SingleEvent() {
 
 	if (isLoading || isLoadingAttendances) {
 		return (
-			<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
-				<div className="h-20 rounded-2xl glass animate-pulse" />
-				<div className="flex gap-5">
+			<div className="flex flex-col gap-5 pb-4">
+				<div className="h-[92px] animate-pulse rounded-[26px] border border-white/[0.06] bg-white/[0.025]" />
+				<div className="flex flex-col gap-5 xl:flex-row">
 					<div className="flex-1 space-y-5">
-						<div className="h-48 rounded-2xl glass animate-pulse" />
-						<div className="h-72 rounded-2xl glass animate-pulse" />
+						<div className="h-48 animate-pulse rounded-[26px] border border-white/[0.06] bg-white/[0.025]" />
+						<div className="h-72 animate-pulse rounded-[26px] border border-white/[0.06] bg-white/[0.025]" />
 					</div>
-					<div className="w-[30%] h-64 rounded-2xl glass animate-pulse" />
+					<div className="h-64 animate-pulse rounded-[26px] border border-white/[0.06] bg-white/[0.025] xl:w-[320px]" />
 				</div>
 			</div>
 		);
@@ -263,22 +265,49 @@ export default function SingleEvent() {
 		}
 	};
 
-	return (
-		<div className="flex flex-col gap-6 pb-8 -mx-5 -mt-5 px-5">
-			{/* Sticky toolbar */}
-			<header className="sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5">
-				<EventHeader event={event} reduceMotion={reduceMotion} />
-			</header>
+	const start = new Date(event.startTime);
+	const end = new Date(event.endTime);
+	const dateLabel = isSameDay(start, end)
+		? `${format(start, 'MMM d, yyyy · h:mm aaa')} – ${format(end, 'h:mm aaa')}`
+		: `${format(start, 'MMM d, h:mm aaa')} – ${format(end, 'MMM d, h:mm aaa')}`;
 
-			<div className="flex gap-5 items-start">
+	return (
+		<div className="flex flex-col gap-5 pb-4">
+			<PageHeader
+				back={
+					<button
+						type="button"
+						onClick={() => navigate(-1)}
+						aria-label="Back to events"
+						className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.07] bg-white/[0.03] text-white/42 transition-[background-color,color,transform] duration-150 ease-apple-out hover:bg-white/[0.07] hover:text-white active:scale-90"
+					>
+						<CaretLeft className="h-4 w-4" />
+					</button>
+				}
+				eyebrow={
+					<>
+						<span>{event.type}</span>
+						<span className="h-[3px] w-[3px] rounded-full bg-white/20" />
+						<span>{dateLabel}</span>
+					</>
+				}
+				title={event.title}
+				description={`${event.venue} · ${attendanceTotal ?? 0} records`}
+				actions={<EventStatusPill event={event} />}
+			/>
+
+			<div className="flex flex-col items-start gap-5 xl:flex-row">
 				{/* left section */}
-				<div className="flex flex-col gap-5 flex-1 min-w-0">
+				<div className="flex min-w-0 flex-1 flex-col gap-5">
 					{/* Scan card */}
-					<section className="glass glass-hover rounded-2xl p-5">
-						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+					<section className="panel p-6">
+						<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 							<div>
-								<p className="text-base font-semibold text-white tracking-tight">Scan attendance</p>
-								<p className="text-sm text-white/40 mt-0.5">
+								<p className="eyebrow">Desk</p>
+								<p className="mt-2 text-[15px] font-semibold tracking-title text-[#f5f5f7]">
+									Scan attendance
+								</p>
+								<p className="mt-1 text-[11.5px] text-white/34">
 									Scan a student ID to record their{' '}
 									{timeType === 'Time In' ? 'time in' : 'time out'}
 								</p>
@@ -314,7 +343,7 @@ export default function SingleEvent() {
 								autoFocus
 								aria-label="Student ID"
 								disabled={isSubmitting}
-								className="w-full rounded-2xl bg-white/[0.04] border border-white/[0.08] pl-12 pr-4 py-4 font-mono text-lg tracking-[0.35em] text-white placeholder:text-white/30 placeholder:tracking-normal outline-none transition-[border-color,background-color] duration-200 focus:border-blue-400/40 focus:bg-white/[0.06] disabled:opacity-50"
+								className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.035] py-4 pl-12 pr-4 font-mono text-[17px] tracking-[0.35em] text-white outline-none transition-[border-color,background-color,box-shadow] duration-200 placeholder:tracking-normal placeholder:text-white/24 focus:border-[#5b8def]/45 focus:bg-white/[0.05] focus:shadow-[0_0_0_3px_rgba(91,141,239,0.12)] disabled:opacity-50"
 								type="text"
 								inputMode="numeric"
 								autoComplete="off"
@@ -324,10 +353,15 @@ export default function SingleEvent() {
 					</section>
 
 					{/* recently recorded */}
-					<section className="glass glass-hover rounded-2xl p-5">
-						<div className="flex items-center justify-between mb-3">
-							<p className="text-base font-semibold text-white tracking-tight">Recently recorded</p>
-							<span className="text-xs text-white/40 tabular-nums">
+					<section className="panel p-6">
+						<div className="mb-3 flex items-center justify-between">
+							<div>
+								<p className="eyebrow">Log</p>
+								<p className="mt-2 text-[15px] font-semibold tracking-title text-[#f5f5f7]">
+									Recently recorded
+								</p>
+							</div>
+							<span className="text-[10.5px] tabular-nums text-white/28">
 								{attendanceTotal ?? attendances?.length ?? 0} records
 							</span>
 						</div>
@@ -355,14 +389,12 @@ export default function SingleEvent() {
 				</div>
 
 				{/* Right section */}
-				<aside className="w-[30%] shrink-0 space-y-5">
+				<aside className="w-full shrink-0 space-y-5 xl:w-[320px]">
 					<EventAttendanceSummary event={event} />
 
 					{/* Export */}
-					<div className="glass glass-hover rounded-2xl p-5">
-						<p className="text-[11px] font-semibold text-white/40 uppercase tracking-micro mb-4">
-							Export
-						</p>
+					<div className="panel p-5">
+						<p className="eyebrow mb-4">Export</p>
 						<button
 							type="button"
 							onClick={handleExportExcel}
@@ -374,9 +406,9 @@ export default function SingleEvent() {
 					</div>
 
 					{/* Live clock */}
-					<div className="glass rounded-2xl p-5 flex items-center justify-between">
-						<LiveClock />
-						<EventStatusPill event={event} size="sm" />
+					<div className="panel flex items-center justify-between p-5">
+						<LiveClock className="numeric text-[15px] font-medium tabular-nums text-white/60" />
+						<span className="text-[10px] uppercase tracking-micro text-white/24">Local time</span>
 					</div>
 				</aside>
 			</div>

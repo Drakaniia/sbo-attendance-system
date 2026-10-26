@@ -35,12 +35,12 @@ export default function UploadStudents() {
 	};
 
 	return (
-		<div className="p-8 max-w-md">
+		<div className="max-w-md">
 			<button
 				type="button"
 				onClick={handleImport}
 				disabled={loading}
-				className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] text-white/80 text-sm font-medium px-4 py-2 transition-[background-color,transform] duration-150 ease-apple-out active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+				className="control h-8 gap-1.5 px-3 text-[11.5px] disabled:cursor-not-allowed disabled:opacity-50"
 			>
 				{loading ? (
 					<ArrowCounterClockwise className="w-4 h-4 motion-safe:animate-spin" />
