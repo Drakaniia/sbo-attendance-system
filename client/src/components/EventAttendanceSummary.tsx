@@ -20,7 +20,7 @@ export default function EventAttendanceSummary({ event }: EventAttendanceSummary
 
 	if (isLoading) {
 		return (
-			<div className="glass rounded-2xl p-5 space-y-3 animate-pulse">
+			<div className="panel space-y-3 p-5 animate-pulse">
 				<div className="h-4 w-1/3 rounded-full bg-white/[0.06]" />
 				<div className="grid grid-cols-2 gap-3">
 					<div className="h-20 rounded-xl bg-white/[0.04]" />
@@ -32,26 +32,22 @@ export default function EventAttendanceSummary({ event }: EventAttendanceSummary
 
 	if (error || !eventAttendanceSummary) {
 		return (
-			<div className="glass rounded-2xl p-5 text-sm text-white/40">
-				Error loading attendance summary
-			</div>
+			<div className="panel p-5 text-[12px] text-white/40">Error loading attendance summary</div>
 		);
 	}
 
 	const rate = Math.round(eventAttendanceSummary.rate);
 
 	return (
-		<div className="glass glass-hover rounded-2xl p-5">
-			<p className="text-[11px] font-semibold text-white/40 uppercase tracking-micro mb-4">
-				Attendance Summary
-			</p>
+		<div className="panel p-5">
+			<p className="eyebrow mb-4">Attendance summary</p>
 
 			<div className="grid grid-cols-2 gap-3">
 				{/* Checked In */}
-				<div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5">
-					<div className="flex items-center gap-2 text-xs text-white/40 mb-1.5">
-						<span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-						Checked In
+				<div className="well p-3.5">
+					<div className="mb-1.5 flex items-center gap-2 text-[10.5px] text-white/35">
+						<span className="h-1.5 w-1.5 rounded-full bg-[#6e9bff]" />
+						Checked in
 					</div>
 					<p className="text-2xl font-bold tracking-display text-white tabular-nums">
 						{eventAttendanceSummary.totalCheckedIn}
@@ -59,10 +55,10 @@ export default function EventAttendanceSummary({ event }: EventAttendanceSummary
 				</div>
 
 				{/* Checked Out */}
-				<div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5">
-					<div className="flex items-center gap-2 text-xs text-white/40 mb-1.5">
-						<span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-						Checked Out
+				<div className="well p-3.5">
+					<div className="mb-1.5 flex items-center gap-2 text-[10.5px] text-white/35">
+						<span className="h-1.5 w-1.5 rounded-full bg-[#43d7b0]" />
+						Checked out
 					</div>
 					<p className="text-2xl font-bold tracking-display text-white tabular-nums">
 						{eventAttendanceSummary.totalCheckedOut}
@@ -71,14 +67,16 @@ export default function EventAttendanceSummary({ event }: EventAttendanceSummary
 			</div>
 
 			{/* Rate */}
-			<div className="mt-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5 flex items-center justify-between">
-				<div className="flex items-center gap-2 text-xs text-white/40">
-					<span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
-					Attendance Rate
+			<div className="well mt-3 flex items-center justify-between p-3.5">
+				<div className="flex items-center gap-2 text-[10.5px] text-white/35">
+					<span className="h-1.5 w-1.5 rounded-full bg-[#cdc2ff]" />
+					Completion
 				</div>
 				<div className="flex items-center gap-1.5">
-					<TrendUp className="w-3.5 h-3.5 text-violet-300" />
-					<p className="text-xl font-bold tracking-display text-white tabular-nums">{rate}%</p>
+					<TrendUp className="h-3.5 w-3.5 text-[#cdc2ff]/70" />
+					<p className="numeric text-[19px] font-semibold tracking-display text-white tabular-nums">
+						{rate}%
+					</p>
 				</div>
 			</div>
 		</div>

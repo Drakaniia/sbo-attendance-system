@@ -7,7 +7,7 @@ import { archiveEvent } from '../api/event';
 import { useNotification } from '../hooks/useNotification';
 import { QUERY_KEYS } from '../constants';
 import { useState } from 'react';
-import { Archive, Check, Clock, X } from '@phosphor-icons/react';
+import { Archive, ArrowUpRight, Check, Clock, X } from '@phosphor-icons/react';
 import EditEventModal from './modals/EditEventModal';
 import EventStatusPill from './EventStatusPill';
 
@@ -30,18 +30,13 @@ export default function EventCard({ event }: EventCardProps) {
 		}
 		try {
 			await archiveEvent(eventID);
-
-			notification({
-				title: 'Event archived',
-				message: '',
-			});
+			notification({ title: 'Event archived', message: '' });
 			await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EVENTS] });
 		} catch (error) {
 			console.error('Failed to archive event', error);
-			const message = error instanceof Error ? error.message : 'Unknown error';
 			notification({
 				title: 'Failed to archive event',
-				message,
+				message: error instanceof Error ? error.message : 'Unknown error',
 			});
 		} finally {
 			setConfirmDelete(false);
@@ -49,55 +44,59 @@ export default function EventCard({ event }: EventCardProps) {
 	};
 
 	return (
-		<div className="group glass glass-hover lift rounded-2xl p-4 sm:p-5 flex items-stretch gap-4">
-			{/* Apple Calendar date tile */}
+		<article className="panel panel-interactive group flex items-stretch gap-4 rounded-[22px] p-4">
+			{/* Date tile */}
 			<Link
 				to={`/admin/events/${event._id}`}
 				className={cn(
-					'shrink-0 flex flex-col items-center justify-center w-16 rounded-xl border overflow-hidden transition-transform duration-150 ease-apple-out active:scale-95',
+					'shrink-0 flex w-[58px] flex-col items-center justify-center overflow-hidden rounded-[13px] border transition-[transform,filter] duration-150 ease-apple-out active:scale-[0.96]',
 					meta.tile
 				)}
 			>
-				<span className="w-full text-center text-[10px] font-semibold uppercase tracking-micro py-1 border-b border-white/10">
+				<span className="w-full border-b border-black/[0.14] py-1.5 text-center text-[9px] font-semibold uppercase tracking-micro opacity-80">
 					{format(start, 'MMM')}
 				</span>
-				<span className="w-full text-center text-2xl font-bold tracking-display py-1">
+				<span className="w-full py-1.5 text-center text-[21px] font-semibold leading-none tracking-display">
 					{format(start, 'd')}
 				</span>
 			</Link>
 
 			{/* Body */}
-			<div className="flex-1 min-w-0 flex flex-col gap-1.5 py-0.5">
+			<div className="flex min-w-0 flex-1 flex-col py-0.5">
 				<div className="flex items-start justify-between gap-3">
 					<div className="min-w-0">
-						<Link to={`/admin/events/${event._id}`}>
-							<h3 className="text-base sm:text-lg font-semibold text-white tracking-tight truncate transition-colors hover:text-blue-400 active:text-blue-300">
+						<Link
+							to={`/admin/events/${event._id}`}
+							className="group/title inline-flex max-w-full items-center gap-1.5"
+						>
+							<h3 className="truncate text-[14.5px] font-semibold tracking-title text-[#f5f5f7] transition-colors duration-150 group-hover/title:text-[#9bbcff]">
 								{event.title}
 							</h3>
+							<ArrowUpRight className="h-3 w-3 shrink-0 text-white/0 transition-[color,transform] duration-200 ease-apple-out group-hover/title:-translate-y-0.5 group-hover/title:translate-x-0.5 group-hover/title:text-white/35" />
 						</Link>
-						<p className="text-sm text-white/45 truncate">
-							{event.type} at the {event.venue}
+						<p className="mt-1 truncate text-[11.5px] text-white/34">
+							{event.type} <span className="text-white/18">·</span> {event.venue}
 						</p>
 					</div>
 					<EventStatusPill event={event} className="shrink-0" />
 				</div>
 
 				{event.description && (
-					<p className="text-sm text-white/40 leading-relaxed line-clamp-2">{event.description}</p>
+					<p className="mt-1.5 line-clamp-1 text-[11.5px] leading-relaxed text-white/26">
+						{event.description}
+					</p>
 				)}
 
-				{/* Time row */}
-				<div className="mt-auto pt-2 flex items-center justify-between gap-3">
-					<p className="flex items-center gap-1.5 text-xs text-white/40 tabular-nums">
-						<Clock className="w-3.5 h-3.5 shrink-0" />
-						{format(start, 'MMM d, hh:mm aaa')}
+				<div className="mt-auto flex items-center justify-between gap-3 pt-2.5">
+					<p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] tabular-nums text-white/30">
+						<Clock className="h-3 w-3 shrink-0 text-white/22" />
+						{format(start, 'MMM d, h:mm aaa')}
 						{isSameDay(start, end)
-							? ` – ${format(end, 'hh:mm aaa')}`
-							: ` – ${format(end, 'MMM d, hh:mm aaa')}`}
+							? ` – ${format(end, 'h:mm aaa')}`
+							: ` – ${format(end, 'MMM d, h:mm aaa')}`}
 					</p>
 
-					{/* Actions — revealed on hover (desktop) / always tappable */}
-					<div className="flex items-center gap-1 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 transition-opacity duration-200">
+					<div className="flex shrink-0 items-center gap-0.5 opacity-70 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
 						<EditEventModal event={event} />
 						{confirmDelete ? (
 							<>
@@ -106,18 +105,18 @@ export default function EventCard({ event }: EventCardProps) {
 									onClick={() => onDelete(event._id)}
 									aria-label="Confirm archive"
 									title="Confirm archive"
-									className="group/btn p-2 rounded-full text-red-400 bg-red-400/10 hover:bg-red-400/20 transition-colors active:bg-red-400/20"
+									className="group/btn rounded-full p-2 text-[#ff9dae] transition-colors hover:bg-[#f07c9a]/15 active:bg-[#f07c9a]/20"
 								>
-									<Check className="w-4 h-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90" />
+									<Check className="h-4 w-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90" />
 								</button>
 								<button
 									type="button"
 									onClick={() => setConfirmDelete(false)}
 									aria-label="Cancel"
 									title="Cancel"
-									className="group/btn p-2 rounded-full text-white/50 hover:bg-white/[0.08] transition-colors active:bg-white/[0.12]"
+									className="group/btn rounded-full p-2 text-white/45 transition-colors hover:bg-white/[0.08] active:bg-white/[0.12]"
 								>
-									<X className="w-4 h-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90" />
+									<X className="h-4 w-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90" />
 								</button>
 							</>
 						) : (
@@ -126,14 +125,14 @@ export default function EventCard({ event }: EventCardProps) {
 								onClick={() => onDelete(event._id)}
 								aria-label="Archive event"
 								title="Archive event"
-								className="group/btn p-2 rounded-full text-white/50 hover:text-red-400 hover:bg-red-400/10 transition-colors active:bg-red-400/10"
+								className="group/btn rounded-full p-2 text-white/40 transition-colors hover:bg-[#f07c9a]/10 hover:text-[#ff9dae] active:bg-[#f07c9a]/10"
 							>
-								<Archive className="w-4 h-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90" />
+								<Archive className="h-4 w-4 transition-transform duration-150 ease-apple-out group-active/btn:scale-90" />
 							</button>
 						)}
 					</div>
 				</div>
 			</div>
-		</div>
+		</article>
 	);
 }

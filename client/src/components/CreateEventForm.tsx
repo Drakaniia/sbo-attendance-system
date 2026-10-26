@@ -177,7 +177,7 @@ export default function CreateEventForm({ event, onSuccess }: CreateEventFormPro
 			<button
 				type="submit"
 				disabled={isSubmitting}
-				className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2.5 shadow-lg shadow-blue-500/25 transition-[background-color,transform,box-shadow] duration-150 ease-apple-out active:scale-[0.97]"
+				className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0a84ff] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_28px_-10px_rgba(10,132,255,0.65)] transition-[background-color,transform,box-shadow] duration-150 ease-apple-out hover:bg-[#3d9bff] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-50"
 			>
 				{isSubmitting ? 'Saving…' : event ? 'Save Changes' : 'Create Event'}
 			</button>
