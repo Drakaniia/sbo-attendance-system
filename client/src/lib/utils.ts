@@ -24,17 +24,17 @@ export const EVENT_STATUS_META: Record<
 > = {
 	ongoing: {
 		label: 'Ongoing',
-		dot: 'bg-emerald-400',
-		text: 'text-emerald-300',
-		tile: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/[0.06]',
-		accent: '#34d399',
+		dot: 'bg-[#43d7b0]',
+		text: 'text-[#7ee8c9]',
+		tile: 'text-[#7ee8c9] border-[#43d7b0]/30 bg-[#43d7b0]/[0.07]',
+		accent: '#43d7b0',
 	},
 	today: {
 		label: 'Today',
-		dot: 'bg-sky-400',
-		text: 'text-sky-300',
-		tile: 'text-sky-400 border-sky-400/30 bg-sky-400/[0.06]',
-		accent: '#38bdf8',
+		dot: 'bg-[#6e9bff]',
+		text: 'text-[#9bbcff]',
+		tile: 'text-[#9bbcff] border-[#6e9bff]/30 bg-[#6e9bff]/[0.07]',
+		accent: '#6e9bff',
 	},
 	upcoming: {
 		label: 'Upcoming',

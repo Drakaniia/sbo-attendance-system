@@ -60,7 +60,7 @@ export default function Pagination({ page, totalPages, onChange, className }: Pa
 						className={cn(
 							'min-w-9 h-9 px-2.5 rounded-full text-sm font-medium transition-[background-color,color,transform] duration-150 ease-apple-out active:scale-90',
 							item === page
-								? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25'
+								? 'border border-white/[0.12] bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.10)]'
 								: 'text-white/50 hover:text-white hover:bg-white/[0.06]'
 						)}
 					>
