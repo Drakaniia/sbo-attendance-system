@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { FadersHorizontal, CaretDown, Printer, DownloadSimple } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import DateRangePicker, { type DateRange } from './DateRangePicker';
 import { downloadReportsExcel } from '../../api/reports';
 import { useNotification } from '../../hooks/useNotification';
 import { cn } from '../../lib/utils';
+import PageHeader from '../ui/PageHeader';
 
 type ReportToolbarProps = {
 	dateRange: DateRange;
@@ -24,7 +24,6 @@ export default function ReportToolbar({
 	onToggleSidebar,
 	isRefreshing = false,
 }: ReportToolbarProps) {
-	const reduceMotion = useReducedMotion();
 	const notification = useNotification();
 	const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
@@ -32,15 +31,14 @@ export default function ReportToolbar({
 	const subtitle = (() => {
 		if (dateRange.preset === 'all') return 'All time';
 		if ('startDate' in dateRange) {
-			const s = dateRange.startDate;
-			const e = dateRange.endDate;
-			if (s === e) return format(new Date(s), 'MMMM d, yyyy');
-			return `${format(new Date(s), 'MMM d')} – ${format(new Date(e), 'MMM d, yyyy')}`;
+			const start = dateRange.startDate;
+			const end = dateRange.endDate;
+			if (start === end) return format(new Date(start), 'MMMM d, yyyy');
+			return `${format(new Date(start), 'MMM d')} – ${format(new Date(end), 'MMM d, yyyy')}`;
 		}
 		return '';
 	})();
 
-	// ── Excel export ────────────────────────────────
 	const handleExcelExport = useCallback(
 		async (mode: 'all' | 'event') => {
 			setExportMenuOpen(false);
@@ -54,85 +52,67 @@ export default function ReportToolbar({
 					query.eventId = selectedEventId;
 				}
 				await downloadReportsExcel(query);
-			} catch (err) {
-				const msg = err instanceof Error ? err.message : String(err);
+			} catch (error) {
 				notification({
 					title: 'Export failed',
-					message: msg,
+					message: error instanceof Error ? error.message : String(error),
 				});
 			}
 		},
 		[dateRange, selectedEventId, notification]
 	);
 
-	// ── Print ────────────────────────────────────────
 	const handlePrint = useCallback(() => {
 		window.print();
 	}, []);
 
 	return (
-		<header className="sticky -top-5 z-20 glass-heavy pt-5 pb-4 -mx-5 px-5">
-			<div className="flex items-center justify-between gap-4">
-				{/* Left: title + subtitle */}
-				<motion.div
-					initial={reduceMotion ? false : { opacity: 0, y: -8 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{
-						type: 'spring',
-						bounce: 0,
-						duration: 0.4,
-					}}
-					className="min-w-0"
-				>
-					<div className="flex items-center gap-3">
-						{/* Slide-over toggle (visible below 1280px) */}
-						{onToggleSidebar && (
-							<button
-								type="button"
-								onClick={onToggleSidebar}
-								className="xl:hidden p-2 -ml-2 rounded-xl text-white/50 hover:text-white/80 hover:bg-white/[0.06] transition-colors active:scale-90"
-								aria-label="Toggle filters"
-							>
-								<FadersHorizontal className="w-5 h-5" />
-							</button>
-						)}
-						<h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2 truncate">
-							Reports
-							{isRefreshing && (
-								<span className="inline-block w-2 h-2 rounded-full bg-indigo-400 motion-safe:animate-pulse" />
-							)}
-						</h1>
-					</div>
-					{subtitle && (
-						<p className="text-white/40 text-sm mt-1 truncate">
-							{subtitle}
-							{selectedEventTitle && (
-								<span className="text-indigo-400/70">
-									{' – '}
-									{selectedEventTitle}
-								</span>
-							)}
-						</p>
+		<PageHeader
+			eyebrow={
+				<>
+					<span>Insights</span>
+					<span className="h-[3px] w-[3px] rounded-full bg-white/20" />
+					<span className="tabular-nums">{subtitle}</span>
+					{isRefreshing && (
+						<span className="ml-1 flex items-center gap-1 text-[#9bbcff]/70">
+							<span className="h-1 w-1 rounded-full bg-[#5b8def] motion-safe:animate-pulse" />
+							Refreshing
+						</span>
 					)}
-				</motion.div>
+				</>
+			}
+			title="Reports"
+			description={
+				selectedEventTitle
+					? `Filtered to ${selectedEventTitle}`
+					: 'Turnout, courses, and rhythm over any window.'
+			}
+			actions={
+				<div className="flex flex-wrap items-center justify-end gap-2">
+					{onToggleSidebar && (
+						<button
+							type="button"
+							onClick={onToggleSidebar}
+							className="control h-8 w-8 px-0 xl:hidden"
+							aria-label="Toggle filters"
+						>
+							<FadersHorizontal className="h-3.5 w-3.5" />
+						</button>
+					)}
 
-				{/* Right: controls */}
-				<div className="flex items-center gap-2">
-					{/* Date Range Picker */}
 					<DateRangePicker value={dateRange} onChange={onDateRangeChange} />
 
-					{/* Excel Export dropdown */}
 					<div className="relative">
 						<button
 							type="button"
-							onClick={() => setExportMenuOpen((o) => !o)}
-							className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
+							onClick={() => setExportMenuOpen((open) => !open)}
+							className="control h-8 gap-1.5 px-2.5 text-[11px]"
 						>
-							<DownloadSimple className="w-4 h-4" />
+							<DownloadSimple className="h-3.5 w-3.5" />
 							<span className="hidden sm:inline">Excel</span>
 							<CaretDown
 								className={cn(
-									'w-3 h-3 text-white/40 transition-transform duration-200',
+									'h-3 w-3 text-white/35 transition-transform duration-200',
 									exportMenuOpen && 'rotate-180'
 								)}
 							/>
@@ -141,11 +121,11 @@ export default function ReportToolbar({
 						{exportMenuOpen && (
 							<>
 								<div className="fixed inset-0 z-20" onClick={() => setExportMenuOpen(false)} />
-								<div className="absolute right-0 top-[calc(100%+8px)] z-30 w-48 glass-modal rounded-2xl p-1.5 origin-top-right motion-safe:animate-[fadeIn_0.15s_ease-out_forwards]">
+								<div className="absolute right-0 top-[calc(100%+8px)] z-30 w-52 origin-top-right animate-[fadeIn_0.15s_ease-out_forwards] rounded-2xl border border-white/[0.1] bg-[rgba(19,20,24,0.92)] p-1.5 shadow-float backdrop-blur-2xl">
 									<button
 										type="button"
 										onClick={() => handleExcelExport('all')}
-										className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors"
+										className="w-full rounded-xl px-3 py-2 text-left text-[12px] text-white/58 transition-colors hover:bg-white/[0.05] hover:text-white"
 									>
 										Export all events
 									</button>
@@ -153,7 +133,7 @@ export default function ReportToolbar({
 										<button
 											type="button"
 											onClick={() => handleExcelExport('event')}
-											className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-left text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors"
+											className="w-full rounded-xl px-3 py-2 text-left text-[12px] text-white/58 transition-colors hover:bg-white/[0.05] hover:text-white"
 										>
 											Export this event only
 										</button>
@@ -163,18 +143,18 @@ export default function ReportToolbar({
 						)}
 					</div>
 
-					{/* Print button */}
 					<button
 						type="button"
 						onClick={handlePrint}
-						className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-sm text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-[background-color,border-color,transform] duration-150 ease-apple-out active:scale-[0.97]"
+						className="control h-8 w-8 px-0 sm:w-auto sm:px-2.5 sm:text-[11px]"
 						title="Print or save as PDF"
+						aria-label="Print reports"
 					>
-						<Printer className="w-4 h-4" />
+						<Printer className="h-3.5 w-3.5" />
 						<span className="hidden sm:inline">Print</span>
 					</button>
 				</div>
-			</div>
-		</header>
+			}
+		/>
 	);
 }

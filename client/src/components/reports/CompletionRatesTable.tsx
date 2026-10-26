@@ -23,17 +23,17 @@ const STATUS_META = {
 	high: {
 		label: 'High',
 		icon: CheckCircle,
-		className: 'text-emerald-400 bg-emerald-400/10',
+		className: 'text-[#7ee8c9] bg-[#43d7b0]/10',
 	},
 	medium: {
 		label: 'Medium',
 		icon: WarningCircle,
-		className: 'text-amber-400 bg-amber-400/10',
+		className: 'text-[#ffd79a] bg-[#f5b85b]/10',
 	},
 	low: {
 		label: 'Low',
 		icon: XCircle,
-		className: 'text-red-400 bg-red-400/10',
+		className: 'text-[#ffb3c2] bg-[#f07c9a]/10',
 	},
 };
 
@@ -104,7 +104,7 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 	}) => (
 		<th
 			className={cn(
-				'px-3 py-3 text-xs font-medium text-white/30 uppercase tracking-wider cursor-pointer select-none hover:text-white/50 transition-colors',
+				'cursor-pointer select-none px-3 py-3 text-[9.5px] font-semibold uppercase tracking-micro text-white/28 transition-colors hover:text-white/55',
 				className
 			)}
 			onClick={() => handleSort(field)}
@@ -117,12 +117,12 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 	// ── Loading ────────────────────────────────────────
 	if (isLoading) {
 		return (
-			<div className="glass glass-hover rounded-2xl p-5">
+			<div className="panel p-6">
 				<TableTitle />
 				<div className="overflow-x-auto">
 					<table className="w-full text-sm">
 						<thead>
-							<tr className="border-b border-white/[0.06]">
+							<tr className="border-y border-white/[0.055] bg-white/[0.012]">
 								{COLUMNS.map((col) => (
 									<th
 										key={col.field}
@@ -159,7 +159,7 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 	// ── Empty ──────────────────────────────────────────
 	if (!data || data.length === 0) {
 		return (
-			<div className="glass glass-hover rounded-2xl p-5">
+			<div className="panel p-6">
 				<TableTitle />
 				<div className="flex flex-col items-center justify-center py-12 text-white/20">
 					<CheckCircle className="w-10 h-10 mb-2 opacity-30" />
@@ -170,12 +170,12 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 	}
 
 	return (
-		<div className="glass glass-hover rounded-2xl p-5">
+		<div className="panel p-6">
 			<TableTitle />
 			<div className="overflow-x-auto">
 				<table className="w-full text-sm">
 					<thead>
-						<tr className="border-b border-white/[0.06]">
+						<tr className="border-y border-white/[0.055] bg-white/[0.012]">
 							<Header field="title" label="Event" className="text-left" />
 							<Header field="date" label="Date" className="text-left" />
 							<Header field="checkIns" label="Check-ins" className="text-right" />
@@ -195,7 +195,7 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 							return (
 								<motion.tr
 									key={entry.eventId}
-									className="border-b border-white/[0.03] transition-colors hover:bg-white/[0.02]"
+									className="border-b border-white/[0.035] transition-colors hover:bg-white/[0.022]"
 									initial={
 										reduceMotion
 											? false
@@ -226,9 +226,9 @@ export default function CompletionRatesTable({ data, isLoading }: Props) {
 									<td className="px-3 py-3 text-right tabular-nums font-medium">
 										<span
 											className={cn(
-												status === 'high' && 'text-emerald-400',
-												status === 'medium' && 'text-amber-400',
-												status === 'low' && 'text-red-400'
+												status === 'high' && 'text-[#7ee8c9]',
+												status === 'medium' && 'text-[#ffd79a]',
+												status === 'low' && 'text-[#ffb3c2]'
 											)}
 										>
 											{rate}%
@@ -267,8 +267,10 @@ const COLUMNS = [
 function TableTitle() {
 	return (
 		<div className="mb-4">
-			<h3 className="text-base font-semibold text-white tracking-tight">Event Completion Rates</h3>
-			<p className="text-xs text-white/30 mt-0.5">Check-in to check-out ratios per event</p>
+			<p className="eyebrow">Closure</p>
+			<h2 className="mt-2 text-[15.5px] font-semibold tracking-title text-[#f5f5f7]">
+				Event completion rates
+			</h2>
 		</div>
 	);
 }

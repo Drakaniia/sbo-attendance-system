@@ -64,7 +64,7 @@ export default function EventPickerModal({
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
 					placeholder="Search events…"
-					className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-white placeholder:text-white/25 outline-none transition-[border-color,background-color] duration-200 focus:border-indigo-400/40 focus:bg-white/[0.06]"
+					className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-white placeholder:text-white/25 outline-none transition-[border-color,background-color] duration-200 focus:border-[#5b8def]/40 focus:bg-white/[0.06]"
 					autoFocus
 				/>
 			</div>
@@ -78,15 +78,15 @@ export default function EventPickerModal({
 					className={cn(
 						'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm text-left transition-colors',
 						selectedEventId === null
-							? 'text-white bg-indigo-400/[0.1]'
+							? 'text-white bg-[#5b8def]/[0.1]'
 							: 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
 					)}
 				>
 					<div className="flex items-center gap-2.5">
-						<Calendar className="w-4 h-4 text-indigo-400/60" />
+						<Calendar className="w-4 h-4 text-[#5b8def]/60" />
 						<span className="font-medium">All Events</span>
 					</div>
-					{selectedEventId === null && <Check className="w-4 h-4 text-indigo-400 shrink-0" />}
+					{selectedEventId === null && <Check className="w-4 h-4 text-[#5b8def] shrink-0" />}
 				</button>
 
 				{/* Divider */}
@@ -118,7 +118,7 @@ export default function EventPickerModal({
 									onClose();
 									onCreateEvent();
 								}}
-								className="mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 text-xs font-medium transition-colors"
+								className="mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#3f7ae0]/20 hover:bg-[#3f7ae0]/30 text-[#5b8def] text-xs font-medium transition-colors"
 							>
 								<Plus className="w-3.5 h-3.5" />
 								Create Event
@@ -139,7 +139,7 @@ export default function EventPickerModal({
 								className={cn(
 									'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm text-left transition-colors',
 									isSelected
-										? 'text-white bg-indigo-400/[0.1]'
+										? 'text-white bg-[#5b8def]/[0.1]'
 										: 'text-white/60 hover:text-white hover:bg-white/[0.04]'
 								)}
 							>
@@ -147,7 +147,7 @@ export default function EventPickerModal({
 									<div
 										className={cn(
 											'w-2 h-2 rounded-full shrink-0',
-											isSelected ? 'bg-indigo-400' : 'bg-white/20'
+											isSelected ? 'bg-[#5b8def]' : 'bg-white/20'
 										)}
 									/>
 									<div className="min-w-0">
@@ -157,7 +157,7 @@ export default function EventPickerModal({
 								</div>
 								<div className="flex items-center gap-2 shrink-0">
 									<EventStatusPill event={event} size="sm" />
-									{isSelected && <Check className="w-4 h-4 text-indigo-400" />}
+									{isSelected && <Check className="w-4 h-4 text-[#5b8def]" />}
 								</div>
 							</button>
 						);

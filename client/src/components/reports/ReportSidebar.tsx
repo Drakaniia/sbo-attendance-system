@@ -96,8 +96,8 @@ export default function ReportSidebar({
 				className={cn(
 					'w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border text-sm text-left transition-colors duration-150',
 					selectedEventId
-						? 'border-indigo-400/20 bg-indigo-400/[0.06] text-indigo-300'
-						: 'border-white/[0.06] bg-white/[0.02] text-white/50 hover:text-white/70 hover:bg-white/[0.04]'
+						? 'border-[#5b8def]/25 bg-[#5b8def]/[0.08] text-[#cfe0ff]'
+						: 'border-white/[0.06] bg-white/[0.022] text-white/45 hover:bg-white/[0.04] hover:text-white/70'
 				)}
 			>
 				<Calendar className="w-4 h-4 shrink-0" />
@@ -128,7 +128,7 @@ export default function ReportSidebar({
 						key={stat.label}
 						className="rounded-xl bg-white/[0.03] border border-white/[0.05] p-3"
 					>
-						<stat.icon className="w-3.5 h-3.5 text-indigo-400/50 mb-1.5" />
+						<stat.icon className="mb-1.5 h-3.5 w-3.5 text-[#8fb4ff]/60" />
 						<p
 							className={cn(
 								'text-base font-bold text-white tracking-tight tabular-nums',
@@ -150,7 +150,7 @@ export default function ReportSidebar({
 		<>
 			{/* Desktop: fixed sidebar */}
 			<aside className="hidden xl:block w-[260px] shrink-0">
-				<div className="sticky top-[72px] glass rounded-2xl overflow-hidden">{sidebarContent}</div>
+				<div className="panel sticky top-[104px] overflow-hidden">{sidebarContent}</div>
 			</aside>
 
 			{/* Mobile/tablet: slide-over drawer */}
@@ -196,7 +196,7 @@ export default function ReportSidebar({
 
 function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
 	return (
-		<div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-400/[0.08] border border-indigo-400/20 text-xs text-indigo-300">
+		<div className="inline-flex items-center gap-1.5 rounded-full border border-[#5b8def]/25 bg-[#5b8def]/[0.08] px-2.5 py-1 text-[11px] text-[#cfe0ff]">
 			<span className="truncate max-w-[120px]">{label}</span>
 			<button
 				type="button"
@@ -204,7 +204,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 					e.stopPropagation();
 					onRemove();
 				}}
-				className="p-0.5 -mr-0.5 rounded-full text-indigo-400/50 hover:text-indigo-300 hover:bg-indigo-400/10 transition-colors"
+				className="rounded-full p-0.5 text-[#8fb4ff]/50 transition-colors hover:bg-[#5b8def]/10 hover:text-[#cfe0ff]"
 				aria-label={`Remove ${label} filter`}
 			>
 				<X className="w-3 h-3" />
