@@ -22,6 +22,19 @@ export default tseslint.config([
 		},
 	},
 	{
+		// Vendored Bklit UI primitives (MIT). They intentionally co-locate
+		// context + helpers with components, which the app's fast-refresh rule
+		// rejects; that rule does not apply to third-party source.
+		files: ['src/components/charts/bklit/**/*.{ts,tsx}'],
+		rules: {
+			'react-refresh/only-export-components': 'off',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+			],
+		},
+	},
+	{
 		files: ['**/*.{ts,tsx}'],
 		plugins: {
 			import: importPlugin,
