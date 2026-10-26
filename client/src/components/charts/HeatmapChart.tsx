@@ -79,9 +79,9 @@ export default function HeatmapChart({
 	// ── Loading state ───────────────────────────────
 	if (isLoading) {
 		return (
-			<div className="glass glass-hover rounded-2xl p-5">
+			<div className="panel p-6">
 				<HeatmapHeader view={view} onViewChange={setView} />
-				<div className="flex items-start gap-4 mt-4">
+				<div className="mt-4 flex items-start gap-4">
 					<div className="flex-1">
 						<SkeletonGrid rows={view === 'hourly' ? 1 : 7} />
 					</div>
@@ -94,9 +94,9 @@ export default function HeatmapChart({
 	// ── Empty state ─────────────────────────────────
 	if (!hasData) {
 		return (
-			<div className="glass glass-hover rounded-2xl p-5">
+			<div className="panel p-6">
 				<HeatmapHeader view={view} onViewChange={setView} />
-				<div className="flex items-center justify-center py-16 text-white/20 text-sm">
+				<div className="flex items-center justify-center py-16 text-[12px] text-white/25">
 					No attendance data for this period
 				</div>
 			</div>
@@ -104,7 +104,7 @@ export default function HeatmapChart({
 	}
 
 	return (
-		<div className="glass glass-hover rounded-2xl p-5">
+		<div className="panel p-6">
 			<HeatmapHeader view={view} onViewChange={setView} />
 
 			<div className="flex items-start gap-4 mt-4">
@@ -147,7 +147,7 @@ export default function HeatmapChart({
 						style={{
 							left: tooltip.x,
 							top: tooltip.y,
-							background: 'rgba(30,30,30,0.95)',
+							background: 'rgba(16,17,21,0.94)',
 							border: '1px solid rgba(255,255,255,0.1)',
 							borderRadius: '12px',
 							backdropFilter: 'blur(12px)',

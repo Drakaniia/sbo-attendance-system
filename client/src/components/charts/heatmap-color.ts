@@ -74,7 +74,7 @@ export function heatmapColor(count: number, maxCount: number): string {
 	if (count === 0) return 'rgba(255, 255, 255, 0.015)';
 	const intensity = maxCount > 0 ? count / maxCount : 0;
 	const opacity = 0.08 + intensity * 0.72;
-	return `rgba(99, 102, 241, ${opacity.toFixed(3)})`;
+	return `rgba(110, 155, 255, ${opacity.toFixed(3)})`;
 }
 
 // ── Get hover label ─────────────────────────────────────────────────────

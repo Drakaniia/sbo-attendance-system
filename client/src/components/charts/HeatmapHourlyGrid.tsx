@@ -53,7 +53,7 @@ export function HourlyGrid({
 					return (
 						<motion.div
 							key={`${animateKey}-${hour}`}
-							className="rounded-[2px] cursor-crosshair transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.35] hover:z-10 hover:ring-1 hover:ring-indigo-400/60"
+							className="rounded-[2px] cursor-crosshair transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.35] hover:z-10 hover:ring-1 hover:ring-[#5b8def]/60"
 							style={{
 								width: CELL_SIZE,
 								height: CELL_SIZE,
