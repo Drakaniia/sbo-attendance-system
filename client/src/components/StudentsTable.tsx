@@ -9,13 +9,12 @@ interface StudentsTableProps {
 
 /** Deterministic pastel for the avatar, derived from the student's name. */
 const AVATAR_COLORS = [
-	'bg-blue-400/15 text-blue-300',
-	'bg-emerald-400/15 text-emerald-300',
-	'bg-violet-400/15 text-violet-300',
-	'bg-amber-400/15 text-amber-300',
-	'bg-rose-400/15 text-rose-300',
-	'bg-sky-400/15 text-sky-300',
-	'bg-pink-400/15 text-pink-300',
+	'bg-[#5b8def]/12 text-[#a8c4ff]',
+	'bg-[#4fd1c5]/12 text-[#9ff0e8]',
+	'bg-[#9f8cf6]/12 text-[#cdc2ff]',
+	'bg-[#f5b85b]/12 text-[#ffd79a]',
+	'bg-[#f07c9a]/12 text-[#ffb8c8]',
+	'bg-[#6fd08c]/12 text-[#b2ecc3]',
 ];
 
 function avatarColor(name: string): string {
@@ -32,15 +31,15 @@ function initialsOf(student: Student): string {
 
 export default function StudentsTable({ students, isLoading }: StudentsTableProps) {
 	return (
-		<div className="glass w-full min-w-0 overflow-hidden rounded-2xl">
+		<div className="panel w-full min-w-0 overflow-hidden rounded-[22px]">
 			<table className="w-full table-fixed text-sm">
 				<thead>
-					<tr className="border-b border-white/[0.06]">
+					<tr className="border-b border-white/[0.055] bg-white/[0.012]">
 						{['Student ID', 'Full name', 'Course', 'Year', 'Gender'].map((head) => (
 							<th
 								key={head}
 								className={cn(
-									'break-words px-2 py-3 text-left text-[10px] font-medium uppercase tracking-micro text-white/30 first:pl-3 last:pr-3 sm:px-4 sm:py-3.5 sm:text-[11px] sm:first:pl-6 sm:last:pr-6',
+									'break-words px-2 py-3 text-left text-[9.5px] font-semibold uppercase tracking-micro text-white/28 first:pl-3 last:pr-3 sm:px-4 sm:py-3.5 sm:first:pl-6 sm:last:pr-6',
 									head === 'Student ID' && 'w-[34%] sm:w-[20%]',
 									head === 'Full name' && 'w-[66%] sm:w-[35%]',
 									head === 'Course' && 'hidden sm:table-cell sm:w-[20%]',
@@ -86,7 +85,7 @@ export default function StudentsTable({ students, isLoading }: StudentsTableProp
 							return (
 								<motion.tr
 									key={student._id}
-									className="border-b border-white/[0.03] transition-colors hover:bg-white/[0.02]"
+									className="border-b border-white/[0.035] transition-colors hover:bg-white/[0.022]"
 									initial={{ opacity: 0, y: 8 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{
@@ -103,7 +102,7 @@ export default function StudentsTable({ students, isLoading }: StudentsTableProp
 										<div className="flex min-w-0 items-center gap-3">
 											<div
 												className={cn(
-													'w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-semibold',
+													'flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[10.5px] font-semibold',
 													avatarColor(name)
 												)}
 											>
@@ -127,8 +126,8 @@ export default function StudentsTable({ students, isLoading }: StudentsTableProp
 									<td className="hidden px-2 py-3 last:pr-3 sm:table-cell sm:px-4 sm:py-3.5 sm:last:pr-6">
 										<span
 											className={cn(
-												'inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border border-white/[0.08] bg-white/[0.04]',
-												student.gender === 'M' ? 'text-sky-300' : 'text-pink-300'
+												'inline-flex rounded-full border border-white/[0.06] bg-white/[0.03] px-2 py-0.5 text-[10.5px] font-medium',
+												student.gender === 'M' ? 'text-[#a8c4ff]/80' : 'text-[#ffb8c8]/80'
 											)}
 										>
 											{student.gender === 'M' ? 'Male' : 'Female'}

@@ -21,12 +21,12 @@ export default function AttendanceTable({
 						{['Student ID', 'Name', 'Course', 'Year', 'Time In', 'Time Out'].map((head) => (
 							<th
 								key={head}
-								className="text-left py-3 px-3 first:pl-0 last:pr-0 text-[11px] font-medium text-white/30 uppercase tracking-micro whitespace-nowrap"
+								className="whitespace-nowrap px-3 py-3 text-left text-[9.5px] font-semibold uppercase tracking-micro text-white/28 first:pl-0 last:pr-0"
 							>
 								{head}
 							</th>
 						))}
-						<th className="text-left py-3 px-3 text-[11px] font-medium text-white/30 uppercase tracking-micro whitespace-nowrap w-0" />
+						<th className="w-0 whitespace-nowrap px-3 py-3 text-left text-[9.5px] font-semibold uppercase tracking-micro text-white/28" />
 					</tr>
 				</thead>
 				<tbody>
@@ -34,7 +34,7 @@ export default function AttendanceTable({
 						return (
 							<tr
 								key={attendance._id}
-								className="border-b border-white/[0.03] transition-colors hover:bg-white/[0.02]"
+								className="border-b border-white/[0.035] transition-colors hover:bg-white/[0.022]"
 							>
 								<td className="py-3 px-3 first:pl-0 font-mono text-xs text-white/60 tabular-nums">
 									{attendance.studentID}
