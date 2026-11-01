@@ -68,11 +68,19 @@ jobs:
         uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signs the updater bundles so installed apps trust the download.
+          # The matching public key lives in src-tauri/tauri.conf.json, so the
+          # key below must never be regenerated without updating it too. Add
+          # the private key file's contents as a repository secret. The key is
+          # passwordless, so no TAURI_SIGNING_PRIVATE_KEY_PASSWORD is needed.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         with:
           # The Tauri CLI is a devDependency of the root package.json, so
           # `bun tauri` resolves the local binary (there is no `tauri` script).
           tauriScript: 'bun tauri'
           tagName: v__VERSION__ # replaced with the app version from tauri.conf.json
+          # Bump the version in tauri.conf.json (and Cargo.toml) before tagging —
+          # installed apps only update to a strictly newer version.
           releaseName: 'SEATS v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true

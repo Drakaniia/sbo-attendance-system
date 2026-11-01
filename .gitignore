@@ -3,6 +3,8 @@ package-lock.json
 
 # Tauri / Rust
 src-tauri/target/
+# Updater signing keys — add the public key to tauri.conf.json instead
+src-tauri/.keys/
 src-tauri/icons/*.png
 src-tauri/icons/*.icns
 
