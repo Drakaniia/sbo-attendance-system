@@ -1,18 +1,23 @@
 import {
+	ArrowClockwise,
+	ArrowsClockwise,
 	Database,
 	DownloadSimple,
 	HardDrive,
 	Info,
 	Desktop,
+	Package,
 	TrashSimple,
 	UploadSimple,
 	Warning,
 } from '@phosphor-icons/react';
 import AppleModal from '../../components/ui/AppleModal';
+import { cn } from '../../lib/utils';
+import type { UpdateStatus } from '../../store/updater';
 import { ActionButton, InfoRow, Section, SectionLabel, ToggleSwitch } from './SettingsUI';
 
 /* ── Card stagger delays (ms) ──────────────────────── */
-const CARD_DELAYS = [0, 80, 160];
+const CARD_DELAYS = [0, 80, 160, 240];
 
 /* ── Database section ──────────────────────────────── */
 
@@ -130,6 +135,106 @@ export function DisplaySection({
 	);
 }
 
+/* ── Updates section ───────────────────────────────── */
+
+type UpdatesSectionProps = {
+	version: string;
+	autoUpdateEnabled: boolean;
+	onAutoUpdateToggle: (enabled: boolean) => void;
+	status: UpdateStatus;
+	availableVersion: string | null;
+	progress: number | null;
+	error: string | null;
+	onCheck: () => void;
+	onRestart: () => void;
+};
+
+function updateStatusText(
+	status: UpdateStatus,
+	version: string | null,
+	progress: number | null,
+	error: string | null
+) {
+	switch (status) {
+		case 'checking':
+			return 'Checking GitHub for a new release…';
+		case 'downloading':
+			return `Downloading v${version}${progress === null ? '' : ` — ${progress}%`}…`;
+		case 'ready':
+			return `v${version} is installed. Restart SEATS to start using it.`;
+		case 'up-to-date':
+			return 'You are on the latest version.';
+		case 'error':
+			return error ?? 'The update check failed.';
+		default:
+			return 'Releases are published on GitHub. New versions are signed and verified before they install.';
+	}
+}
+
+export function UpdatesSection({
+	version,
+	autoUpdateEnabled,
+	onAutoUpdateToggle,
+	status,
+	availableVersion,
+	progress,
+	error,
+	onCheck,
+	onRestart,
+}: UpdatesSectionProps) {
+	const busy = status === 'checking' || status === 'downloading';
+
+	return (
+		<Section delay={CARD_DELAYS[2]}>
+			<SectionLabel icon={Package} label="Updates" />
+
+			<div className="space-y-1 mb-5">
+				<InfoRow icon={Package} label="Installed version" value={`SEATS v${version}`} />
+			</div>
+
+			<div className="space-y-2">
+				<ActionButton
+					icon={ArrowsClockwise}
+					label="Check for updates"
+					subtitle="Download the latest release from GitHub"
+					onClick={onCheck}
+					loading={busy}
+				/>
+
+				{status === 'ready' && (
+					<ActionButton
+						icon={ArrowClockwise}
+						label={`Restart to install v${availableVersion}`}
+						subtitle="SEATS closes and reopens on the new version"
+						onClick={onRestart}
+					/>
+				)}
+
+				<p
+					className={cn(
+						'pt-1 text-xs leading-relaxed',
+						status === 'error' ? 'text-red-400/70' : 'text-white/30'
+					)}
+				>
+					{updateStatusText(status, availableVersion, progress, error)}
+				</p>
+			</div>
+
+			<div className="mt-5 border-t border-white/[0.06] pt-5">
+				<div className="flex items-center justify-between gap-4">
+					<div>
+						<p className="text-sm font-medium text-white/70">Automatic updates</p>
+						<p className="mt-0.5 text-xs text-white/35">
+							Install new releases in the background when SEATS starts. You choose when to restart.
+						</p>
+					</div>
+					<ToggleSwitch checked={autoUpdateEnabled} onChange={onAutoUpdateToggle} disabled={busy} />
+				</div>
+			</div>
+		</Section>
+	);
+}
+
 /* ── About section ─────────────────────────────────── */
 
 type AboutSectionProps = {
@@ -139,7 +244,7 @@ type AboutSectionProps = {
 
 export function AboutSection({ dbPath, version }: AboutSectionProps) {
 	return (
-		<Section delay={CARD_DELAYS[2]}>
+		<Section delay={CARD_DELAYS[3]}>
 			<SectionLabel icon={Info} label="About" />
 
 			<div className="space-y-1">

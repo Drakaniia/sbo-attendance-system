@@ -1,6 +1,13 @@
 import PageHeader from '../../components/ui/PageHeader';
 import { useSettingsActions } from '../../hooks/useSettingsActions';
-import { AboutSection, DatabaseSection, DisplaySection, ResetDataModal } from './SettingsSections';
+import { useUpdaterStore } from '../../store/updater';
+import {
+	AboutSection,
+	DatabaseSection,
+	DisplaySection,
+	ResetDataModal,
+	UpdatesSection,
+} from './SettingsSections';
 
 export default function Settings() {
 	const {
@@ -9,6 +16,7 @@ export default function Settings() {
 		restoring,
 		kioskEnabled,
 		autoStartEnabled,
+		autoUpdateEnabled,
 		version,
 		resetOpen,
 		setResetOpen,
@@ -17,9 +25,17 @@ export default function Settings() {
 		handleRestore,
 		handleKioskToggle,
 		handleAutoStartToggle,
+		handleAutoUpdateToggle,
 		handleResetAll,
 		handleCopyPath,
 	} = useSettingsActions();
+
+	const updateStatus = useUpdaterStore((s) => s.status);
+	const updateVersion = useUpdaterStore((s) => s.version);
+	const updateProgress = useUpdaterStore((s) => s.progress);
+	const updateError = useUpdaterStore((s) => s.error);
+	const checkForUpdates = useUpdaterStore((s) => s.checkForUpdates);
+	const restart = useUpdaterStore((s) => s.restart);
 
 	return (
 		<div className="flex flex-col gap-5 pb-4">
@@ -50,6 +66,17 @@ export default function Settings() {
 						onKioskToggle={handleKioskToggle}
 						autoStartEnabled={autoStartEnabled}
 						onAutoStartToggle={handleAutoStartToggle}
+					/>
+					<UpdatesSection
+						version={version}
+						autoUpdateEnabled={autoUpdateEnabled}
+						onAutoUpdateToggle={handleAutoUpdateToggle}
+						status={updateStatus}
+						availableVersion={updateVersion}
+						progress={updateProgress}
+						error={updateError}
+						onCheck={checkForUpdates}
+						onRestart={restart}
 					/>
 					<AboutSection dbPath={dbPath} version={version} />
 				</div>
