@@ -4,6 +4,7 @@ import { ipc } from './ipc';
 export type AppSettings = {
 	kiosk: boolean;
 	autoStart: boolean;
+	autoUpdate: boolean;
 };
 
 /** Copy the SQLite database to a user-chosen file path. */
@@ -34,6 +35,11 @@ export async function getAppSettings(): Promise<AppSettings> {
 /** Turn auto-start with Windows on/off and persist the preference. */
 export async function setAutoStart(enabled: boolean): Promise<void> {
 	return ipc<void>('set_auto_start', { enabled });
+}
+
+/** Turn automatic updates on/off and persist the preference. */
+export async function setAutoUpdate(enabled: boolean): Promise<void> {
+	return ipc<void>('set_auto_update', { enabled });
 }
 
 /**

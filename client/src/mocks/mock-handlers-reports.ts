@@ -215,10 +215,15 @@ export function handleReportsAndSettings(
 		}
 
 		case 'get_app_settings':
-			return { kiosk: false, autoStart: false };
+			return { kiosk: false, autoStart: false, autoUpdate: true };
 
 		case 'set_kiosk':
 		case 'set_auto_start':
+		case 'set_auto_update':
+			return null;
+
+		// The browser preview has no updater backend — report "up to date".
+		case 'plugin:updater|check':
 			return null;
 
 		case 'get_db_path':

@@ -7,6 +7,7 @@ import {
 	getDbPath,
 	restoreDb,
 	setAutoStart,
+	setAutoUpdate,
 	setKiosk,
 } from '../lib/tauri';
 import { useNotification } from './useNotification';
@@ -18,6 +19,7 @@ export type SettingsActions = {
 	restoring: boolean;
 	kioskEnabled: boolean;
 	autoStartEnabled: boolean;
+	autoUpdateEnabled: boolean;
 	version: string;
 	resetOpen: boolean;
 	setResetOpen: (open: boolean) => void;
@@ -26,6 +28,7 @@ export type SettingsActions = {
 	handleRestore: () => Promise<void>;
 	handleKioskToggle: (enabled: boolean) => Promise<void>;
 	handleAutoStartToggle: (enabled: boolean) => Promise<void>;
+	handleAutoUpdateToggle: (enabled: boolean) => Promise<void>;
 	handleResetAll: () => Promise<void>;
 	handleCopyPath: () => Promise<void>;
 };
@@ -37,6 +40,7 @@ export function useSettingsActions(): SettingsActions {
 	const [restoring, setRestoring] = useState(false);
 	const [kioskEnabled, setKioskEnabled] = useState(false);
 	const [autoStartEnabled, setAutoStartEnabled] = useState(false);
+	const [autoUpdateEnabled, setAutoUpdateEnabled] = useState(true);
 	const [version, setVersion] = useState<string>('...');
 	const [resetOpen, setResetOpen] = useState(false);
 	const [resetting, setResetting] = useState(false);
@@ -52,6 +56,7 @@ export function useSettingsActions(): SettingsActions {
 			.then((s) => {
 				setKioskEnabled(s.kiosk);
 				setAutoStartEnabled(s.autoStart);
+				setAutoUpdateEnabled(s.autoUpdate);
 			})
 			.catch(() => {});
 
@@ -166,6 +171,28 @@ export function useSettingsActions(): SettingsActions {
 		}
 	};
 
+	// ── Automatic updates ────────────────────────────
+	const handleAutoUpdateToggle = async (enabled: boolean) => {
+		try {
+			await setAutoUpdate(enabled);
+			setAutoUpdateEnabled(enabled);
+			notification({
+				title: enabled ? 'Automatic updates on' : 'Automatic updates off',
+				message: enabled
+					? 'New releases install in the background when SEATS starts'
+					: 'SEATS will only update when you check from Settings',
+				icon: <Check />,
+				color: 'teal',
+			});
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			notification({
+				title: 'Update preference failed',
+				message: msg,
+			});
+		}
+	};
+
 	// ── Delete all data ──────────────────────────────
 	const handleResetAll = async () => {
 		setResetting(true);
@@ -216,6 +243,7 @@ export function useSettingsActions(): SettingsActions {
 		restoring,
 		kioskEnabled,
 		autoStartEnabled,
+		autoUpdateEnabled,
 		version,
 		resetOpen,
 		setResetOpen,
@@ -224,6 +252,7 @@ export function useSettingsActions(): SettingsActions {
 		handleRestore,
 		handleKioskToggle,
 		handleAutoStartToggle,
+		handleAutoUpdateToggle,
 		handleResetAll,
 		handleCopyPath,
 	};
