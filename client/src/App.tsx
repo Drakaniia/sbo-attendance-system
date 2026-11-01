@@ -3,11 +3,14 @@ import { useEffect } from 'react';
 import { emit } from '@tauri-apps/api/event';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import { useAutoUpdate } from './hooks/useAutoUpdate';
 import { setNavigate } from './lib/navigate';
 
 function App() {
 	const navigate = useNavigate();
 	setNavigate(navigate);
+
+	useAutoUpdate();
 
 	useEffect(() => {
 		if (typeof (window as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ === 'undefined') {
