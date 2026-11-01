@@ -36,6 +36,10 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        // Background updater: signed bundles are checked against the public
+        // key in tauri.conf.json, so a tampered download is rejected.
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,
@@ -209,6 +213,7 @@ pub fn run() {
             commands::settings::reset_all_data,
             commands::settings::get_app_settings,
             commands::settings::set_auto_start,
+            commands::settings::set_auto_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

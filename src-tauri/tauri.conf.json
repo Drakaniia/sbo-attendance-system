@@ -48,11 +48,23 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/Drakaniia/sbo-attendance-system/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDc4NTQ2RTY4MEQ2RUU2OApSV1JvN3RhQTVrYUZCNkxES0o3RWFNelhYc0ZySUpDbGJWWTI2L0JrQWJrYVNVVHVxaU1MS3lTRwo=",
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

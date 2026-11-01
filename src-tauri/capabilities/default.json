@@ -14,6 +14,8 @@
     "core:window:allow-unmaximize",
     "dialog:allow-open",
     "dialog:allow-save",
-    "opener:default"
+    "opener:default",
+    "updater:default",
+    "process:allow-restart"
   ]
 }

@@ -52,3 +52,17 @@ pub async fn set_auto_start(
     app_config::save(&data_dir, &settings)?;
     Ok(())
 }
+
+/// Persist whether the app should install published releases on its own.
+/// The updater itself runs in the frontend, so this only stores the flag.
+#[tauri::command]
+pub async fn set_auto_update(
+    state: State<'_, Arc<Mutex<AppState>>>,
+    enabled: bool,
+) -> Result<(), IpcError> {
+    let data_dir = state.lock().unwrap().data_dir.clone();
+    let mut settings = app_config::load(&data_dir);
+    settings.auto_update = enabled;
+    app_config::save(&data_dir, &settings)?;
+    Ok(())
+}
