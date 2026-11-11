@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicoverbruggen/tauri-v2-docs/main/src/content/docs/_schema/tauri-schema.json",
   "productName": "SEATS",
-  "version": "0.1.0",
+  "version": "2.6.11",
   "identifier": "com.sboattendance.seats",
   "build": {
     "beforeDevCommand": "cd client && bun run dev",

@@ -1,6 +1,6 @@
 [package]
 name = "seats"
-version = "0.1.0"
+version = "2.6.11"
 description = "SEATS — SBO Attendance System (desktop)"
 authors = []
 edition = "2021"
