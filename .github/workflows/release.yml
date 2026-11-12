@@ -83,7 +83,9 @@ jobs:
           # installed apps only update to a strictly newer version.
           releaseName: 'SEATS v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
+          # Publish straight away: the in-app updater reads latest.json from the
+          # latest *published* release, and drafts are invisible to it.
+          releaseDraft: false
           prerelease: false
           generateReleaseNotes: true
           args: ${{ matrix.args }}
