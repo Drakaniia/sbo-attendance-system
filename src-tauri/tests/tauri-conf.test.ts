@@ -37,7 +37,7 @@ describe('Tauri startup windows', () => {
 	test('main window starts hidden behind the splash', () => {
 		const main = windowByLabel('main');
 		expect(main.visible).toBe(false);
-		expect(main.backgroundColor).toBe('#0A0A0A');
+		expect(main.backgroundColor).toBe('#08090B');
 		expect(main.decorations).toBe(true);
 	});
 
