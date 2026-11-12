@@ -5,7 +5,9 @@ package-lock.json
 src-tauri/target/
 # Updater signing keys — add the public key to tauri.conf.json instead
 src-tauri/.keys/
-src-tauri/icons/*.png
+# Icon PNGs are referenced by tauri.conf.json and embedded at compile time,
+# so they must be tracked (CI on Linux fails without them). Only the large
+# generated .icns (macOS-only) stays ignored.
 src-tauri/icons/*.icns
 
 # SQLite runtime files (don't commit the live DB)
